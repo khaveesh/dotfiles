@@ -1,8 +1,5 @@
-#!/usr/bin/env fish
-
-# colors documentation can be found at
-# http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
-function man --wraps man -d "Run man with added colors"
+# Defined in - @ line 1
+function man --wraps=man --description 'Run man with added colors'
     set -l bold_ansi_code "\u001b[1m"
     set -l underline_ansi_code "\u001b[4m"
     set -l reversed_ansi_code "\u001b[7m"

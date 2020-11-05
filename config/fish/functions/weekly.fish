@@ -1,6 +1,5 @@
 # Defined in - @ line 1
-function weekly --wraps='fisher self-update; fisher; vim +PackerSync' --description 'alias weekly fisher self-update; fisher; vim +PackerSync'
-    fisher self-update
-    fisher
+function weekly --wraps='scuba update; vim +PackerSync' --description 'alias weekly scuba update; vim +PackerSync'
+    scuba update
     vim +PackerSync
 end

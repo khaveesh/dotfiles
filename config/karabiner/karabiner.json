@@ -22,12 +22,8 @@
                                 "from": {
                                     "key_code": "f",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["option"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
@@ -41,17 +37,13 @@
                                 "from": {
                                     "key_code": "s",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["option"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open '/Applications/Safari Technology Preview.app'"
+                                        "shell_command": "open -a 'Safari Technology Preview'"
                                     }
                                 ],
                                 "type": "basic"
@@ -60,17 +52,13 @@
                                 "from": {
                                     "key_code": "v",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["option"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open '/Applications/Visual Studio Code.app'"
+                                        "shell_command": "open -a 'Visual Studio Code'"
                                     }
                                 ],
                                 "type": "basic"
@@ -79,17 +67,13 @@
                                 "from": {
                                     "key_code": "i",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["option"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open '/Applications/IINA.app'"
+                                        "shell_command": "open -a 'IINA'"
                                     }
                                 ],
                                 "type": "basic"
@@ -98,17 +82,13 @@
                                 "from": {
                                     "key_code": "t",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["option"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open '/Applications/Transmission.app'"
+                                        "shell_command": "open -a 'Transmission'"
                                     }
                                 ],
                                 "type": "basic"
@@ -117,12 +97,8 @@
                                 "from": {
                                     "key_code": "a",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["option"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
@@ -134,19 +110,15 @@
                             },
                             {
                                 "from": {
-                                    "key_code": "f",
+                                    "key_code": "c",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["option"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open '/Applications/Firefox.app'"
+                                        "shell_command": "open -a 'Google Chrome'"
                                     }
                                 ],
                                 "type": "basic"
@@ -155,12 +127,8 @@
                                 "from": {
                                     "key_code": "m",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["option"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
@@ -174,17 +142,13 @@
                                 "from": {
                                     "key_code": "r",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["option"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open '/Applications/Reeder.app'"
+                                        "shell_command": "open -a 'Reeder'"
                                     }
                                 ],
                                 "type": "basic"
@@ -193,12 +157,8 @@
                                 "from": {
                                     "key_code": "p",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "option"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["option"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
@@ -216,18 +176,14 @@
                             {
                                 "conditions": [
                                     {
-                                        "bundle_identifiers": [
-                                            "^com.apple.finder"
-                                        ],
+                                        "bundle_identifiers": ["^com.apple.finder"],
                                         "type": "frontmost_application_if"
                                     }
                                 ],
                                 "from": {
                                     "key_code": "return_or_enter",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "fn"
-                                        ]
+                                        "mandatory": ["fn"]
                                     }
                                 },
                                 "to": [
@@ -240,9 +196,7 @@
                             {
                                 "conditions": [
                                     {
-                                        "bundle_identifiers": [
-                                            "^com.apple.finder"
-                                        ],
+                                        "bundle_identifiers": ["^com.apple.finder"],
                                         "type": "frontmost_application_if"
                                     }
                                 ],
@@ -252,9 +206,7 @@
                                 "to": [
                                     {
                                         "key_code": "o",
-                                        "modifiers": [
-                                            "right_command"
-                                        ]
+                                        "modifiers": ["right_command"]
                                     }
                                 ],
                                 "type": "basic"
@@ -268,12 +220,8 @@
                                 "from": {
                                     "key_code": "left_shift",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "right_shift"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["right_shift"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
@@ -292,12 +240,8 @@
                                 "from": {
                                     "key_code": "right_shift",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "left_shift"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["left_shift"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
@@ -321,13 +265,8 @@
                                 "from": {
                                     "key_code": "delete_or_backspace",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "shift"
-                                        ],
-                                        "optional": [
-                                            "caps_lock",
-                                            "option"
-                                        ]
+                                        "mandatory": ["shift"],
+                                        "optional": ["caps_lock", "option"]
                                     }
                                 },
                                 "to": [
@@ -346,13 +285,8 @@
                                 "from": {
                                     "key_code": "escape",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "shift",
-                                            "control"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["shift", "control"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
@@ -365,7 +299,7 @@
                         ]
                     },
                     {
-                        "description": "Double tap left-shift to return ~/",
+                        "description": "Double tap left-shift to type ~/",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -378,17 +312,13 @@
                                 "from": {
                                     "key_code": "left_shift",
                                     "modifiers": {
-                                        "optional": [
-                                            "any"
-                                        ]
+                                        "optional": ["any"]
                                     }
                                 },
                                 "to": [
                                     {
                                         "key_code": "grave_accent_and_tilde",
-                                        "modifiers": [
-                                            "shift"
-                                        ]
+                                        "modifiers": ["shift"]
                                     },
                                     {
                                         "key_code": "slash"
@@ -400,9 +330,7 @@
                                 "from": {
                                     "key_code": "left_shift",
                                     "modifiers": {
-                                        "optional": [
-                                            "any"
-                                        ]
+                                        "optional": ["any"]
                                     }
                                 },
                                 "to": [
@@ -444,22 +372,15 @@
                             {
                                 "conditions": [
                                     {
-                                        "bundle_identifiers": [
-                                            "^com.apple.Safari"
-                                        ],
+                                        "bundle_identifiers": ["^com.apple.Safari"],
                                         "type": "frontmost_application_if"
                                     }
                                 ],
                                 "from": {
                                     "key_code": "p",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["command", "control"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
@@ -478,13 +399,8 @@
                                 "from": {
                                     "key_code": "n",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["command", "control"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
@@ -497,32 +413,51 @@
                         ]
                     },
                     {
-                        "description": "Open current Safari tab in Firefox",
+                        "description": "Open current Safari tab in Chrome",
                         "manipulators": [
                             {
                                 "conditions": [
                                     {
-                                        "bundle_identifiers": [
-                                            "^com.apple.Safari"
-                                        ],
+                                        "bundle_identifiers": ["^com.apple.Safari"],
                                         "type": "frontmost_application_if"
                                     }
                                 ],
                                 "from": {
-                                    "key_code": "f",
+                                    "key_code": "c",
                                     "modifiers": {
-                                        "mandatory": [
-                                            "control",
-                                            "option"
-                                        ],
-                                        "optional": [
-                                            "caps_lock"
-                                        ]
+                                        "mandatory": ["control", "option"],
+                                        "optional": ["caps_lock"]
                                     }
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "osascript -e 'tell application \"Safari Technology Preview\"\nset theURL to URL of front document\nclose current tab of window 1\nend tell\ndo shell script \"open -a Firefox \" & theURL'"
+                                        "shell_command": "osascript $HOME/.config/Scripts/Open\\ Tab\\ in\\ Chrome.scpt"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Open Daily Set",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": ["^com.apple.Safari"],
+                                        "type": "frontmost_application_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "d",
+                                    "modifiers": {
+                                        "mandatory": ["control", "option", "command"],
+                                        "optional": ["caps_lock"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "$HOME/.config/Scripts/Open\\ Daily\\ Set.zsh"
                                     }
                                 ],
                                 "type": "basic"

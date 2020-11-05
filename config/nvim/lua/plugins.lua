@@ -11,14 +11,20 @@ return require('packer').startup(function()
 	use {
 		'nvim-lua/completion-nvim',
 		requires = 'neovim/nvim-lspconfig',
+
 		config = function()
 			local completion = require('completion')
 			local lsp = require('nvim_lsp')
 
-			lsp.texlab.setup{settings = {latex = {build = {args = {'-lualatex'}}}}, on_attach = completion.on_attach()}
-			lsp.clangd.setup{on_attach = completion.on_attach()}
-			lsp.jedi_language_server.setup{on_attach = completion.on_attach()}
+			local lsp_servers = {'clangd', 'jedi_language_server'}
 
+			lsp.texlab.setup{settings = {latex = {build = {args = {'-lualatex'}}}}, on_attach = completion.on_attach()}
+
+			for _, server in ipairs(lsp_servers) do
+				lsp[server].setup{on_attach = completion.on_attach()}
+			end
+
+			-- Enable completion even for non-lsp languages
 			completion.on_attach()
 
 			-- Disable LSP diagnostics since ALE already provides diagnostics
@@ -30,10 +36,12 @@ return require('packer').startup(function()
 	use {
 		'nvim-treesitter/nvim-treesitter',
 		requires = 'nvim-treesitter/nvim-treesitter-textobjects',
+
 		config = function()
 			require'nvim-treesitter.configs'.setup{
 				ensure_installed = {'c', 'cpp', 'python'},
 				highlight = {enable = true},
+
 				textobjects = {
 					select = {
 						enable = true,
@@ -41,9 +49,17 @@ return require('packer').startup(function()
 							["af"] = "@function.outer",
 							["if"] = "@function.inner",
 							["ac"] = "@class.outer",
-							["ic"] = "@class.inner"
+							["ic"] = "@class.inner",
+							["am"] = "@call.outer",
+							["im"] = "@call.inner",
+							["ai"] = "@conditional.outer",
+							["ii"] = "@conditional.inner",
+							["al"] = "@loop.outer",
+							["il"] = "@loop.inner",
+							["ia"] = "@parameter.inner"
 						}
 					},
+
 					swap = {
 						enable = true,
 						swap_next = {
@@ -53,6 +69,7 @@ return require('packer').startup(function()
 							["<C-h>"] = "@parameter.inner"
 						}
 					},
+
 					move = {
 						enable = true,
 						goto_next_start = {
@@ -68,6 +85,7 @@ return require('packer').startup(function()
 							["[M"] = "@function.outer"
 						}
 					},
+
 					lsp_interop = {
 						enable = true,
 						peek_definition_code = {
@@ -85,6 +103,7 @@ return require('packer').startup(function()
 		'lewis6991/gitsigns.nvim',
 		branch = 'main',
 		requires = 'nvim-lua/plenary.nvim',
+
 		config = function()
 			require('gitsigns').setup{
 				signs = {
@@ -99,39 +118,38 @@ return require('packer').startup(function()
 	}
 
 
+	-- Colour Schemes
+	use {'khaveesh/nord-vim', opt = true}
+	use {'srcery-colors/srcery-vim', opt = true}
+
 	-- Linter and Snippets
 	use 'khaveesh/ale'
 	use 'khaveesh/vim-fish-syntax'
 	use {'SirVer/ultisnips', event = 'InsertEnter *'}
 	use {'honza/vim-snippets', event = 'InsertEnter *'}
 
-	-- Markdown Distraction-Free Writing Mode
-	use {'junegunn/goyo.vim', cmd = 'Goyo'}
-	use {'junegunn/limelight.vim', cmd = 'Goyo'}
-
 	-- Statusline
 	use 'itchyny/lightline.vim'
 	use 'maximbaz/lightline-ale'
 	use 'mengelbrecht/lightline-bufferline'
 
-	-- Colour Schemes
-	use {'arcticicestudio/nord-vim', opt = true}
-	use {'srcery-colors/srcery-vim', opt = true}
-
 	-- Utilities
 	use 'khaveesh/vim-unimpaired'
+	use 'khaveesh/pear-tree'
 	use 'tpope/vim-commentary'
 	use 'tpope/vim-repeat'
 	use 'machakann/vim-sandwich'
 	use 'wellle/targets.vim'
 	use 'rhysd/clever-f.vim'
-	use 'tmsvg/pear-tree'
 	use 'AndrewRadev/sideways.vim'
 	use 'tommcdo/vim-exchange'
 	use {'junegunn/vim-easy-align', opt = true}
 	use {'simnalamburt/vim-mundo', cmd = 'MundoToggle'}
 	use 'romainl/vim-cool'
 	use 'Konfekt/vim-CtrlXA'
-	use {'sedm0784/vim-you-autocorrect', cmd = 'EnableAutocorrect'}
+
+	-- Markdown Distraction-Free Writing Mode
+	use {'junegunn/goyo.vim', cmd = 'Goyo'}
+	use {'junegunn/limelight.vim', cmd = 'Goyo'}
 
 end)

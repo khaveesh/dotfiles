@@ -1,11 +1,22 @@
-function fish_prompt
-    set --local exit_code $status  # save previous exit code
+function fish_prompt --description 'Created by tide configure'
+    set -g _tide_last_pipestatus $pipestatus
+    set -g _tide_last_status $status
 
-    echo -e -n (_pure_prompt_beginning)  # init prompt context (clear current line, etc.)
-    echo -e (_pure_prompt_first_line)  # print current path, git branch/status, command duration
-    _pure_place_iterm2_prompt_mark # place iTerm shell integration mark
-    echo -e -n (_pure_prompt $exit_code)  # print prompt
-    echo -e (_pure_prompt_ending)  # reset colors and end prompt
+    if test "$tide_print_newline_before_prompt" = 'true'
+        printf '%b' '\n'
+    end
 
-    set _pure_fresh_session false
+    set_color $tide_prompt_connection_color
+    string repeat --no-newline --max $COLUMNS $tide_prompt_connection_icon
+    printf '%b' '\r'
+
+    _tide_right_prompt
+    _tide_left_prompt
+end
+
+function fish_right_prompt
+    printf '%s' $_tide_fish_right_prompt_display
+    # Right prompt is always the last thing on the line 
+    # therefore reset colors for tab completion
+    set_color normal
 end

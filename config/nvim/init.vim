@@ -14,9 +14,6 @@
 augroup custom
 	autocmd!
 
-	" Better commenting
-	" autocmd BufEnter * setlocal formatoptions-=ro
-
 	" Toggle between appropriate number formats
 	autocmd BufEnter,WinEnter * setlocal nonu rnu
 	autocmd BufLeave,WinLeave * setlocal nu nornu
@@ -54,8 +51,10 @@ augroup custom
 	autocmd! User GoyoLeave Limelight!
 
 	" Neovim only
-	" Reset cursor shape on exit
-	autocmd VimLeave,VimSuspend * set guicursor=a:ver25-blinkon100
+	" Reset cursor shape on exit & restore on resume
+	autocmd VimSuspend * let g:default_gc = &guicursor
+	autocmd VimLeave,VimSuspend * set guicursor=n:ver25-blinkon100
+	autocmd VimResume * let &guicursor = g:default_gc
 augroup END
 
 
@@ -66,7 +65,7 @@ set termguicolors
 " Full mouse support
 set mouse=a
 " Customize shell and grep to use preferred tools
-set shell=/usr/local/bin/fish
+set shell=/usr/bin/env\ fish
 set grepprg=rg\ --vimgrep\ --smart-case
 " Better grep command
 command! -bar -nargs=1 Grep silent grep! <q-args> | redraw! | cw
@@ -74,7 +73,7 @@ cnoreabbrev grep Grep
 
 " Disabled since integrated in Lightline
 set noshowmode
-" Suppress startup message
+" Suppress startup & completion messages
 set shortmess+=Ic
 " Set 3 lines to the cursor - when moving vertically using j/k
 set scrolloff=3
@@ -179,9 +178,9 @@ nnoremap <silent> <expr> <leader>l empty(filter(getwininfo(), 'v:val.loclist')) 
 " Markdown Preview using Pandoc
 nnoremap <silent> <leader>m :silent! !panhtml %<CR>
 
-" Use Tab for completion navigation
-inoremap <expr> <Tab>   pumvisible() ? '<C-n>' : '<Tab>'
-inoremap <expr> <S-Tab> pumvisible() ? '<C-p>' : '<S-Tab>'
+" Use tab for completion navigation
+inoremap <expr> <tab>   pumvisible() ? '<C-n>' : '<tab>'
+inoremap <expr> <S-tab> pumvisible() ? '<C-p>' : '<S-tab>'
 
 
 " Plugin Configuration
@@ -216,18 +215,20 @@ nnoremap <silent> cs :ClangdSwitchSourceHeader<CR>
 nnoremap gb :TexlabBuild<CR>
 
 " Completion
-let g:completion_chain_complete_list  = [
-			\ {'complete_items': ['lsp', 'snippet']},
-			\ {'mode': '<c-p>'},
-			\ {'mode': '<c-n>'},
-			\ {'complete_items': ['path']},
-			\ ]
-let g:completion_enable_auto_hover  = 0
-let g:completion_auto_change_source = 1
-let g:completion_enable_auto_paren  = 1
-let g:completion_enable_snippet     = 'UltiSnips'
-let g:completion_confirm_key        = "\<CR>"
-let g:completion_abbr_length        = 60
+let g:completion_chain_complete_list = {
+			\ 'default': [
+			\	{'complete_items': ['lsp', 'snippet']},
+			\	{'mode': '<c-p>'},
+			\	{'mode': '<c-n>'}
+			\ ],
+			\ 'string': [{'complete_items': ['path']}]
+			\ }
+let g:completion_enable_auto_hover   = 0
+let g:completion_auto_change_source  = 1
+let g:completion_enable_auto_paren   = 1
+let g:completion_enable_snippet      = 'UltiSnips'
+let g:completion_confirm_key         = "\<CR>"
+let g:completion_abbr_length         = 60
 
 " ALE - Asynchronous Lint (also format) Engine
 let g:ale_fix_on_save  = 1
@@ -247,7 +248,7 @@ let g:ale_cpp_cppcheck_options  = g:ale_c_cppcheck_options
 let g:ale_c_clangtidy_options   = '-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/include/'
 let g:ale_cpp_clangtidy_options = '-isystem /Library/Developer/CommandLineTools/usr/include/c++/v1/'
 let g:ale_vale_options          = '--config=/Users/khaveesh/.config/vale/vale.ini'
-let g:ale_tex_chktex_options    = '-wall -n 21 -n 22 -n 30'
+let g:ale_tex_chktex_options    = '-wall -n 21 -n 22 -n 26 -n 30'
 let g:ale_c_clangtidy_checks    = ['*', '-readability-isolate-declaration', '-android-cloexec-fopen', '-misc-no-recursion',
 			\ '-readability-braces-around-statements', '-hicpp-braces-around-statements', '-google-readability-braces-around-statements',
 			\ '-readability-magic-numbers', '-cppcoreguidelines-avoid-magic-numbers', '-llvmlibc-restrict-system-libc-headers']
@@ -269,7 +270,7 @@ let g:ale_python_isort_options         = '--profile black'
 let g:ale_markdown_pandoc_target_flags = ['-inline_code_attributes', '-fenced_code_attributes']
 let g:ale_markdown_pandoc_options      = ['--atx-headers', '--columns=80']
 let g:ale_tex_latexindent_options      = '-c=/tmp/'
-let g:ale_c_clangformat_options        = '-style="{BasedOnStyle: LLVM, IndentWidth: 4, BreakBeforeBraces: Linux, AllowShortIfStatementsOnASingleLine: false, IndentCaseLabels: false, SortIncludes: false}"'
+let g:ale_c_clangformat_options        = '-style="{BasedOnStyle: LLVM, IndentWidth: 4, BreakBeforeBraces: Linux, IndentCaseLabels: false, AllowShortIfStatementsOnASingleLine: false, SortIncludes: false}"'
 
 " Pear Tree - Auto Pair closing
 let g:pear_tree_repeatable_expand = 0
@@ -299,11 +300,6 @@ nmap <leader>sA <Plug>SidewaysArgumentAppendLast
 xmap ga <Plug>(EasyAlign)
 nmap ga :packadd vim-easy-align<CR> <Plug>(EasyAlign)
 
-" Autocorrect - Set mappings
-nmap <leader>u <Plug>VimyouautocorrectUndo
-imap <F3> <C-o><Plug>VimyouautocorrectUndo
-nnoremap <silent> <leader>sp :setlocal spelllang=en_gb<CR> :EnableAutocorrect<CR>
-
 " Mundo - Undo Tree Visualizer
 nnoremap <silent> <F5> :MundoToggle<CR>
 
@@ -314,8 +310,8 @@ nnoremap <silent> <leader>gy :Goyo<CR>
 let g:textobj_sandwich_no_default_key_mappings = 1
 
 " Ultisnips - Snippets
-" Since tab is already taken for Completion
-let g:UltiSnipsExpandTrigger = '<C-l>'
+" Since <tab> is already taken for Completion, disable trigger key
+let g:UltiSnipsExpandTrigger = ''
 
 " Targets - Seek only to lines visible on current screen
 let g:targets_seekRanges = 'cc cr cb lc ac lr ab rr rb'
@@ -326,7 +322,7 @@ let g:snips_email  = 'khaveesh@gmail.com'
 
 " Lightline - Statusline
 function! LightlineGitGutter() abort
-	return ' ' . get(b:,'gitsigns_status','N/A')
+	return ' ' . get(b:, 'gitsigns_status', 'N/A')
 endfunction
 
 function! LightlineReadonly() abort
@@ -334,7 +330,7 @@ function! LightlineReadonly() abort
 endfunction
 
 let g:lightline = {
-			\	'active' : {
+			\	'active': {
 			\		'left': [
 			\			['mode', 'paste'],
 			\			['readonly', 'filename', 'modified'],
@@ -351,20 +347,20 @@ let g:lightline = {
 			\		'gitstatus': 'LightlineGitGutter',
 			\		'readonly':  'LightlineReadonly'
 			\	},
-			\	'component_expand' : {
+			\	'component_expand': {
 			\		'linter_infos':    'lightline#ale#infos',
 			\		'linter_warnings': 'lightline#ale#warnings',
 			\		'linter_errors':   'lightline#ale#errors',
 			\		'buffers':         'lightline#bufferline#buffers'
 			\	},
-			\	'component_type' : {
+			\	'component_type': {
 			\		'linter_infos':    'right',
 			\		'linter_warnings': 'warning',
 			\		'linter_errors':   'error',
 			\		'buffers':         'tabsel'
 			\	},
 			\	'colorscheme': 'nord',
-			\	'separator': {'left': '', 'right': ''},
+			\	'separator':    {'left': '', 'right': ''},
 			\	'subseparator': {'left': '', 'right': ''}
 			\ }
 
