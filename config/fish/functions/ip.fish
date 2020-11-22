@@ -1,5 +1,5 @@
 # Defined in - @ line 1
-function ip --wraps='dig +short myip.opendns.com @resolver1.opendns.com' --description 'alias ip dig +short myip.opendns.com @resolver1.opendns.com'
+function ip --description 'Lists IP addresses'
     echo -n 'IPv4: '
     dig +short myip.opendns.com @resolver1.opendns.com -4
     echo -n 'IPv6: '
