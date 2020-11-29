@@ -191,21 +191,21 @@
       "Text" : "5",
       "Action" : 12
     },
-    "0x30-0x200000-0x0" : {
-      "Text" : "0",
+    "0x2f-0x200000-0x0" : {
+      "Text" : "\/",
       "Action" : 12
     },
     "0x2d-0x40000-0x0" : {
       "Text" : "0x1f",
       "Action" : 11
     },
+    "0x30-0x200000-0x0" : {
+      "Text" : "0",
+      "Action" : 12
+    },
     "0x38-0x40000-0x0" : {
       "Text" : "0x7f",
       "Action" : 11
-    },
-    "0x2f-0x200000-0x0" : {
-      "Text" : "\/",
-      "Action" : 12
     }
   },
   "Place Prompt at First Column" : true,
@@ -282,7 +282,7 @@
     "Green Component" : 0.78105825185775757
   },
   "Vertical Spacing" : 1.1100000000000001,
-  "Disable Window Resizing" : false,
+  "Disable Window Resizing" : true,
   "Close Sessions On End" : true,
   "HotKey Activated By Modifier" : false,
   "Default Bookmark" : "No",
@@ -305,7 +305,7 @@
     "Alpha Component" : 1,
     "Green Component" : 0.99263292551040649
   },
-  "Disable Printing" : false,
+  "Disable Printing" : true,
   "Minimum Contrast" : 0,
   "Ansi 12 Color" : {
     "Red Component" : 0.46202266216278076,
@@ -437,6 +437,8 @@
         "configuration" : {
           "knobs" : {
             "path" : "path",
+            "minwidth" : 0,
+            "base: compression resistance" : 1,
             "base: priority" : 5,
             "shared text color" : {
               "Red Component" : 0.90000000000000002,
@@ -445,8 +447,6 @@
               "Alpha Component" : 1,
               "Green Component" : 0.63
             },
-            "minwidth" : 0,
-            "base: compression resistance" : 1,
             "maxwidth" : 1.7976931348623157e+308
           },
           "layout advanced configuration dictionary value" : {
@@ -459,8 +459,6 @@
         "class" : "iTermStatusBarJobComponent",
         "configuration" : {
           "knobs" : {
-            "base: compression resistance" : 1,
-            "base: priority" : 5,
             "shared text color" : {
               "Red Component" : 0.90000000000000002,
               "Color Space" : "sRGB",
@@ -468,6 +466,8 @@
               "Alpha Component" : 1,
               "Green Component" : 0.83250000000000002
             },
+            "base: priority" : 5,
+            "base: compression resistance" : 1,
             "minwidth" : 0,
             "maxwidth" : 1.7976931348623157e+308
           },
@@ -561,9 +561,6 @@
         "class" : "iTermStatusBarGitComponent",
         "configuration" : {
           "knobs" : {
-            "base: compression resistance" : 1,
-            "iTermStatusBarGitComponentPollingIntervalKey" : 2,
-            "base: priority" : 5,
             "shared text color" : {
               "Red Component" : 0.76500000000000001,
               "Color Space" : "sRGB",
@@ -571,7 +568,10 @@
               "Alpha Component" : 1,
               "Green Component" : 0.63
             },
+            "iTermStatusBarGitComponentPollingIntervalKey" : 2,
+            "base: priority" : 5,
             "minwidth" : 0,
+            "base: compression resistance" : 1,
             "maxwidth" : 1.7976931348623157e+308
           },
           "layout advanced configuration dictionary value" : {

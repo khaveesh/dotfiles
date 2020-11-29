@@ -7,6 +7,9 @@ return require('packer').startup(function()
 	-- Package Manager
 	use {'wbthomason/packer.nvim', opt = true}
 
+	-- Defaults
+	use 'khaveesh/nvim-sensibly-opinionated-defaults'
+
 	-- LSP Setup
 	use {
 		'neovim/nvim-lspconfig',
@@ -122,6 +125,8 @@ return require('packer').startup(function()
 	-- Syntax Highlight, Semantic Text Objects
 	use {
 		'nvim-treesitter/nvim-treesitter',
+		run = ':TSUpdate',
+
 		requires = 'nvim-treesitter/nvim-treesitter-textobjects',
 
 		config = function()

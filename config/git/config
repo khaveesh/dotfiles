@@ -167,12 +167,9 @@
 	insteadOf = "gist:"
 
 [user]
-	name = Khaveesh N
+	name = Khaveesh N (MBP)
 	email = khaveesh@gmail.com
 	signingkey = CB82DEC6404CD52E
-
-[gpg]
-	program = gpg
 
 [interactive]
 	diffFilter = delta --color-only

@@ -14,17 +14,8 @@
 augroup custom
 	autocmd!
 
-	" Restore last file position
-	autocmd BufReadPost *
-				\ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit' && &diff == 0
-				\ |   exe "normal! g`\""
-				\ | endif
-
 	" Format the file before saving
 	autocmd BufWritePre * call functions#Format()
-
-	" Highlight yanked region
-	autocmd TextYankPost * silent lua vim.highlight.on_yank{higroup = 'IncSearch', timeout = 1000}
 
 	" Update statusline on diagnostics change
 	autocmd User LspDiagnosticsChanged call lightline#update() | lua vim.lsp.diagnostic.set_loclist({open_loclist = false})
@@ -37,51 +28,27 @@ augroup custom
 augroup END
 
 
-" Terminal Config
-
-" 24-Bit Truecolor
-set termguicolors
-" Use POSIX-compliant shell instead of fish
-set shell=sh
-
 " EditorConfig
 
+" Use POSIX-compliant shell instead of fish
+set shell=sh
 " Customize grep to use ripgrep
 set grepprg=rg\ --vimgrep\ --smart-case
 " Better grep command
 command! -bar -nargs=1 Grep silent grep! <q-args> | cw
-" Relative number for easy jumps
-set relativenumber
 " Disabled since integrated in Lightline
 set noshowmode
 " Suppress startup & completion messages
 set shortmess+=Ic
-" Set 3 lines to the cursor - when moving vertically using j/k
-set scrolloff=3
 " Make tab stops somewhat emulate spaces
 set tabstop=4 shiftwidth=4
-" Indicate that tab stops are used instead of spaces
-set list
-" Better search
-set ignorecase smartcase
 " Better substitute
 set gdefault
 " Prevents inserting two spaces after punctuation on a join
 set nojoinspaces
-" More natural split opening
-set splitbelow splitright
-" Quick switch buffer without worries
-set hidden
 " Completion
 set pumheight=10
 set completeopt=menuone,noselect,noinsert
-" Wrap a long line into multiple lines with indent
-set linebreak breakindent
-let &showbreak = '↳ '
-
-" Neovim only
-" Live Preview of substitute
-set inccommand=nosplit
 
 
 " Editor Variables
@@ -155,17 +122,13 @@ nnoremap <leader>y "+y
 nnoremap <leader>d "+d
 vnoremap <leader>y "+y
 vnoremap <leader>d "+d
-nnoremap <leader>p "+p
-nnoremap <leader>P "+P
-vnoremap <leader>p "+p
-vnoremap <leader>P "+P
 
 " Toggle Quickfix & Location Lists
 nnoremap <silent> <expr> <leader>e empty(filter(getwininfo(), 'v:val.quickfix')) ? ':copen<CR>' : ':cclose<CR>'
 nnoremap <silent> <expr> <leader>l empty(filter(getwininfo(), 'v:val.loclist'))  ? ':lopen<CR>' : ':lclose<CR>'
 
 " Markdown Preview using Pandoc
-nnoremap <silent> <leader>m :silent exec "%w !fish -c 'panhtml -f " . &ft . "'"<CR>
+nnoremap <silent> <leader>p :silent exec "%w !fish -c 'panhtml -f " . &ft . "'"<CR>
 
 " Use tab for completion navigation
 inoremap <expr> <Tab>   pumvisible() ? '<C-n>' : '<Tab>'
@@ -178,6 +141,8 @@ nnoremap gb :call functions#Blame()<CR>
 " Plugin Configuration
 
 " Colorscheme - Nord for low-contrast & Srcery for high-contrast
+" let g:nord_underline       = 1
+" let g:nord_italic_comments = 1
 colorscheme nord
 
 " Packer

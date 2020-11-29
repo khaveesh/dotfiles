@@ -1,4 +1,4 @@
 # Defined in - @ line 1
-function caskls --wraps='cask info' --description 'alias caskls cask info'
-    cask info $argv
+function caskls --wraps='brew info --cask' --description 'alias caskls brew info --cask'
+    brew info --cask $argv
 end

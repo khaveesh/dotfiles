@@ -8,13 +8,13 @@
 			<key>NSBackgroundColorName</key>
 			<string>background</string>
 			<key>NSBackgroundSystemColorName</key>
-			<string>systemPurpleColor</string>
+			<string>systemGrayColor</string>
 			<key>NSIconName</key>
-			<string>NSTouchBarCommunicationVideo</string>
+			<string>NSTouchBarGetInfoOutline</string>
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
-				<string>Open in mpv</string>
+				<string>Analyze MediaInfo</string>
 			</dict>
 			<key>NSMessage</key>
 			<string>runWorkflowAsService</string>
@@ -25,7 +25,7 @@
 			</dict>
 			<key>NSSendFileTypes</key>
 			<array>
-				<string>public.movie</string>
+				<string>public.item</string>
 			</array>
 		</dict>
 	</array>

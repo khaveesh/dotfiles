@@ -7,8 +7,10 @@
 		<dict>
 			<key>NSBackgroundColorName</key>
 			<string>background</string>
+			<key>NSBackgroundSystemColorName</key>
+			<string>systemPurpleColor</string>
 			<key>NSIconName</key>
-			<string>NSActionTemplate</string>
+			<string>NSTouchBarCheck</string>
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
