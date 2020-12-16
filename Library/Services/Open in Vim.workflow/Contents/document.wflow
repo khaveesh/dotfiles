@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>492</string>
+	<string>509</string>
 	<key>AMApplicationVersion</key>
 	<string>2.10</string>
 	<key>AMDocumentVersion</key>
@@ -21,17 +21,25 @@
 					<true/>
 					<key>Types</key>
 					<array>
-						<string>com.apple.applescript.object</string>
+						<string>com.apple.cocoa.string</string>
 					</array>
 				</dict>
 				<key>AMActionVersion</key>
-				<string>1.0.2</string>
+				<string>2.0.3</string>
 				<key>AMApplication</key>
 				<array>
 					<string>Automator</string>
 				</array>
 				<key>AMParameterProperties</key>
 				<dict>
+					<key>COMMAND_STRING</key>
+					<dict/>
+					<key>CheckedForUserDefaultShell</key>
+					<dict/>
+					<key>inputMethod</key>
+					<dict/>
+					<key>shell</key>
+					<dict/>
 					<key>source</key>
 					<dict/>
 				</dict>
@@ -41,23 +49,55 @@
 					<string>List</string>
 					<key>Types</key>
 					<array>
-						<string>com.apple.applescript.object</string>
+						<string>com.apple.cocoa.string</string>
 					</array>
 				</dict>
 				<key>ActionBundlePath</key>
-				<string>/System/Library/Automator/Run AppleScript.action</string>
+				<string>/System/Library/Automator/Run Shell Script.action</string>
 				<key>ActionName</key>
-				<string>Run AppleScript</string>
+				<string>Run Shell Script</string>
 				<key>ActionParameters</key>
 				<dict>
+					<key>COMMAND_STRING</key>
+					<string>open -a kitty
+
+flag=0
+
+for f in "$@"
+do
+	if [ -d "$f" ]; then
+		/usr/local/bin/kitty @ --to=unix:/tmp/mykitty new-window --window-type=os
+		/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "fd -t f -t d --max-depth 1 . $f -X nvim -p {}\x0d"
+	fi
+done
+
+for f in "$@"; do
+	if [ -f "$f" ]; then
+		if [ $flag -eq 0 ]; then
+			/usr/local/bin/kitty @ --to=unix:/tmp/mykitty new-window --window-type=os
+			/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "vim -p "
+			flag=1
+		fi
+		/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "\"$f\" "
+	fi
+done
+
+if [ $flag -eq 1 ]; then
+	/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "\x0d"
+fi</string>
+					<key>CheckedForUserDefaultShell</key>
+					<true/>
+					<key>inputMethod</key>
+					<integer>1</integer>
+					<key>shell</key>
+					<string>/bin/sh</string>
 					<key>source</key>
-					<string>on run {input, parameters}	set fpath to quoted form of POSIX path of first item of input	try		do shell script "cd " &amp; fpath		set currFolder to fpath		tell application "Finder" to set input to (every file of folder input) as alias list	on error		set currFolder to quoted form of (do shell script "dirname " &amp; fpath)	end try		set cdCommand to "cd " &amp; currFolder	set nvimCommand to "nvim -p "		set filepaths to {}	repeat with currentFile in input		set currFile to quoted form of POSIX path of currentFile		if (do shell script "file " &amp; currFile) contains "text" then set end of filepaths to currFile &amp; space	end repeat		set term_command to cdCommand &amp; " &amp;&amp; " &amp; nvimCommand &amp; filepaths		tell application "iTerm"		set open_status to (it is running)		if open_status then tell current window to create tab with default profile		tell current session of current window to write text term_command		activate	end tell	
-	return inputend run</string>
+					<string></string>
 				</dict>
 				<key>BundleIdentifier</key>
-				<string>com.apple.Automator.RunScript</string>
+				<string>com.apple.RunShellScript</string>
 				<key>CFBundleVersion</key>
-				<string>1.0.2</string>
+				<string>2.0.3</string>
 				<key>CanShowSelectedItemsWhenRun</key>
 				<false/>
 				<key>CanShowWhenRun</key>
@@ -67,17 +107,21 @@
 					<string>AMCategoryUtilities</string>
 				</array>
 				<key>Class Name</key>
-				<string>RunScriptAction</string>
+				<string>RunShellScriptAction</string>
 				<key>InputUUID</key>
-				<string>05DB4447-E9B1-431C-9A82-A7D175F8D84B</string>
+				<string>C2AE8568-52B3-4C69-9A03-A6B37AC7E36A</string>
 				<key>Keywords</key>
 				<array>
+					<string>Shell</string>
+					<string>Script</string>
+					<string>Command</string>
 					<string>Run</string>
+					<string>Unix</string>
 				</array>
 				<key>OutputUUID</key>
-				<string>CC84E828-A8E0-4AA0-9C8E-FEE1540E2CBC</string>
+				<string>EC9EE389-41F9-4111-9B3D-5E46BDE8D10D</string>
 				<key>UUID</key>
-				<string>952ACCC6-54C0-46CD-A1C0-DFFC1B92EB5B</string>
+				<string>26323C2D-DD7F-4327-86AA-C1891AFB307A</string>
 				<key>UnlocalizedApplications</key>
 				<array>
 					<string>Automator</string>
@@ -87,14 +131,9 @@
 					<key>0</key>
 					<dict>
 						<key>default value</key>
-						<string>on run {input, parameters}
-	
-	(* Your script goes here *)
-	
-	return input
-end run</string>
+						<integer>0</integer>
 						<key>name</key>
-						<string>source</string>
+						<string>inputMethod</string>
 						<key>required</key>
 						<string>0</string>
 						<key>type</key>
@@ -102,16 +141,68 @@ end run</string>
 						<key>uuid</key>
 						<string>0</string>
 					</dict>
+					<key>1</key>
+					<dict>
+						<key>default value</key>
+						<false/>
+						<key>name</key>
+						<string>CheckedForUserDefaultShell</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>1</string>
+					</dict>
+					<key>2</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>2</string>
+					</dict>
+					<key>3</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>COMMAND_STRING</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>3</string>
+					</dict>
+					<key>4</key>
+					<dict>
+						<key>default value</key>
+						<string>/bin/sh</string>
+						<key>name</key>
+						<string>shell</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>4</string>
+					</dict>
 				</dict>
 				<key>isViewVisible</key>
-				<true/>
+				<integer>1</integer>
 				<key>location</key>
-				<string>521.750000:368.000000</string>
+				<string>521.750000:305.000000</string>
 				<key>nibPath</key>
-				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
+				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
 			<key>isViewVisible</key>
-			<true/>
+			<integer>1</integer>
 		</dict>
 	</array>
 	<key>connectors</key>

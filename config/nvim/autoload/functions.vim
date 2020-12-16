@@ -2,30 +2,31 @@
 let s:lsp_ft = ['c', 'cpp', 'python']
 let s:formatprg_ft = {
 			\ 'fish': 'fish_indent',
-			\ 'markdown': 'pandoc -s -f markdown -t markdown-inline_code_attributes-fenced_code_attributes --columns=80',
+			\ 'markdown': 'pandoc -s -t markdown-fenced_code_attributes',
 			\ 'tex': 'latexindent -c=/tmp/'
 			\ }
 
 " Run formatters with perfect undo history
 function! functions#Format() abort
-	let buf = bufname()
-
 	" LSP provided formatting
 	if index(s:lsp_ft, &ft) >= 0
 		lua vim.lsp.buf.formatting_sync(nil, 1000)
 
 	else
-		let original_lines = getbufline(buf, 1, '$')
+		let original_lines = getbufline(bufname(), 1, '$')
 		if has_key(s:formatprg_ft, &ft)
+			" Format using CLI tools via stdin
 			let formatted_lines = split(system(s:formatprg_ft[&ft], original_lines), '\n')
 		else
+			" Trim trailing whitespace and leading blank lines
 			let formatted_lines = split(system("sed 's/[ \t]*$//'", original_lines), '\n')
 		endif
 		if v:shell_error > 0
 			echomsg 'formatprg exited with status ' . v:shell_error
 		elseif formatted_lines !=# original_lines
-			call deletebufline(buf, len(formatted_lines) + 1, '$')
-			call setbufline(buf, 1, formatted_lines)
+			let view = winsaveview()
+			lua vim.api.nvim_buf_set_lines(0, 0, -1, true, vim.api.nvim_eval('formatted_lines'))
+			call winrestview(view)
 		endif
 	endif
 endfunction

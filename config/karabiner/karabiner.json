@@ -99,13 +99,10 @@
                         "manipulators": [
                             {
                                 "from": {
-                                    "key_code": "f",
+                                    "key_code": "spacebar",
                                     "modifiers": {
                                         "mandatory": [
-                                            "option",
-                                            "command",
-                                            "control",
-                                            "shift"
+                                            "option"
                                         ],
                                         "optional": [
                                             "caps_lock"
@@ -114,7 +111,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "open -a Finder"
+                                        "shell_command": "open -a kitty"
                                     }
                                 ],
                                 "type": "basic"
@@ -432,7 +429,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "osascript $HOME/.config/Scripts/Open\\ Tab\\ in\\ Chrome.scpt"
+                                        "shell_command": "osascript $HOME/.config/AppleScripts/Open\\ Tab\\ in\\ Chrome.scpt"
                                     }
                                 ],
                                 "type": "basic"
@@ -466,7 +463,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "$HOME/.config/Scripts/Open\\ Daily\\ Set.zsh"
+                                        "shell_command": "$HOME/.local/share/Scripts/Open\\ Daily\\ Set.zsh"
                                     }
                                 ],
                                 "type": "basic"

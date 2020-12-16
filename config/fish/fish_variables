@@ -17,7 +17,7 @@ SETUVAR --export MANPAGER:nvim\x20\x2bMan\x21
 SETUVAR NVM_DIR:/Users/khaveesh/\x2envm
 SETUVAR --export PYLINTHOME:/Users/khaveesh/\x2ecache/pylint
 SETUVAR --export TERM_ITALICS:true
-SETUVAR VIRTUAL_ENV_DISABLE_PROMPT:true
+SETUVAR VIRTUAL_ENV_DISABLE_PROMPT:1
 SETUVAR --export VISUAL:nvim
 SETUVAR ZO_CMD:zo
 SETUVAR Z_CMD:z
@@ -48,7 +48,7 @@ SETUVAR _fisher_franciscolourenco_2F_done_files:/Users/khaveesh/\x2econfig/fish/
 SETUVAR _fisher_ilancosman_2F_tide_files:/Users/khaveesh/\x2econfig/fish/functions/_tide_count_left_prompt_height\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_cursor_right\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_cursor_up\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_decolor\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_detect_os\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_git_prompt_set_vars\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_cmd_duration\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_context\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_git_prompt\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_jobs\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_nvm\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_os\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_prompt_char\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_pwd\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_rust\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_status\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_time\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_vi_mode\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_item_virtual_env\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_left_prompt\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_pwd\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_right_prompt\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_sub_bug\x2dreport\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_sub_configure\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/_tide_sub_test\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/fish_mode_prompt\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/fish_prompt\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/fish_right_prompt\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/tide\x1e/Users/khaveesh/\x2econfig/fish/functions/tide\x2efish\x1e/Users/khaveesh/\x2econfig/fish/conf\x2ed/_tide_init\x2efish\x1e/Users/khaveesh/\x2econfig/fish/completions/tide\x2efish
 SETUVAR _fisher_jethrokuan_2F_z_files:/Users/khaveesh/\x2econfig/fish/functions/__z\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/__z_add\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/__z_clean\x2efish\x1e/Users/khaveesh/\x2econfig/fish/functions/__z_complete\x2efish\x1e/Users/khaveesh/\x2econfig/fish/conf\x2ed/z\x2efish
 SETUVAR _fisher_jorgebucaran_2F_fisher_files:/Users/khaveesh/\x2econfig/fish/functions/fisher\x2efish\x1e/Users/khaveesh/\x2econfig/fish/completions/fisher\x2efish
-SETUVAR _fisher_plugins:jorgebucaran/fisher\x1efranciscolourenco/done\x1ejethrokuan/z\x1eilancosman/tide
+SETUVAR _fisher_plugins:franciscolourenco/done\x1ejethrokuan/z\x1eilancosman/tide\x1ejorgebucaran/fisher
 SETUVAR _tide_color_dark_blue:0087AF
 SETUVAR _tide_color_dark_green:5FAF00
 SETUVAR _tide_color_gold:D7AF00
@@ -138,7 +138,7 @@ SETUVAR tide_pwd_dir_icon:\x1d
 SETUVAR tide_pwd_home_icon:\x1d
 SETUVAR tide_pwd_max_dirs:0
 SETUVAR tide_pwd_truncate_margin:10
-SETUVAR tide_pwd_unwritable_icon:\uf023
+SETUVAR tide_pwd_unwritable_icon:\ue0a2
 SETUVAR tide_right_prompt_frame_color:6C6C6C
 SETUVAR tide_right_prompt_frame_enabled:false
 SETUVAR tide_right_prompt_item_separator_diff_color:\x20
