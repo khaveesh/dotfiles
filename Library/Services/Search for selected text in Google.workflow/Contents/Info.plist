@@ -10,7 +10,7 @@
 			<key>NSBackgroundSystemColorName</key>
 			<string>systemBlueColor</string>
 			<key>NSIconName</key>
-			<string>NSActionTemplate</string>
+			<string>NSTouchBarGlobe</string>
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>

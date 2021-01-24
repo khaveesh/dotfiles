@@ -1,4 +1,4 @@
 # Defined in - @ line 1
-function brewL --wraps='brew leaves' --description 'alias brewL brew leaves'
-    brew leaves
+function brewl --wraps='brew info' --description 'alias brewl brew info'
+    brew info $argv
 end

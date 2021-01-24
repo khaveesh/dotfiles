@@ -1,4 +1,4 @@
 # Defined in - @ line 1
-function brewrm --wraps='brew uninstall --formula' --description 'alias brewrm brew uninstall --formula'
-    brew uninstall --formula $argv
+function brewrm --wraps='brew uninstall' --description 'alias brewrm brew uninstall'
+    brew uninstall $argv && brew autoremove
 end

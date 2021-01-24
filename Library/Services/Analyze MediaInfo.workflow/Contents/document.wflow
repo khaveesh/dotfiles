@@ -59,12 +59,13 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>open -a kitty
-for f in "$@"
+					<string>for f in "$@"
 do
-	/usr/local/bin/kitty @ --to=unix:/tmp/mykitty new-window --window-type=os
+	/usr/local/bin/kitty @ --to=unix:/tmp/mykitty new-window --new-tab
 	/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "mediainfo '$f' &amp;| less\x0d"
-done</string>
+done
+
+open -a kitty</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
@@ -174,8 +175,6 @@ done</string>
 						<string>4</string>
 					</dict>
 				</dict>
-				<key>conversionLabel</key>
-				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>

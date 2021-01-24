@@ -1,5 +1,6 @@
 # Defined in - @ line 1
-function weekly --wraps='fisher update; vim +PackagerUpdate' --description 'alias weekly fisher update; vim +PackagerUpdate'
+function weekly --description 'alias weekly fisher update; nvim +PackagerUpdate; curl https://raw.githubusercontent.com/ookangzheng/dbl-oisd-nl/master/hosts_light.txt > /etc/hosts'
     fisher update
-    vim +PackagerUpdate $argv
+    nvim +PackagerUpdate
+    curl https://raw.githubusercontent.com/ookangzheng/dbl-oisd-nl/master/hosts_light.txt >/etc/hosts
 end

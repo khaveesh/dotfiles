@@ -1,4 +1,4 @@
 # Defined in - @ line 1
-function lt --wraps='exa --tree --level=2' --description 'alias lt exa --tree --level=2'
-    exa -T --group-directories-first $argv
+function lt --wraps='exa -TF' --description 'alias lt exa -TF'
+    exa -TF $argv
 end

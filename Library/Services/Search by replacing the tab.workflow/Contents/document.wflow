@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>492</string>
+	<string>509</string>
 	<key>AMApplicationVersion</key>
 	<string>2.10</string>
 	<key>AMDocumentVersion</key>
@@ -51,7 +51,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>on run {input, parameters}		tell application "Safari Technology Preview" to set the URL of current tab of window 1 to "https://www.google.com/search?q=" &amp; input		return inputend run</string>
+					<string>on run {input, parameters}		tell application "Safari Technology Preview" to set the URL of current tab of window 1 to "https://www.google.com/search?q=" &amp; (do shell script "php -r 'echo urlencode(\"" &amp; input &amp; "\");'")		return inputend run</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>

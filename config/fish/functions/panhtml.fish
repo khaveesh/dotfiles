@@ -1,3 +1,4 @@
+# Defined in - @ line 1
 function panhtml --wraps=pandoc --description 'Typesets any format to LaTeX-style HTML'
     if set -q argv[2]
         set temp_file '/tmp/pandoc.html'

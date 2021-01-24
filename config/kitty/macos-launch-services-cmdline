@@ -1,2 +1,4 @@
 --start-as=fullscreen
 --listen-on=unix:/tmp/mykitty
+-d ~/Developer
+-1

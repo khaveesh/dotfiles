@@ -51,7 +51,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>on run {input, parameters}		tell application "Safari Technology Preview" to set the URL of (make new tab in window 1) to "https://www.google.com/search?q=" &amp; input		return inputend run</string>
+					<string>on run {input, parameters}		tell application "Safari Technology Preview" to set the URL of (make new tab in window 1) to "https://www.google.com/search?q=" &amp; (do shell script "php -r 'echo urlencode(\"" &amp; input &amp; "\");'")		return inputend runon encode(str)	return do shell script "php -r 'echo urlencode(\"" &amp; str &amp; "\");'"end encode</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -223,7 +223,7 @@ end run</string>
 		<key>serviceProcessesInput</key>
 		<integer>0</integer>
 		<key>systemImageName</key>
-		<string>NSActionTemplate</string>
+		<string>NSTouchBarGlobe</string>
 		<key>useAutomaticInputType</key>
 		<integer>0</integer>
 		<key>workflowTypeIdentifier</key>

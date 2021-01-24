@@ -59,32 +59,32 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>open -a kitty
-
-flag=0
+					<string>flag=0
 
 for f in "$@"
 do
 	if [ -d "$f" ]; then
-		/usr/local/bin/kitty @ --to=unix:/tmp/mykitty new-window --window-type=os
-		/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "fd -t f -t d --max-depth 1 . $f -X nvim -p {}\x0d"
+		/usr/local/bin/kitty @ --to=unix:/tmp/mykitty new-window --new-tab
+		/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "cd '$f' &amp;&amp; fd -d1 -X nvim -p {}\x0d"
 	fi
 done
 
 for f in "$@"; do
 	if [ -f "$f" ]; then
 		if [ $flag -eq 0 ]; then
-			/usr/local/bin/kitty @ --to=unix:/tmp/mykitty new-window --window-type=os
-			/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "vim -p "
+			/usr/local/bin/kitty @ --to=unix:/tmp/mykitty new-window --new-tab
+			/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text 'nvim -p '
 			flag=1
 		fi
-		/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "\"$f\" "
+		/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "'$f' "
 	fi
 done
 
 if [ $flag -eq 1 ]; then
-	/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "\x0d"
-fi</string>
+	/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text '\x0d'
+fi
+
+open -a kitty</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
