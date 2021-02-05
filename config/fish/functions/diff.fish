@@ -1,4 +1,4 @@
 # Defined in - @ line 1
-function diff --wraps=delta --description 'alias diff delta'
-    delta $argv
+function diff --wraps='kitty +kitten diff' --description 'alias diff kitty +kitten diff'
+    kitty +kitten diff $argv[1] $argv[2]
 end

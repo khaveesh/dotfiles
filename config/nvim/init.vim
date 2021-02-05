@@ -13,7 +13,7 @@
 " Highlights for the statusline
 function! s:Highlight() abort
     " Gruvbox Light colors
-    hi statusline guibg=#504945 guifg=#ebdbb2
+    hi statusline guibg=#665c54 guifg=#ebdbb2
     hi info       guibg=#d5c4a1 guifg=#282828
     hi warning    guibg=#b57614 guifg=#fbf1c7
     hi error      guibg=#fbf1c7 guifg=#9d0006
@@ -26,11 +26,6 @@ augroup custom
 
     " Prevent the highlights from being cleared on reload
     autocmd ColorScheme * call s:Highlight()
-
-    " Completion (Neovim only)
-    autocmd BufEnter * lua require'completion'.on_attach()
-    " Load snippets on entering insert mode
-    autocmd InsertEnter * ++once packadd vim-snippets | packadd ultisnips
 
     " Format the file before saving (Neovim only)
     autocmd BufWritePre * call functions#Format()
@@ -50,18 +45,23 @@ augroup END
 
 " EditorConfig {{{
 
-set termguicolors                              " Enable 24-Bit Truecolor
-set shell=dash                                 " Use POSIX-compliant shell
-set grepprg=rg\ --vimgrep\ --smart-case        " Customize grep to use ripgrep
-set expandtab tabstop=4 shiftwidth=4           " Expand tabstops to be 4 spaces
-set gdefault                                   " Better substitute
-set nojoinspaces                               " One space after punctuation on join
-set pumheight=12 completeopt=menuone,noinsert  " Completion
-set keywordprg=:DD                             " Search Dash.app for keywords
+set termguicolors                        " Enable 24-Bit Truecolor
+set shell=dash                           " Use POSIX-compliant shell
+set grepprg=rg\ --vimgrep\ --smart-case  " Customize grep to use ripgrep
+set expandtab tabstop=4 shiftwidth=4     " Expand tabstops to be 4 spaces
+set gdefault                             " Better substitute
+set nojoinspaces                         " One space after punctuation on join
+set pumheight=15                         " Completion
+set keywordprg=:DD                       " Search Dash.app for keywords
+
+" Use spacebar as leader
+let mapleader = "\<Space>"
+nnoremap <Space> <nop>
 
 " Colorscheme
 set background=light
 let g:gruvbox_invert_selection = 0
+let g:gruvbox_italic           = 1
 let g:gruvbox_contrast_light   = 'hard'
 colorscheme gruvbox
 
@@ -70,10 +70,9 @@ colorscheme gruvbox
 " let g:nord_italic_comments = 1
 " colorscheme nord
 
-Statusline
-set statusline=%#statusline#\ %m\ %f\ %h%w%=
-set statusline+=%{functions#Buffers()}\ \ %{functions#GitStatus()}
-set statusline+=\ \ %#info#\ \ %l\ \:\ %c\ \|\ %P
+" Statusline
+set statusline=%#statusline#\ %m\ %f\ %h%w\ \ %{functions#Buffers()}%=
+set statusline+=%{functions#GitStatus()}\ \ %#info#\ \ %l\:%c\ \|\ %P
 set statusline+=\ %#error#%{functions#LspErrors()}
 set statusline+=%#warning#%{functions#LspWarnings()}
 
@@ -120,6 +119,9 @@ nnoremap Q @q
 " Toggle netrw
 nnoremap <silent> <C-n> :Lexplore<CR>
 
+" Clear search highlighting
+nnoremap <silent> <C-l> :<C-u>nohls<CR><C-l>
+
 " Preview current document using Pandoc
 nnoremap <silent> <leader>p :silent exe "%w !fish -c 'panhtml -f ".&ft."'"<CR>
 
@@ -131,7 +133,7 @@ nnoremap <leader>V :ls<CR>:vsp\|b
 nnoremap <leader>i :echo "\t" &ft &fenc &ff<CR>
 
 " Edit recorded macros
-nnoremap <leader>m  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr><c-f><left>
+nnoremap <leader>m  :<C-u><C-r><C-r>='let @'.v:register.' = '.string(getreg(v:register))<CR><C-f><left>
 
 " Reload init.vim
 nnoremap <leader>v :source ~/.config/nvim/init.vim<CR>
@@ -156,20 +158,21 @@ nnoremap <M-l> <C-w>l
 
 " Quick save & exit
 nnoremap <leader>w  :w<CR>
-nnoremap <leader>ww :normal! gg=G<C-o><CR>:w<CR>
+nnoremap <leader>ww :normal! mwgg=G`w<CR>:w<CR>
 nnoremap <leader>q  :q<CR>
 nnoremap <leader>qa :qa<CR>
 nnoremap <leader>wq :wq<CR>
 nnoremap <leader>qq ZQ
 nnoremap <silent> <C-q> :bd<CR>
 
-" Some niceties on top of vim-commentary & vim-surround
+" Some niceties on top of vim-commentary
 nmap co ox<Esc>gcc0fx"_cl
 nmap cO Ox<Esc>gcc0fx"_cl
 nmap cA ox<Esc>gcc$kJfx"_cl
 
+" Change/Delete surrounding function
+nnoremap csf F(cb
 nmap dsf dsbdb
-nmap csf F(cb
 
 " }}}
 
@@ -203,7 +206,7 @@ function! s:packager_init(packager) abort
     call a:packager.add('khaveesh/nvim-sensibly-opinionated-defaults')
 
     " Tab Completion - LSP & other sources
-    call a:packager.add('nvim-lua/completion-nvim',
+    call a:packager.add('hrsh7th/nvim-compe',
                 \         {'requires': 'neovim/nvim-lspconfig'})
 
     " Syntax highlight & Semantic textobjs
@@ -218,18 +221,16 @@ function! s:packager_init(packager) abort
 
     " }}}
 
+    " Snippets & Signature help
+    call a:packager.add('hrsh7th/vim-vsnip')
+    call a:packager.add('Shougo/echodoc.vim')
+
     " Colour Schemes
     call a:packager.add('gruvbox-community/gruvbox', {'type': 'opt'})
     call a:packager.add('arcticicestudio/nord-vim', {'type': 'opt'})
 
     " Syntax files
     call a:packager.add('khaveesh/vim-fish-syntax')
-
-    " Snippets
-    call a:packager.add('honza/vim-snippets', {
-                \         'type': 'opt',
-                \         'requires': [['SirVer/ultisnips', {'type': 'opt'}]]
-                \ })
 
     " Utilities
     call a:packager.add('khaveesh/vim-unimpaired')
@@ -238,7 +239,6 @@ function! s:packager_init(packager) abort
     call a:packager.add('CherryMan/vim-commentary-yank')
     call a:packager.add('tmsvg/pear-tree')
     call a:packager.add('AndrewRadev/sideways.vim')
-    call a:packager.add('romainl/vim-cool')
     call a:packager.add('junegunn/vim-easy-align', {'type': 'opt'})
     call a:packager.add('simnalamburt/vim-mundo', {'type': 'opt'})
 
@@ -253,33 +253,28 @@ call packager#setup(function('s:packager_init'),
 
 " Plugin Configuration {{{
 
-" Initializes configuration for Lua plugins
-lua require'init'
+" Initializes configuration for Lua plugins (Neovim only)
+lua require 'init'
 
 " LSP server-specific mappings
 nnoremap <silent> <leader>t :w<CR>:TexlabBuild<CR>
 nnoremap <silent> <leader>h :ClangdSwitchSourceHeader<CR>
 
-" Completion
-let g:completion_chain_complete_list = {
-            \  'fish': [
-            \      {'complete_items': ['fish', 'snippet']},
-            \      {'mode': '<c-p>'},
-            \      {'mode': '<c-n>'},
-            \      {'complete_items': ['path']}
-            \  ],
-            \  'default': [
-            \      {'complete_items': ['lsp', 'snippet']},
-            \      {'mode': '<c-p>'},
-            \      {'mode': '<c-n>'},
-            \      {'complete_items': ['path']}
-            \  ],
-            \ }
-let g:completion_enable_auto_hover  = 0
-let g:completion_enable_auto_paren  = 1
-let g:completion_auto_change_source = 1
-let g:completion_abbr_length        = 60
-let g:completion_enable_snippet     = 'UltiSnips'
+" Nvim-Compe
+set completeopt=menu,menuone,noselect
+inoremap <silent> <expr> <CR>  compe#confirm({ 'keys': "\<Plug>(PearTreeExpand)", 'mode': 'i' })
+inoremap <silent> <expr> <C-e> compe#close('<C-e>')
+
+" vim-vsnip - LSP & VSCode snippets
+let g:vsnip_snippet_dir = expand('~/.config/nvim/vsnip')
+imap <expr> <C-j> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-j>'
+smap <expr> <C-j> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-j>'
+imap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
+smap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
+
+" EchoDoc - Function signature help
+let g:echodoc#enable_at_startup = 1
+let g:echodoc#type              = 'floating'
 
 " Pear Tree - Auto pair closing
 let g:pear_tree_repeatable_expand = 0
@@ -288,9 +283,6 @@ let g:pear_tree_smart_closers     = 1
 let g:pear_tree_smart_backspace   = 1
 " Restore <CR> for Completion confirmation
 imap <nop> <Plug>(PearTreeExpand)
-let g:completion_confirm_key = ''
-imap <expr> <CR> pumvisible() ? complete_info()['selected'] != '-1' ?
-            \ "\<Plug>(completion_confirm_completion)" : "\<C-e>\<CR>" : "\<Plug>(PearTreeExpand)"
 
 " Sideways - Shift and insert arguments
 nnoremap <silent> [a :SidewaysLeft<CR>
@@ -301,10 +293,8 @@ nmap <leader>sa <Plug>SidewaysArgumentAppendAfter
 nmap <leader>sI <Plug>SidewaysArgumentInsertFirst
 nmap <leader>sA <Plug>SidewaysArgumentAppendLast
 
-omap aa <Plug>SidewaysArgumentTextobjA
-xmap aa <Plug>SidewaysArgumentTextobjA
 omap ia <Plug>SidewaysArgumentTextobjI
-xmap ia <Plug>SidewaysArgumentTextobjI
+omap aa <Plug>SidewaysArgumentTextobjA
 
 " Easy Align - Align by character
 nmap ga :packadd vim-easy-align<CR><Plug>(EasyAlign)
@@ -312,9 +302,5 @@ xmap ga <cmd>packadd vim-easy-align<CR><Plug>(EasyAlign)
 
 " Mundo - Undo Tree Visualizer
 nnoremap <silent> <F5> :packadd vim-mundo<CR>:MundoToggle<CR>
-
-" Ultisnips - Snippets
-" Since Completion uses <tab>, change trigger key
-let g:UltiSnipsExpandTrigger = "\<C-l>"
 
 " }}}

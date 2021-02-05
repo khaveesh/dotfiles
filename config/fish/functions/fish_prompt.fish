@@ -1,37 +1,99 @@
-_tide_detect_os
-_tide_git_prompt_set_vars
+function fish_prompt --description 'Write out the prompt'
+    set -l last_pipestatus $pipestatus
 
-# Set things that wont change
-set -g _tide_left_prompt_display_var _tide_left_prompt_display_$fish_pid
+    if not set -q __fish_git_prompt_show_informative_status
+        set -g __fish_git_prompt_show_informative_status 1
+    end
+    if not set -q __fish_git_prompt_hide_untrackedfiles
+        set -g __fish_git_prompt_hide_untrackedfiles 1
+    end
+    if not set -q __fish_git_prompt_color_branch
+        set -g __fish_git_prompt_color_branch green
+    end
+    if not set -q __fish_git_prompt_showupstream
+        set -g __fish_git_prompt_showupstream "informative"
+    end
+    if not set -q __fish_git_prompt_char_upstream_ahead
+        set -g __fish_git_prompt_char_upstream_ahead "↑"
+    end
+    if not set -q __fish_git_prompt_char_upstream_behind
+        set -g __fish_git_prompt_char_upstream_behind "↓"
+    end
+    if not set -q __fish_git_prompt_char_upstream_prefix
+        set -g __fish_git_prompt_char_upstream_prefix ""
+    end
+    if not set -q __fish_git_prompt_char_stagedstate
+        set -g __fish_git_prompt_char_stagedstate "+"
+    end
+    if not set -q __fish_git_prompt_char_dirtystate
+        set -g __fish_git_prompt_char_dirtystate "*"
+    end
+    if not set -q __fish_git_prompt_char_untrackedfiles
+        set -g __fish_git_prompt_char_untrackedfiles "…"
+    end
+    if not set -q __fish_git_prompt_char_invalidstate
+        set -g __fish_git_prompt_char_invalidstate "✖"
+    end
+    if not set -q __fish_git_prompt_char_cleanstate
+        set -g __fish_git_prompt_char_cleanstate "✔"
+    end
+    if not set -q __fish_git_prompt_color_dirtystate
+        set -g __fish_git_prompt_color_dirtystate blue
+    end
+    if not set -q __fish_git_prompt_color_stagedstate
+        set -g __fish_git_prompt_color_stagedstate yellow
+    end
+    if not set -q __fish_git_prompt_color_invalidstate
+        set -g __fish_git_prompt_color_invalidstate red
+    end
+    if not set -q __fish_git_prompt_color_untrackedfiles
+        set -g __fish_git_prompt_color_untrackedfiles $fish_color_normal
+    end
+    if not set -q __fish_git_prompt_color_cleanstate
+        set -g __fish_git_prompt_color_cleanstate green
+    end
 
-set -gx _tide_fish_pid $fish_pid
-set -x fish_term24bit $fish_term24bit
+    set -g __fish_git_prompt_char_stateseparator ' '
+    set -g __fish_git_prompt_showstashstate 1
+    set -g __fish_git_prompt_char_stashstate '$'
+    set -g __fish_git_prompt_color_stashstate yellow
 
-function fish_prompt
-    set -lx _tide_last_pipestatus $pipestatus
-    set -lx _tide_jobs_number (jobs --pid | count)
+    set -l color_cwd
+    set -l prefix
+    set -l suffix
+    switch "$USER"
+        case root toor
+            if set -q fish_color_cwd_root
+                set color_cwd $fish_color_cwd_root
+            else
+                set color_cwd $fish_color_cwd
+            end
+            set suffix '#'
+        case '*'
+            set color_cwd $fish_color_cwd
+            set suffix '❯'
+    end
 
-    fish --command "
-    set CMD_DURATION $CMD_DURATION
-    set COLUMNS $COLUMNS
-    set fish_bind_mode $fish_bind_mode
+    # PWD
+    echo
+    # set_color $color_cwd
+    set_color 00AFFF
+    echo -n (prompt_pwd)
+    set_color normal
 
-    command kill $_tide_last_pid 2>/dev/null
-    set -U _tide_left_prompt_display_$fish_pid (_tide_prompt)
-    " >&- & # >&- closes stdout. See https://github.com/fish-shell/fish-shell/issues/7559
+    printf '%s ' (fish_git_prompt " %s")
 
-    set -g _tide_last_pid (jobs --last --pid)
-    disown $_tide_last_pid 2>/dev/null
+    set -l pipestatus_string (__fish_print_pipestatus "[" "] " "|" (set_color $fish_color_status) (set_color --bold $fish_color_status) $last_pipestatus)
+    echo -n $pipestatus_string
+    set_color normal
 
-    string unescape $$_tide_left_prompt_display_var
-end
+    set_color cyan
+    if test (jobs | wc -l | tr -d " ") -ne 0
+        echo -n '#'(jobs | wc -l | tr -d " ")' '
+    end
+    set_color normal
 
-function _tide_refresh_prompt --on-variable _tide_left_prompt_display_$fish_pid --on-variable _tide_right_prompt_display_$fish_pid
-    commandline --function force-repaint
-end
-
-# Double underscores to avoid erasing this function on uninstall
-function __tide_on_fish_exit --on-event fish_exit
-    set -e _tide_left_prompt_display_$fish_pid
-    set -e _tide_right_prompt_display_$fish_pid
+    set_color green
+    echo -n "$suffix "
+    set_color normal
 end

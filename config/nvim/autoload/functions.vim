@@ -76,5 +76,5 @@ function! functions#GitStatus() abort
 endfunction
 
 function! functions#Buffers() abort
-    return len(getbufinfo({'buflisted':1})) > 1 ? '[Other Buffers]' : ''
+    return len(getbufinfo({'buflisted': 1})) > 1 && &bl ? '[Buffers Listed]' : ''
 endfunction

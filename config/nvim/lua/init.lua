@@ -1,18 +1,22 @@
 -- LSP Config
 local custom_lsp_attach = function(client)
     -- Override built-in keymaps only when LSP client is attached
-    vim.api.nvim_buf_set_keymap(0, 'n',  'gK'  , '<cmd>lua vim.lsp.buf.hover()<CR>'           , { noremap = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>'  , { noremap = true })
-    vim.api.nvim_buf_set_keymap(0, 'n', '<C-]>', '<cmd>lua vim.lsp.buf.definition()<CR>'      , { noremap = true })
-    vim.api.nvim_buf_set_keymap(0, 'n',  'gd'  , '<cmd>lua vim.lsp.buf.declaration()<CR>'     , { noremap = true })
-    vim.api.nvim_buf_set_keymap(0, 'n',  'gD'  , '<cmd>lua vim.lsp.buf.implementation()<CR>'  , { noremap = true })
-    vim.api.nvim_buf_set_keymap(0, 'n',  '1gD' , '<cmd>lua vim.lsp.buf.type_definition()<CR>' , { noremap = true })
-    vim.api.nvim_buf_set_keymap(0, 'n',  'gr'  , '<cmd>lua vim.lsp.buf.references()<CR>'      , { noremap = true })
-    vim.api.nvim_buf_set_keymap(0, 'n',  'gR'  , '<cmd>lua vim.lsp.buf.rename()<CR>'          , { noremap = true })
-    vim.api.nvim_buf_set_keymap(0, 'n',  'g0'  , '<cmd>lua vim.lsp.buf.document_symbol()<CR>' , { noremap = true })
-    vim.api.nvim_buf_set_keymap(0, 'n',  'cd'  , '<cmd>lua vim.lsp.buf.code_action()<CR>'     , { noremap = true })
-    vim.api.nvim_buf_set_keymap(0, 'n',  '[d'  , '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', { noremap = true })
-    vim.api.nvim_buf_set_keymap(0, 'n',  ']d'  , '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', { noremap = true })
+    local function map(key, action)
+        vim.api.nvim_buf_set_keymap(0, 'n', key, '<cmd>lua vim.lsp.' .. action .. '()<CR>', { noremap = true })
+    end
+
+    map( 'gK'  , 'buf.hover')
+    map('<C-k>', 'buf.signature_help')
+    map( 'gd'  , 'buf.declaration')
+    map('<C-]>', 'buf.definition')
+    map( '1gD' , 'buf.type_definition')
+    map( 'gD'  , 'buf.implementation')
+    map( 'gr'  , 'buf.references')
+    map( 'gR'  , 'buf.rename')
+    map( 'g0'  , 'buf.document_symbol')
+    map( 'cd'  , 'buf.code_action')
+    map( '[d'  , 'diagnostic.goto_prev')
+    map( ']d'  , 'diagnostic.goto_next')
 
     if client.config.flags then
         client.config.flags.allow_incremental_sync = true
@@ -20,10 +24,10 @@ local custom_lsp_attach = function(client)
 end
 
 local texlab_search_status = vim.tbl_add_reverse_lookup{
-    Success      = 0;
-    Error        = 1;
-    Failure      = 2;
-    Unconfigured = 3;
+    Success      = 0,
+    Error        = 1,
+    Failure      = 2,
+    Unconfigured = 3,
 }
 
 local servers = {
@@ -34,11 +38,11 @@ local servers = {
             pyls = {
                 plugins = {
                     flake8    = { enabled = true },
-                    pylint    = { enabled = true },
-                    pyls_mypy = { enabled = true },
                     isort     = { enabled = true },
                     black     = { enabled = true },
 
+                    pylint      = { enabled = false },
+                    pyls_mypy   = { enabled = false },
                     autopep8    = { enabled = false },
                     mccabe      = { enabled = false },
                     pycodestyle = { enabled = false },
@@ -65,7 +69,7 @@ local servers = {
                             if err then error(tostring(err)) end
                             print('Forward search ' .. vim.inspect(pos) .. ' ' .. texlab_search_status[result])
                         end)
-                end;
+                end,
                 description = 'Run synctex forward search'
             }
         },
@@ -75,7 +79,7 @@ local servers = {
                     args = {'-lualatex', '-interaction=nonstopmode', '-synctex=1', '-pv', '%f'}
                 },
                 forwardSearch = {
-                    executable = '/Applications/Skim.app/Contents/SharedSupport/displayline',
+                    executable = 'displayline',
                     args = {'%l', '%p', '%f'}
                 }
             }
@@ -83,8 +87,12 @@ local servers = {
     }
 }
 
+-- Express snippet support to LSP server
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
 for server, config in pairs(servers) do
-    require'lspconfig'[server].setup{config, on_attach = custom_lsp_attach}
+    require'lspconfig'[server].setup{config, on_attach = custom_lsp_attach, capabilities=capabilities}
 end
 
 -- Delay LSP diagnostics while in insert mode
@@ -155,6 +163,18 @@ require'nvim-treesitter.configs'.setup{
     }
 }
 
+-- Nvim-compe
+require('compe').setup {
+    preselect = 'always',
+    source = {
+        buffer   = true,
+        calc     = true,
+        nvim_lsp = true,
+        nvim_lua = true,
+        path     = true,
+        vsnip    = true
+    }
+}
 
 -- Git Signs
 require('gitsigns').setup{
