@@ -1,2 +1,6 @@
 [mypy]
 ignore_missing_imports = True
+follow_imports = skip
+show_column_numbers = True
+no_error_summary = True
+strict = True

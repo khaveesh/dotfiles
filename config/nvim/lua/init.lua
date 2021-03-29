@@ -1,110 +1,88 @@
--- LSP Config
-local custom_lsp_attach = function(client)
-    -- Override built-in keymaps only when LSP client is attached
-    local function map(key, action)
-        vim.api.nvim_buf_set_keymap(0, 'n', key, '<cmd>lua vim.lsp.' .. action .. '()<CR>', { noremap = true })
+-- LSP {{{
+
+-- Override built-in keymaps only when client is attached
+local function on_attach(client, bufnr)
+    local function lsp_map(key, action, mode)
+        mode = mode or 'n'
+        vim.api.nvim_buf_set_keymap(
+            bufnr,
+            mode,
+            key,
+            '<cmd>lua vim.lsp.' .. action .. '()<CR>',
+            { noremap = true }
+        )
     end
 
-    map( 'gK'  , 'buf.hover')
-    map('<C-k>', 'buf.signature_help')
-    map( 'gd'  , 'buf.declaration')
-    map('<C-]>', 'buf.definition')
-    map( '1gD' , 'buf.type_definition')
-    map( 'gD'  , 'buf.implementation')
-    map( 'gr'  , 'buf.references')
-    map( 'gR'  , 'buf.rename')
-    map( 'g0'  , 'buf.document_symbol')
-    map( 'cd'  , 'buf.code_action')
-    map( '[d'  , 'diagnostic.goto_prev')
-    map( ']d'  , 'diagnostic.goto_next')
+    lsp_map('<C-k>', 'buf.signature_help', 'i')
+    lsp_map('<C-k>', 'buf.signature_help')
+    lsp_map('<C-]>', 'buf.definition')
+    lsp_map('gA', 'buf.code_action')
+    lsp_map('gd', 'buf.declaration')
+    lsp_map('gK', 'buf.hover')
+    lsp_map('gr', 'buf.references')
+    lsp_map('gR', 'buf.rename')
+    lsp_map('gs', 'buf.document_symbol')
+    lsp_map('[d', 'diagnostic.goto_prev')
+    lsp_map(']d', 'diagnostic.goto_next')
 
-    if client.config.flags then
-        client.config.flags.allow_incremental_sync = true
+    if client.resolved_capabilities.document_formatting then
+        vim.bo.formatprg = 'lsp'
     end
 end
 
-local texlab_search_status = vim.tbl_add_reverse_lookup{
-    Success      = 0,
-    Error        = 1,
-    Failure      = 2,
-    Unconfigured = 3,
-}
-
+-- Server config
 local servers = {
     clangd = {},
 
-    pyls = {
-        settings = {
-            pyls = {
-                plugins = {
-                    flake8    = { enabled = true },
-                    isort     = { enabled = true },
-                    black     = { enabled = true },
-
-                    pylint      = { enabled = false },
-                    pyls_mypy   = { enabled = false },
-                    autopep8    = { enabled = false },
-                    mccabe      = { enabled = false },
-                    pycodestyle = { enabled = false },
-                    pyflakes    = { enabled = false },
-                    rope        = { enabled = false },
-                    yapf        = { enabled = false }
-                }
-            }
-        }
-    },
+    jedi_language_server = {},
 
     texlab = {
-        commands = {
-            TexlabForwardSearch = {
-                function()
-                    local pos = vim.api.nvim_win_get_cursor(0)
-                    local params = {
-                        textDocument = { uri = vim.uri_from_bufnr(0) },
-                        position = { line = pos[1] - 1, character = pos[2] }
-                    }
-
-                    vim.lsp.buf_request(0, 'textDocument/forwardSearch', params,
-                        function(err, _, result, _)
-                            if err then error(tostring(err)) end
-                            print('Forward search ' .. vim.inspect(pos) .. ' ' .. texlab_search_status[result])
-                        end)
-                end,
-                description = 'Run synctex forward search'
-            }
-        },
         settings = {
             latex = {
                 build = {
-                    args = {'-lualatex', '-interaction=nonstopmode', '-synctex=1', '-pv', '%f'}
+                    args = {
+                        '-lualatex',
+                        '-interaction=nonstopmode',
+                        '-synctex=1',
+                        '-pv',
+                        '%f',
+                    },
                 },
                 forwardSearch = {
                     executable = 'displayline',
-                    args = {'%l', '%p', '%f'}
-                }
-            }
-        }
-    }
+                    args = { '%l', '%p', '%f' },
+                },
+            },
+        },
+    },
 }
 
--- Express snippet support to LSP server
-local capabilities = vim.lsp.protocol.make_client_capabilities()
+local lsp = vim.lsp
+
+-- Express snippet support to server
+local capabilities = lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
+-- Setup client
+local nvim_lsp = require('lspconfig')
 for server, config in pairs(servers) do
-    require'lspconfig'[server].setup{config, on_attach = custom_lsp_attach, capabilities=capabilities}
+    config.on_attach = on_attach
+    config.capabilities = capabilities
+    nvim_lsp[server].setup(config)
 end
 
--- Delay LSP diagnostics while in insert mode
-vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
-    vim.lsp.diagnostic.on_publish_diagnostics,
-    { update_in_insert = false }
+-- Delay diagnostics while in insert mode
+lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
+    lsp.diagnostic.on_publish_diagnostics,
+    { update_in_insert = false, signs = false }
 )
 
+-- }}}
 
--- Treesitter
-require'nvim-treesitter.configs'.setup{
-    ensure_installed = {'c', 'cpp', 'python'},
+-- Treesitter {{{
+
+require('nvim-treesitter.configs').setup({
+    ensure_installed = { 'c', 'cpp', 'python', 'lua' },
     highlight = { enable = true },
     indent = { enable = true },
 
@@ -123,65 +101,115 @@ require'nvim-treesitter.configs'.setup{
                 ['al'] = '@loop.outer',
                 ['il'] = '@loop.inner',
                 ['aa'] = '@parameter.outer',
-                ['ia'] = '@parameter.inner'
-            }
+                ['ia'] = '@parameter.inner',
+                ['as'] = '@statement.outer',
+            },
         },
 
         swap = {
             enable = true,
             swap_next = {
-                [']a'] = '@parameter.inner'
+                [']a'] = '@parameter.inner',
             },
             swap_previous = {
-                ['[a'] = '@parameter.inner'
-            }
+                ['[a'] = '@parameter.inner',
+            },
         },
 
         move = {
             enable = true,
             goto_next_start = {
-                [']m'] = '@function.outer'
+                [']m'] = '@function.outer',
             },
             goto_next_end = {
-                [']M'] = '@function.outer'
+                [']M'] = '@function.outer',
             },
             goto_previous_start = {
-                ['[m'] = '@function.outer'
+                ['[m'] = '@function.outer',
             },
             goto_previous_end = {
-                ['[M'] = '@function.outer'
-            }
+                ['[M'] = '@function.outer',
+            },
         },
 
         lsp_interop = {
             enable = true,
             peek_definition_code = {
-                ['gk']  = '@function.outer',
-                ['1gk'] = '@class.outer'
-            }
-        }
-    }
-}
+                ['dm'] = '@function.outer',
+                ['dc'] = '@class.outer',
+            },
+        },
+    },
+})
 
--- Nvim-compe
-require('compe').setup {
+-- }}}
+
+-- Compe & VSnip integration {{{
+
+require('compe').setup({
     preselect = 'always',
     source = {
-        buffer   = true,
-        calc     = true,
+        buffer = true,
         nvim_lsp = true,
         nvim_lua = true,
-        path     = true,
-        vsnip    = true
-    }
-}
+        path = true,
+        vsnip = { priority = 10000 },
+        omni = { filetypes = { 'fish' } },
+        treesitter = { filetypes = { 'lua' } },
+    },
+})
 
--- Git Signs
-require('gitsigns').setup{
+local function t(str)
+    return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
+
+-- Use (s-)tab to:
+--- move to prev/next item in completion menuone
+--- jump to prev/next snippet's placeholder
+function tab_complete()
+    local function check_back_space()
+        local col = vim.fn.col('.') - 1
+        return (col == 0 or vim.fn.getline('.'):sub(col, col):match('%s'))
+    end
+
+    if vim.fn.pumvisible() == 1 then
+        return t('<C-n>')
+    elseif vim.fn.call('vsnip#available', { 1 }) == 1 then
+        return t('<Plug>(vsnip-expand-or-jump)')
+    elseif check_back_space() then
+        return t('<Tab>')
+    else
+        return vim.fn['compe#complete']()
+    end
+end
+
+function s_tab_complete()
+    if vim.fn.pumvisible() == 1 then
+        return t('<C-p>')
+    elseif vim.fn.call('vsnip#jumpable', { -1 }) == 1 then
+        return t('<Plug>(vsnip-jump-prev)')
+    else
+        return t('<S-Tab>')
+    end
+end
+
+vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.tab_complete()', { expr = true })
+vim.api.nvim_set_keymap('s', '<Tab>', 'v:lua.tab_complete()', { expr = true })
+vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
+vim.api.nvim_set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
+
+-- }}}
+
+-- Git Signs {{{
+
+require('gitsigns').setup({
     signs = {
-        add          = { text = '+' },
-        change       = { text = '~' },
-        delete       = { text = '-' },
-        changedelete = { text = '_' }
-    }
-}
+        add = { text = '+' },
+        change = { text = '~' },
+        changedelete = { text = '_' },
+        delete = { text = '-' },
+        topdelete = { text = '‾' },
+    },
+})
+
+-- }}}

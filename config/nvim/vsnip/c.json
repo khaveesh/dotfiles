@@ -1,62 +1,62 @@
 {
-  "struct": {
-    "prefix": "struct",
-    "body": "struct ${1:${TM_FILENAME_BASE}}\n{\n\t${0:/* data */}\n};",
-    "description": "Code snippet for struct",
-    "scope": "source.c, source.objc, source.c++, source.objc++"
-  },
-  "union": {
-    "prefix": "union",
-    "body": "union ${1:${TM_FILENAME_BASE}}\n{\n\t${0:/* data */}\n};",
-    "description": "Code snippet for union",
-    "scope": "source.c, source.objc, source.c++, source.objc++"
-  },
-  "ifel": {
-    "prefix": "ifel",
-    "body": "if (${1:/* condition */}) {\n\t${2:/* code */}\n}\nelse {\n\t${0:/* code */}\n}",
-    "description": "Code snippet for if() else",
-    "scope": "source.c, source.objc, source.c++, source.objc++"
-  },
-  "ifelif": {
-    "prefix": "ifelif",
-    "body": "if (${1:/* condition */}) {\n\t${2:/* code */}\n}\nelse if(${3:/* condition */}) {\n\t${4:/* code */}\n}\nelse {\n\t${0:/* code */}\n}",
-    "description": "Code snippet for if() else if() else",
-    "scope": "source.c, source.objc, source.c++, source.objc++"
-  },
-  "main": {
-    "prefix": "main",
-    "body": "main(int argc, char const *argv[])\n{\n\t${1:/* code */}\n\treturn 0;\n}",
-    "description": "Code snippet for main()",
-    "scope": "source.c, source.objc, source.c++, source.objc++"
-  },
-  "forr": {
-    "prefix": "forr",
-    "body": "for(int ${1:i} = ${2:length} - 1; $1 >= 0; ${3:$1--})\n{\n\t${0:/* code */}\n}",
-    "description": "Code snippet for reverse for loop",
-    "scope": "source.c, source.objc, source.c++, source.objc++"
-  },
-  "foreach": {
-    "prefix": "foreach",
-    "body": "for(${1:object} = ${2:var} in ${3:collection})\n{\n\t${0:/* code */}\n}",
-    "description": "Code snippet for foreach loop",
-    "scope": "source.c, source.objc, source.c++, source.objc++"
-  },
-  "forrange": {
-    "prefix": "forrange",
-    "body": "for(auto&& ${1:i} : ${2:v})\n{\n\t$0\n}",
-    "description": "Code snippet for range-based forloop",
-    "scope": "source.c, source.objc, source.c++, source.objc++"
-  },
-  "ifd": {
-    "prefix": "ifnd",
-    "body": "#if defined($1)\n\n${0}\n\n#endif // $1",
-    "description": "Code snippet for if defined()",
-    "scope": "source.c, source.objc, source.c++, source.objc++"
-  },
-  "ifnd": {
-    "prefix": "ifnd",
-    "body": "#if !defined($1)\n#define ${1:MACRO}\n\n${0}\n\n#endif // $1",
-    "description": "Code snippet for if !defined()",
-    "scope": "source.c, source.objc, source.c++, source.objc++"
-  }
+    "struct": {
+        "prefix": "struct",
+        "body": "struct ${1:${TM_FILENAME_BASE}}\n{\n\t${0:/* data */}\n};",
+        "description": "Code snippet for struct",
+        "scope": "source.c, source.objc, source.c++, source.objc++"
+    },
+    "union": {
+        "prefix": "union",
+        "body": "union ${1:${TM_FILENAME_BASE}}\n{\n\t${0:/* data */}\n};",
+        "description": "Code snippet for union",
+        "scope": "source.c, source.objc, source.c++, source.objc++"
+    },
+    "ifel": {
+        "prefix": "ifel",
+        "body": "if (${1:/* condition */}) {\n\t${2:/* code */}\n}\nelse {\n\t${0:/* code */}\n}",
+        "description": "Code snippet for if() else",
+        "scope": "source.c, source.objc, source.c++, source.objc++"
+    },
+    "ifelif": {
+        "prefix": "ifelif",
+        "body": "if (${1:/* condition */}) {\n\t${2:/* code */}\n}\nelse if(${3:/* condition */}) {\n\t${4:/* code */}\n}\nelse {\n\t${0:/* code */}\n}",
+        "description": "Code snippet for if() else if() else",
+        "scope": "source.c, source.objc, source.c++, source.objc++"
+    },
+    "main": {
+        "prefix": "main",
+        "body": "main(int argc, char const *argv[])\n{\n\t${1:/* code */}\n\treturn 0;\n}",
+        "description": "Code snippet for main()",
+        "scope": "source.c, source.objc, source.c++, source.objc++"
+    },
+    "forr": {
+        "prefix": "forr",
+        "body": "for(int ${1:i} = ${2:length} - 1; $1 >= 0; ${3:$1--})\n{\n\t${0:/* code */}\n}",
+        "description": "Code snippet for reverse for loop",
+        "scope": "source.c, source.objc, source.c++, source.objc++"
+    },
+    "foreach": {
+        "prefix": "foreach",
+        "body": "for(${1:object} = ${2:var} in ${3:collection})\n{\n\t${0:/* code */}\n}",
+        "description": "Code snippet for foreach loop",
+        "scope": "source.c, source.objc, source.c++, source.objc++"
+    },
+    "forrange": {
+        "prefix": "forrange",
+        "body": "for(auto&& ${1:i} : ${2:v})\n{\n\t$0\n}",
+        "description": "Code snippet for range-based forloop",
+        "scope": "source.c, source.objc, source.c++, source.objc++"
+    },
+    "ifd": {
+        "prefix": "ifnd",
+        "body": "#if defined($1)\n\n${0}\n\n#endif // $1",
+        "description": "Code snippet for if defined()",
+        "scope": "source.c, source.objc, source.c++, source.objc++"
+    },
+    "ifnd": {
+        "prefix": "ifnd",
+        "body": "#if !defined($1)\n#define ${1:MACRO}\n\n${0}\n\n#endif // $1",
+        "description": "Code snippet for if !defined()",
+        "scope": "source.c, source.objc, source.c++, source.objc++"
+    }
 }

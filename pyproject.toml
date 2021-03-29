@@ -1,0 +1,11 @@
+[tool.isort]
+profile     = "black"
+line_length = 100
+
+[tool.black]
+quiet          = true
+line-length    = 100
+target-version = ['py38']
+
+[tool.pylint.messages_control]
+disable = "C0114, C0115, C0116, C0330, C0326, E0401, E1101"

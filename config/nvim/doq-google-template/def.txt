@@ -1,0 +1,29 @@
+{%- set count = namespace(value=1) -%}
+"""${1:{{ name }}}.
+{% if params %}
+Args:
+{%- for p in params %}
+    {%- set count.value = count.value + 1 %}
+    {% if p.argument == 'args' %}*{% elif p.argument == 'kwargs' %}**{% endif %}{{ p.argument }}{% if p.annotation %} ({{ p.annotation }}){% endif -%}: ${{ count.value }}.{% if p.default %} Defaults to {{ p.default }}.{% endif -%}
+{% endfor %}
+{% endif -%}
+{% if return_type is not none and return_type != "None" %}
+{% set count.value = count.value + 1 -%}
+Returns:
+    {{ return_type }}: ${{ count.value }}
+{% endif -%}
+{% if yields %}
+Yields:
+{%- for y in yields %}
+{%- set count.value = count.value + 1 %}
+    {{ y }}: ${{ count.value }}
+{%- endfor %}
+{% endif -%}
+{% if exceptions %}
+Raises:
+{%- for e in exceptions %}
+{%- set count.value = count.value + 1 %}
+    {{ e }}: ${{ count.value }}
+{%- endfor %}
+{% endif -%}
+"""$0

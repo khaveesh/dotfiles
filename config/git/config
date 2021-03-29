@@ -73,8 +73,6 @@
 
 [diff]
 
-    colorMoved = default
-
     tool = nvimdiff
 
 [merge]
@@ -108,10 +106,6 @@
     name = Khaveesh N (MBP)
     email = khaveesh@gmail.com
     signingkey = CB82DEC6404CD52E
-
-[difftool]
-
-    prompt = false
 
 [difftool "nvimdiff"]
 

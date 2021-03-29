@@ -12,6 +12,6 @@ t="$a [$y]"
 #     t="$t ($b)"
 # fi
 if [ "{}" != "$t" ]; then
-	echo "{} -> $t"
+    echo "{} -> $t"
 fi
 '
