@@ -25,6 +25,111 @@
 					</array>
 				</dict>
 				<key>AMActionVersion</key>
+				<string>1.0</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run JavaScript.action</string>
+				<key>ActionName</key>
+				<string>Run JavaScript</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>source</key>
+					<string>function run(input, parameters) {	return encodeURIComponent(input);}</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.RunJavaScript</string>
+				<key>CFBundleVersion</key>
+				<string>1.0</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunJavaScriptAction</string>
+				<key>InputUUID</key>
+				<string>81D2E1C1-B50F-401C-8ABC-68D4EDAAD391</string>
+				<key>Keywords</key>
+				<array>
+					<string>Run</string>
+					<string>JavaScript</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>456B8E56-C6F9-4CB2-8BB9-436DBED7B898</string>
+				<key>UUID</key>
+				<string>AB4E8522-7D16-416C-9BB1-B883BBCBA23E</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>function run(input, parameters) {
+	
+	// Your script goes here
+
+	return input;
+}</string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
+				<key>isViewVisible</key>
+				<integer>1</integer>
+				<key>location</key>
+				<string>521.750000:368.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run JavaScript.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
 				<string>1.0.2</string>
 				<key>AMApplication</key>
 				<array>
@@ -51,7 +156,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>on run {input, parameters}	tell application "Safari Technology Preview" to set the URL of (make new tab in window 1) to "https://www.google.com/search?q=" &amp; (do shell script "php -r 'echo urlencode(\"" &amp; input &amp; "\");'")		return inputend run</string>
+					<string>on run {input, parameters}	tell application "Safari Technology Preview" to set the URL of (make new tab in window 1) to "https://www.google.com/search?q=" &amp; input		return inputend run</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -105,7 +210,7 @@ end run</string>
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>521.750000:368.000000</string>
+				<string>521.750000:613.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -114,7 +219,15 @@ end run</string>
 		</dict>
 	</array>
 	<key>connectors</key>
-	<dict/>
+	<dict>
+		<key>1BE71F13-CC8A-489D-9F0D-27CC802C77A2</key>
+		<dict>
+			<key>from</key>
+			<string>AB4E8522-7D16-416C-9BB1-B883BBCBA23E - AB4E8522-7D16-416C-9BB1-B883BBCBA23E</string>
+			<key>to</key>
+			<string>D079F718-7DE3-44E6-BD4F-1EC0AC7A4C2B - D079F718-7DE3-44E6-BD4F-1EC0AC7A4C2B</string>
+		</dict>
+	</dict>
 	<key>workflowMetaData</key>
 	<dict>
 		<key>applicationBundleIDsByPath</key>

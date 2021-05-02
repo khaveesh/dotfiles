@@ -2,7 +2,7 @@
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 # =============================================================================
 # Changing Directories
@@ -50,15 +50,15 @@ bindkey -e
 sudo-command-line() {
 [[ -z $BUFFER ]] && zle up-history
 if [[ $BUFFER == sudo\ * ]]; then
-	LBUFFER="${LBUFFER#sudo }"
+    LBUFFER="${LBUFFER#sudo }"
 elif [[ $BUFFER == $EDITOR\ * ]]; then
-	LBUFFER="${LBUFFER#$EDITOR }"
-	LBUFFER="sudoedit $LBUFFER"
+    LBUFFER="${LBUFFER#$EDITOR }"
+    LBUFFER="sudoedit $LBUFFER"
 elif [[ $BUFFER == sudoedit\ * ]]; then
-	LBUFFER="${LBUFFER#sudoedit }"
-	LBUFFER="$EDITOR $LBUFFER"
+    LBUFFER="${LBUFFER#sudoedit }"
+    LBUFFER="$EDITOR $LBUFFER"
 else
-	LBUFFER="sudo $LBUFFER"
+    LBUFFER="sudo $LBUFFER"
 fi
 }
 zle -N sudo-command-line
@@ -66,34 +66,34 @@ zle -N sudo-command-line
 bindkey "\es" sudo-command-line
 
 _dircycle_update_cycled() {
-	setopt localoptions nopushdminus
+    setopt localoptions nopushdminus
 
-	[[ ${#dirstack} -eq 0 ]] && return 1
+    [[ ${#dirstack} -eq 0 ]] && return 1
 
-	while ! builtin pushd -q $1 &>/dev/null; do
-		# A missing directory was found; pop it out of the directory stack.
-		builtin popd -q $1
+    while ! builtin pushd -q $1 &>/dev/null; do
+        # A missing directory was found; pop it out of the directory stack.
+        builtin popd -q $1
 
-		# Stop trying if there are no more directories in the directory stack.
-		[[ ${#dirstack} -eq 0 ]] && return 1
-	done
+        # Stop trying if there are no more directories in the directory stack.
+        [[ ${#dirstack} -eq 0 ]] && return 1
+    done
 
-	# Trigger a prompt update if using Pure (https://github.com/sindresorhus/pure).
-	local fn
-	for fn (chpwd $chpwd_functions precmd $precmd_functions); do
-		(( $+functions[$fn] )) && $fn
-	done
-	zle reset-prompt
+    # Trigger a prompt update if using Pure (https://github.com/sindresorhus/pure).
+    local fn
+    for fn (chpwd $chpwd_functions precmd $precmd_functions); do
+        (( $+functions[$fn] )) && $fn
+    done
+    zle reset-prompt
 }
 
 _dircycle_insert_cycled_left() {
-	_dircycle_update_cycled +1 || return
+    _dircycle_update_cycled +1 || return
 }
 
 zle -N _dircycle_insert_cycled_left
 
 _dircycle_insert_cycled_right() {
-	_dircycle_update_cycled -0 || return
+    _dircycle_update_cycled -0 || return
 }
 
 zle -N _dircycle_insert_cycled_right

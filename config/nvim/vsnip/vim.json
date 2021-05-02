@@ -1,34 +1,23 @@
 {
-  "function": {
-    "prefix": [
-      "fun"
-    ],
-    "body": [
-      "function $1(${2:args}) abort",
-      "    $0",
-      "endfunction"
-    ],
-    "description": "Function"
-  },
-  "autocmd": {
-    "prefix": [
-      "aut"
-    ],
-    "body": [
-      "autocmd $1 ${2:* $0}"
-    ],
-    "description": "autocmd"
-  },
-  "augroup": {
-    "prefix": [
-      "aug"
-    ],
-    "body": [
-      "augroup ${1:Foo}",
-      "    autocmd!",
-      "    autocmd $2 ${3:*} $0",
-      "augroup END"
-    ],
-    "description": "augroup"
-  }
+    "autocmd": {
+        "prefix": [
+            "aut"
+        ],
+        "body": [
+            "autocmd $1 ${2:* $0}"
+        ],
+        "description": "autocmd"
+    },
+    "augroup": {
+        "prefix": [
+            "aug"
+        ],
+        "body": [
+            "augroup ${1:Foo}",
+            "    autocmd!",
+            "    autocmd $2 ${3:*} $0",
+            "augroup END"
+        ],
+        "description": "augroup"
+    }
 }

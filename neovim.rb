@@ -12,4 +12,5 @@ cask "neovim" do
   conflicts_with formula: "neovim"
 
   binary "nvim-osx64/bin/nvim"
+  manpage "nvim-osx64/share/man/man1/nvim.1"
 end

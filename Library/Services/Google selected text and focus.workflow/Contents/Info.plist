@@ -14,7 +14,7 @@
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
-				<string>Search by replacing the tab</string>
+				<string>Google selected text and focus</string>
 			</dict>
 			<key>NSMessage</key>
 			<string>runWorkflowAsService</string>

@@ -1,38 +1,63 @@
 -- LSP {{{
 
--- Override built-in keymaps only when client is attached
+local lsp = vim.lsp
+
+-- Statusline functions
+function LspErrorsSL()
+    local e = lsp.diagnostic.get_count(0, [[Error]])
+    return (e ~= 0) and (' E:' .. e .. ' ') or ''
+end
+
+function LspWarningsSL()
+    local w = lsp.diagnostic.get_count(0, [[Warning]])
+    return (w ~= 0) and (' W:' .. w .. ' ') or ''
+end
+
+-- Custom LSP on_attach
 local function on_attach(client, bufnr)
     local function lsp_map(key, action, mode)
+        local prefix = ':'
+        if mode == 'i' then
+            prefix = '<cmd>'
+        end
         mode = mode or 'n'
-        vim.api.nvim_buf_set_keymap(
-            bufnr,
-            mode,
-            key,
-            '<cmd>lua vim.lsp.' .. action .. '()<CR>',
-            { noremap = true }
-        )
+
+        vim.api.nvim_buf_set_keymap(bufnr, mode, key, prefix .. 'lua vim.lsp.' .. action .. '()<CR>', {
+            noremap = true,
+            silent = true,
+        })
     end
 
+    -- Override built-in keymaps only when client is attached
     lsp_map('<C-k>', 'buf.signature_help', 'i')
     lsp_map('<C-k>', 'buf.signature_help')
     lsp_map('<C-]>', 'buf.definition')
-    lsp_map('gA', 'buf.code_action')
+    lsp_map('<M-k>', 'buf.hover')
+    lsp_map('ga', 'buf.range_code_action', 'v')
+    lsp_map('ga', 'buf.code_action')
     lsp_map('gd', 'buf.declaration')
-    lsp_map('gK', 'buf.hover')
-    lsp_map('gr', 'buf.references')
-    lsp_map('gR', 'buf.rename')
+    lsp_map('dr', 'buf.references')
+    lsp_map('cr', 'buf.rename')
     lsp_map('gs', 'buf.document_symbol')
     lsp_map('[d', 'diagnostic.goto_prev')
     lsp_map(']d', 'diagnostic.goto_next')
 
+    -- Set formatprg to the lsp client
     if client.resolved_capabilities.document_formatting then
         vim.bo.formatprg = 'lsp'
     end
+
+    -- Add diagnostic info to statusline only for LSP clients
+    vim.wo.statusline = vim.o.statusline
+        .. '%#error#%{v:lua.LspErrorsSL()}'
+        .. '%#warning#%{v:lua.LspWarningsSL()}'
 end
 
 -- Server config
 local servers = {
     clangd = {},
+
+    denols = { init_options = { lint = true, unstable = true } },
 
     jedi_language_server = {},
 
@@ -55,13 +80,20 @@ local servers = {
             },
         },
     },
-}
 
-local lsp = vim.lsp
+    vimls = {},
+}
 
 -- Express snippet support to server
 local capabilities = lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
+capabilities.textDocument.completion.completionItem.resolveSupport = {
+    properties = {
+        'documentation',
+        'detail',
+        'additionalTextEdits',
+    },
+}
 
 -- Setup client
 local nvim_lsp = require('lspconfig')
@@ -71,11 +103,11 @@ for server, config in pairs(servers) do
     nvim_lsp[server].setup(config)
 end
 
--- Delay diagnostics while in insert mode
-lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
-    lsp.diagnostic.on_publish_diagnostics,
-    { update_in_insert = false, signs = false }
-)
+-- Delay diagnostics while in insert mode & don't show signs
+lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(lsp.diagnostic.on_publish_diagnostics, {
+    update_in_insert = false,
+    signs = false,
+})
 
 -- }}}
 
@@ -84,7 +116,6 @@ lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
 require('nvim-treesitter.configs').setup({
     ensure_installed = { 'c', 'cpp', 'python', 'lua' },
     highlight = { enable = true },
-    indent = { enable = true },
 
     textobjects = {
         select = {
@@ -144,7 +175,7 @@ require('nvim-treesitter.configs').setup({
 
 -- }}}
 
--- Compe & VSnip integration {{{
+-- Compe {{{
 
 require('compe').setup({
     preselect = 'always',
@@ -152,51 +183,10 @@ require('compe').setup({
         buffer = true,
         nvim_lsp = true,
         nvim_lua = true,
-        path = true,
-        vsnip = { priority = 10000 },
+        vsnip = true,
         omni = { filetypes = { 'fish' } },
-        treesitter = { filetypes = { 'lua' } },
     },
 })
-
-local function t(str)
-    return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
-
--- Use (s-)tab to:
---- move to prev/next item in completion menuone
---- jump to prev/next snippet's placeholder
-function tab_complete()
-    local function check_back_space()
-        local col = vim.fn.col('.') - 1
-        return (col == 0 or vim.fn.getline('.'):sub(col, col):match('%s'))
-    end
-
-    if vim.fn.pumvisible() == 1 then
-        return t('<C-n>')
-    elseif vim.fn.call('vsnip#available', { 1 }) == 1 then
-        return t('<Plug>(vsnip-expand-or-jump)')
-    elseif check_back_space() then
-        return t('<Tab>')
-    else
-        return vim.fn['compe#complete']()
-    end
-end
-
-function s_tab_complete()
-    if vim.fn.pumvisible() == 1 then
-        return t('<C-p>')
-    elseif vim.fn.call('vsnip#jumpable', { -1 }) == 1 then
-        return t('<Plug>(vsnip-jump-prev)')
-    else
-        return t('<S-Tab>')
-    end
-end
-
-vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.tab_complete()', { expr = true })
-vim.api.nvim_set_keymap('s', '<Tab>', 'v:lua.tab_complete()', { expr = true })
-vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
-vim.api.nvim_set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
 
 -- }}}
 
@@ -204,11 +194,11 @@ vim.api.nvim_set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true 
 
 require('gitsigns').setup({
     signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        changedelete = { text = '_' },
-        delete = { text = '-' },
-        topdelete = { text = '‾' },
+        add = { hl = 'DiffAdd', text = '+' },
+        change = { hl = 'DiffChange', text = '~' },
+        changedelete = { hl = 'DiffText', text = '-' },
+        delete = { hl = 'DiffDelete' },
+        topdelete = { hl = 'DiffDelete' },
     },
 })
 

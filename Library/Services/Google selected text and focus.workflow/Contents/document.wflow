@@ -25,6 +25,109 @@
 					</array>
 				</dict>
 				<key>AMActionVersion</key>
+				<string>1.0</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run JavaScript.action</string>
+				<key>ActionName</key>
+				<string>Run JavaScript</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>source</key>
+					<string>function run(input, parameters) {    return encodeURIComponent(input);}</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.RunJavaScript</string>
+				<key>CFBundleVersion</key>
+				<string>1.0</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunJavaScriptAction</string>
+				<key>InputUUID</key>
+				<string>7DF6B7B2-65D7-4C15-BBA5-ADEB05424321</string>
+				<key>Keywords</key>
+				<array>
+					<string>Run</string>
+					<string>JavaScript</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>51AAA9FF-5EB4-46B6-9EEB-60EF04B8864F</string>
+				<key>UUID</key>
+				<string>F1BE2939-20DB-4219-9BBA-7F5E334A4155</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>function run(input, parameters) {
+	
+	// Your script goes here
+
+	return input;
+}</string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>isViewVisible</key>
+				<integer>1</integer>
+				<key>location</key>
+				<string>521.750000:368.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run JavaScript.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
 				<string>1.0.2</string>
 				<key>AMApplication</key>
 				<array>
@@ -51,7 +154,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>on run {input, parameters}	tell application "System Events" to set theApp to name of first application process whose frontmost is true and visible is true		set glink to "https://www.google.com/search?q=" &amp; (do shell script "php -r 'echo urlencode(\"" &amp; input &amp; "\");'")		tell application "Safari Technology Preview"		if "Safari" is in theApp then			set the URL of current tab of window 1 to glink		else			do shell script "open " &amp; glink		end if	end tell		return inputend run</string>
+					<string>on run {input, parameters}	tell application "System Events" to set theApp to name of first application process whose frontmost is true and visible is true		set glink to "https://www.google.com/search?q=" &amp; input		if "Safari" is in theApp then		tell application "Safari Technology Preview" to set the URL of current tab of window 1 to glink	else		do shell script "open " &amp; quoted form of glink	end if		return inputend run</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -105,7 +208,7 @@ end run</string>
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>521.750000:368.000000</string>
+				<string>521.750000:613.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -114,7 +217,15 @@ end run</string>
 		</dict>
 	</array>
 	<key>connectors</key>
-	<dict/>
+	<dict>
+		<key>2748374E-33C5-48AA-8FE6-2FBB8042602F</key>
+		<dict>
+			<key>from</key>
+			<string>F1BE2939-20DB-4219-9BBA-7F5E334A4155 - F1BE2939-20DB-4219-9BBA-7F5E334A4155</string>
+			<key>to</key>
+			<string>61F32808-7564-479C-BAC2-9F2EFFCE6042 - 61F32808-7564-479C-BAC2-9F2EFFCE6042</string>
+		</dict>
+	</dict>
 	<key>workflowMetaData</key>
 	<dict>
 		<key>applicationBundleIDsByPath</key>

@@ -1,16 +1,3 @@
-let s:save_cpo = &cpoptions
-set cpoptions&vim
-
-let b:undo_ftplugin .= ' | unlet! b:pear_tree_pairs'
-
-let b:pear_tree_pairs = extend(deepcopy(g:pear_tree_pairs), {
-            \ '---': {'closer': '---'},
-            \ }, 'keep')
-
-let &cpoptions = s:save_cpo
-unlet s:save_cpo
-
-
 " Markdown header jumping (romain-l)
 function s:JumpToNextHeading(direction, count) abort
     let col = col('.')
@@ -32,9 +19,27 @@ nnoremap <silent><buffer> [[ :<C-u>call <SID>JumpToNextHeading('up', v:count1)<C
 
 let &l:formatprg = 'pandoc -s -t markdown'
 
-" Cite as you Write using Zotero database
-nnoremap <silent><buffer> cz :call functions#ZoteroCite()<CR>
-inoremap <silent><buffer> <C-z> <cmd>call functions#ZoteroCite()<CR>
+" Fuzzy select from references
+function s:Cite(mode) abort
+    let callback = {}
+
+    function callback.on_select(content) abort closure
+        if !empty(a:content)
+            let key = a:content[0 : match(a:content, ':') - 1]
+            let cite_key = '[@' . key . ']'
+            if a:mode == 'i'
+                call feedkeys('a'.cite_key, 'n')
+            else
+                execute 'normal! i' . cite_key
+            endif
+        endif
+    endfunction
+
+    call functions#FZTerm(stdpath('config').'/pick.py', callback, 'References> ')
+endfunction
+
+nnoremap <silent><buffer> cr :call <SID>Cite('n')<CR>
+inoremap <silent><buffer> <C-c> <ESC>:call <SID>Cite('i')<CR>
 
 " Preview current document using Pandoc
 nnoremap <silent><buffer> <leader>p :up <bar> silent !fish -c 'panhtml %:S'<CR>

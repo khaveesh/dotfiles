@@ -12,19 +12,22 @@
 " Highlights for the statusline
 function s:Highlight() abort
     " Gruvbox Light colors
-    hi statusline guibg=#665c54 guifg=#ebdbb2
-    hi info       guibg=#d5c4a1 guifg=#282828
-    hi warning    guibg=#b57614 guifg=#fbf1c7
-    hi error      guibg=#fbf1c7 guifg=#9d0006
+    highlight statusline guibg=#665c54 guifg=#ebdbb2
+    highlight info       guibg=#d5c4a1 guifg=#282828
+    highlight warning    guibg=#b57614 guifg=#fbf1c7
+    highlight error      guibg=#fbf1c7 guifg=#9d0006
 
-    hi! link TabLineSel BufTabLineCurrent
+    highlight! link TabLineSel BufTabLineCurrent
 endfunction
 
 augroup custom
     autocmd!
 
-    " Prevent the highlights from being cleared on reload
+    " Prevent the custom highlights from being cleared on reload
     autocmd ColorScheme * call s:Highlight()
+
+    " Use Pandoc Markdown syntax for all md files
+    autocmd BufNewFile,BufRead *.md setfiletype markdown.pandoc
 
     " Format the file before saving (Neovim only)
     autocmd BufWritePre * call functions#Format()
@@ -34,18 +37,16 @@ augroup END
 
 " EditorConfig {{{
 
-set termguicolors                              " Enable 24-Bit Truecolor
-set shell=dash                                 " Use POSIX-compliant shell
-set completeopt=menuone,noselect pumheight=15  " Completion popup
-set gdefault                                   " Better substitute
-set expandtab tabstop=4 shiftwidth=4           " Expand tabstops to be 4 spaces
-set diffopt+=foldcolumn:0                      " Disable extra column for folds
-set grepprg=rg\ --vimgrep\ --smart-case        " Customize grep to use ripgrep
-set keywordprg=:DD                             " Search Dash.app for keywords
+set termguicolors                           " Enable 24-Bit Truecolor
+set shell=dash                              " Use POSIX-compliant shell
+set gdefault                                " Better substitute
+set expandtab softtabstop=4 shiftwidth=4    " Expand tabstops to be 4 spaces
+set keywordprg=:DD                          " Search Dash.app for keywords
+let &grepprg = 'rg --vimgrep --smart-case'  " Customize grep to use ripgrep
 
-" Use spacebar as leader
-let mapleader = "\<Space>"
-nnoremap <Space> <nop>
+" Completion popup
+set completeopt=menuone,noselect
+let &pumheight = (&lines - 2) / 3
 
 " Colorscheme
 set background=light
@@ -54,16 +55,12 @@ let g:gruvbox_italic           = 1
 let g:gruvbox_contrast_light   = 'hard'
 colorscheme gruvbox
 
-" Setting the python path reduces startup time
-let g:python3_host_prog = '/usr/bin/python3'
-" Disable unused providers
-let g:loaded_node_provider   = 0
-let g:loaded_perl_provider   = 0
-let g:loaded_python_provider = 0
-let g:loaded_ruby_provider   = 0
-
-" Markdown fenced languages syntax highlighting
-let g:markdown_fenced_languages = ['python']
+" Disable unused providers to reduce startup time
+let g:loaded_node_provider    = 0
+let g:loaded_perl_provider    = 0
+let g:loaded_python_provider  = 0
+let g:loaded_python3_provider = 0
+let g:loaded_ruby_provider    = 0
 
 " NerdTree style netrw
 let g:netrw_banner       = 0
@@ -75,59 +72,48 @@ let g:netrw_winsize      = 25
 
 " Statusline {{{
 
-" Statusline Functions
-function LspErrors() abort
-    if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
-        let e = luaeval('vim.lsp.diagnostic.get_count(0, [[Error]])')
-        return e != 'null' ? ' E:' . e . ' ' : ''
-    endif
-    return ''
-endfunction
-
-function LspWarnings() abort
-    if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
-        let w = luaeval('vim.lsp.diagnostic.get_count(0, [[Warning]])')
-        return w != 'null' ? "\ua0W:" . w . ' ' : ''
-    endif
-    return ''
-endfunction
-
-function GitStatus() abort
-    return exists('b:gitsigns_status') ? ' ' . b:gitsigns_status : ''
-endfunction
-
-function Buffers() abort
-    return len(getbufinfo({ 'buflisted': 1 })) > 1 && &bl ? '[Buffers Listed]' : ''
-endfunction
-
 " Left section
-set statusline=%#statusline#\ %m\ %f\ %h%w\ \ \ %{Buffers()}%=
+let &statusline = '%#statusline# %m %f %h%w   '
+let &statusline .= '%{&bl' .
+            \ "&& len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1" .
+            \ "? '[Buffers Listed]' : ''}"
+let &statusline .= '%='
+
 " Right section
-set statusline+=%{GitStatus()}\ \ %#info#\ \ %l\:%c\ \|\ %P
-" LSP section
-set statusline+=\ %#error#%{LspErrors()}%#warning#%{LspWarnings()}
+" Git Status
+let &statusline .= "%{exists('b:gitsigns_status') ? ' '.b:gitsigns_status : ''}"
+" Position info
+let &statusline .= ' %#info# %l:%c | %P '
 
 " }}}
 
 " Keymappings {{{
 
-" Map unused normal mode keys to useful functions
-nnoremap <CR> :
-vnoremap <CR> :
+" Use spacebar as leader
+let mapleader = "\<Space>"
+nnoremap <Space> <nop>
+
+" Map unused large sized normal mode keys to useful functions
 nnoremap <BS> <C-^>
 nnoremap \ <C-w>
 map <Tab> %
 map <S-Tab> g%
 
+" Jetpack mapping - Fast switch, split or unload buffers
+nmap gb <cmd>ls<CR>
+nnoremap gB :ls<CR>:vert sb
+
+" Quick copy/delete into system clipboard
+nnoremap cy "+y
+nnoremap cd "+d
+xnoremap cy "+y
+xnoremap cd "+d
+
 " Call macro
 nnoremap Q @q
 
-" Jetpack mapping - Fast switch, split or unload buffers
-nmap gb :ls<CR>
-nnoremap gB :ls<CR>:vert sb
-
 " Edit recorded macros
-nnoremap cm :<C-u><C-r><C-r>='let @'.v:register.' = '.string(getreg(v:register))<CR><C-f><left>
+nnoremap cm :<C-r>='let @'.v:register.'='.string(getreg(v:register))<CR><C-f><left>
 
 " Clear search highlighting
 noremap <silent> <C-l> <cmd>nohls<CR><C-l>
@@ -137,9 +123,11 @@ nnoremap <silent> yd :Lexplore<CR>
 
 " Toggle Quickfix & Location Lists
 nnoremap <silent><expr> <leader>q
-            \ empty(filter(getwininfo(), 'v:val.quickfix')) ? ':cwindow<CR>' : ':cclose<CR>'
+            \ empty(filter(getwininfo(), 'v:val.quickfix'))
+            \ ? ':cwindow<CR>' : ':cclose<CR>'
 nnoremap <silent><expr> <leader>l
-            \ empty(filter(getwininfo(), 'v:val.loclist'))  ? ':lwindow<CR>' : ':lclose<CR>'
+            \ empty(filter(getwininfo(), 'v:val.loclist'))
+            \ ? ':lwindow<CR>' : ':lclose<CR>'
 
 " Echo current file's info
 nnoremap <leader>f :echo "\t" &ft &fenc &ff<CR>
@@ -151,105 +139,90 @@ nnoremap <leader>v :source ~/.config/nvim/init.vim<CR>
 nnoremap <leader>s :%s/<C-r><C-w>/<C-r><C-w>
 nnoremap <leader>S :%s/\<<C-r><C-w>\>/<C-r><C-w>
 
-" Quick copy/delete into system clipboard
-nnoremap cy "+y
-nnoremap cd "+d
-vnoremap cy "+y
-vnoremap cd "+d
-
 " Quick save & exit
 nnoremap <leader>w :up<CR>
 nnoremap <leader>W mwgg=G`w:up<CR>
+nnoremap <leader>e :q<CR>
+nnoremap <leader>E :qa<CR>
 nnoremap <silent> <C-q> :bd<CR>
 nnoremap <silent> <M-q> :bd!<CR>
 
 " Use CCR to provide intuitive auto prompt
 cnoremap <expr> <CR> functions#CCR()
 nnoremap gm :g//#<left><left>
-nmap <leader>m :marks<CR>
-nmap <leader>j :jumps<CR>
-nmap <leader>Q :clist<CR>
-nmap <leader>L :llist<CR>
-nmap <leader>o :browse oldfiles<CR>
+nmap <leader>m <cmd>marks<CR>
+nmap <leader>j <cmd>jumps<CR>
+nmap <leader>Q <cmd>clist<CR>
+nmap <leader>L <cmd>llist<CR>
+nnoremap <leader>o :browse oldfiles<CR>
 
-" Some niceties on top of vim-commentary
-nmap co ox<Esc>gcc0fx"_cl
-nmap cO Ox<Esc>gcc0fx"_cl
-nmap cA ox<Esc>gcc$kJfx"_cl
-
-" Change/Delete surrounding function
-nnoremap csf F(cb
-nmap dsf dsbdb
+" Toggle Terminal
+tnoremap <ESC> <C-\><C-n>
+nnoremap <M-z> :call functions#ToggleTerminal()<CR>
+tnoremap <M-z> <C-\><C-n>:call functions#ToggleTerminal()<CR>
 
 " }}}
 
 " Commands {{{
 
-" Lazy load package manager
-command! -bar VPO packadd vim-packager
-            \     | call packager#setup(function('s:packager_init'),
-            \          {'dir': stdpath('data') . '/site/pack/packager'})
-command! -bar VP VPO | PackagerClean | PackagerUpdate
-
 " Better grep command (romain-l)
 function s:Grep(...) abort
     return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
 endfunction
-command! -nargs=+ -complete=file_in_path -bar Grep cgetexpr s:Grep(<f-args>) | cwindow
-cnoreabbrev <expr> grep (getcmdtype() ==# ':' && getcmdline() ==# 'grep') ? 'Grep' : 'grep'
+command -nargs=+ -complete=file_in_path -bar Grep cgetexpr s:Grep(<f-args>) | cw
+cnoreabbrev <expr> grep
+            \ (getcmdtype() == ':' && getcmdline() ==# 'grep') ? 'Grep' : 'grep'
 
 " Look up documentation in Dash.app
-command! -nargs=+ DD silent exe '!'.functions#DevDocs(<q-args>)
+command -nargs=+ DD silent execute functions#DevDocs(<q-args>)
 
 " }}}
 
 " Plugins {{{
 
-" Packager - Plugin Manager
-function s:packager_init(packager) abort
-    " Manage packager as optional plugin
-    call a:packager.add('kristijanhusak/vim-packager', {'type': 'opt'})
+let g:packages = []
 
-    " Neovim only plugins {{{
-
-    " Defaults
-    call a:packager.add('khaveesh/nvim-sensibly-opinionated-defaults')
-
-    " Tab Completion - LSP & other sources
-    call a:packager.add('hrsh7th/nvim-compe',
-                \         {'requires': 'neovim/nvim-lspconfig'})
-
-    " Syntax highlight & Semantic textobjs
-    call a:packager.add('nvim-treesitter/nvim-treesitter', {
-                \     'do':       ':TSUpdate',
-                \     'requires': 'nvim-treesitter/nvim-treesitter-textobjects'
-                \ })
-
-    " Git Gutter
-    call a:packager.add('lewis6991/gitsigns.nvim',
-                \         {'requires': 'nvim-lua/plenary.nvim'})
-
-    " }}}
-
-    " Snippets & Syntax files
-    call a:packager.add('hrsh7th/vim-vsnip')
-    call a:packager.add('khaveesh/vim-fish-syntax')
-
-    " Colour Schemes
-    call a:packager.add('gruvbox-community/gruvbox', {'type': 'opt'})
-    call a:packager.add('tanvirtin/nvim-monokai', {'type': 'opt'})
-
-    " Utilities
-    call a:packager.add('khaveesh/vim-commentary-yank')
-    call a:packager.add('khaveesh/vim-unimpaired')
-    call a:packager.add('tpope/vim-surround')
-    call a:packager.add('tpope/vim-repeat')
-    call a:packager.add('tmsvg/pear-tree')
-    call a:packager.add('AndrewRadev/sideways.vim')
-    call a:packager.add('tommcdo/vim-exchange')
-    call a:packager.add('junegunn/vim-easy-align', {'type': 'opt'})
-    call a:packager.add('simnalamburt/vim-mundo', {'type': 'opt'})
+function s:packadd(pack, args = {}) abort
+    if empty(a:args)
+        call add(g:packages, a:pack)
+    else
+        call add(g:packages, [a:pack, a:args])
+    endif
 endfunction
+
+command -buffer -nargs=+ Pack call s:packadd(<args>)
+
+" Neovim only plugins {{{
+
+" Sensible Defaults
+Pack 'khaveesh/nvim-sensibly-opinionated-defaults'
+
+" LSP - Actions & Completion
+Pack 'neovim/nvim-lspconfig'
+Pack 'hrsh7th/nvim-compe'
+
+" Semantic syntax highlight & Textobjs
+Pack 'nvim-treesitter/nvim-treesitter'
+Pack 'nvim-treesitter/nvim-treesitter-textobjects'
+
+" Git Gutter
+Pack 'nvim-lua/plenary.nvim'
+Pack 'lewis6991/gitsigns.nvim'
+
+" }}}
+
+" Essentials
+Pack 'khaveesh/vim-fish-syntax'
+Pack 'vim-pandoc/vim-pandoc-syntax'
+Pack 'hrsh7th/vim-vsnip'
+Pack 'gruvbox-community/gruvbox', {'type':'opt'}
+
+" Utilities
+Pack 'khaveesh/vim-commentary-yank'
+Pack 'khaveesh/vim-unimpaired'
+Pack 'tpope/vim-surround'
+Pack 'tpope/vim-repeat'
+Pack 'tommcdo/vim-exchange'
 
 " }}}
 
@@ -259,39 +232,58 @@ endfunction
 lua require('init')
 
 " Nvim-Compe
-inoremap <expr> <CR>  compe#confirm({ 'keys': "\<Plug>(PearTreeExpand)", 'mode': 'i' })
-inoremap <expr> <C-e> compe#close('<C-e>')
+inoremap <expr> <CR>  compe#confirm("\<CR>")
+inoremap <expr> <C-e> compe#close("\<C-e>")
 inoremap <expr> <C-f> compe#scroll({ 'delta': +4 })
 inoremap <expr> <C-d> compe#scroll({ 'delta': -4 })
 
 " vim-vsnip - LSP & VSCode snippets
 let g:vsnip_snippet_dir = stdpath('config') . '/vsnip'
 
-" Pear Tree - Auto pair closing
-let g:pear_tree_repeatable_expand = 0
-let g:pear_tree_smart_openers     = 1
-let g:pear_tree_smart_closers     = 1
-let g:pear_tree_smart_backspace   = 1
-" Restore <CR> for completion confirmation
-imap <nop> <Plug>(PearTreeExpand)
+" Use (s-)tab to:
+"   - move to prev/next item in completion menu
+"   - jump to prev/next snippet's placeholder
+function s:tab() abort
+    if pumvisible()
+        return "\<C-n>"
+    elseif vsnip#available(1)
+        return "\<Plug>(vsnip-expand-or-jump)"
+    elseif col('.') == 1 || getline('.')[col('.') - 2] =~ '\s'
+        return "\<Tab>"
+    else
+        return compe#complete()
+    endif
+endfunction
 
-" Sideways - Shift and insert arguments
-nnoremap <silent> [a :SidewaysLeft<CR>
-nnoremap <silent> ]a :SidewaysRight<CR>
+function s:s_tab() abort
+    if pumvisible()
+        return "\<C-p>"
+    elseif vsnip#jumpable(-1)
+        return "\<Plug>(vsnip-jump-prev)"
+    else
+        return "\<S-Tab>"
+    endif
+endfunction
 
-nmap <leader>i <Plug>SidewaysArgumentInsertBefore
-nmap <leader>a <Plug>SidewaysArgumentAppendAfter
-nmap <leader>I <Plug>SidewaysArgumentInsertFirst
-nmap <leader>A <Plug>SidewaysArgumentAppendLast
+imap <expr> <Tab> <SID>tab()
+smap <expr> <Tab> <SID>tab()
+imap <expr> <S-Tab> <SID>s_tab()
+smap <expr> <S-Tab> <SID>s_tab()
 
-omap <silent> ia <Plug>SidewaysArgumentTextobjI
-omap <silent> aa <Plug>SidewaysArgumentTextobjA
+" Some niceties on top of vim-commentary
+nnoremap co ox<ESC>:Commentary<CR>0fx"_cl
+nnoremap cO Ox<ESC>:Commentary<CR>0fx"_cl
+nnoremap cA ox<ESC>:Commentary<CR>$kJfx"_cl
 
-" Easy Align - Align by character
-nmap <silent> ga :packadd vim-easy-align<CR><Plug>(EasyAlign)
-xmap <silent> ga <cmd>packadd vim-easy-align<CR><Plug>(EasyAlign)
+" Change/Delete surrounding function
+nnoremap csf F(cb
+nmap dsf dsbdb
 
-" Mundo - Undo Tree Visualizer
-nnoremap <silent> yu :packadd vim-mundo <bar> MundoToggle<CR>
+" Invert comments for given range
+xnoremap <silent> gC :g/./Commentary<CR>:set nohls<CR>
+nnoremap <silent> gC :set opfunc=<SID>InvertComment<CR>g@
+function s:InvertComment(type) abort
+    execute "'[,']g/./Commentary"
+endfunction
 
 " }}}

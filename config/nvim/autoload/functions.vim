@@ -1,5 +1,3 @@
-" Autoloaded Functions
-
 " Run formatters with perfect undo history
 function functions#Format() abort
     " LSP provided formatting
@@ -18,7 +16,7 @@ function functions#Format() abort
         endif
 
         if v:shell_error != 0
-            echomsg 'formatprg exited with error code ' . v:shell_error
+            echoerr 'formatprg exited with error code ' . v:shell_error
         elseif formatted_lines !=# original_lines
             let view = winsaveview()
             lua vim.api.nvim_buf_set_lines(0, 0, -1, true, vim.lsp.util.trim_empty_lines(vim.api.nvim_eval('formatted_lines')))
@@ -27,16 +25,44 @@ function functions#Format() abort
     endif
 endfunction
 
-" Use BetterBibTex's 'cayw' function to insert citations
-function functions#ZoteroCite() abort
-    " pick a format based on the filetype
-    let format = &filetype =~ '.*tex' ? 'biblatex' : 'pandoc'
-    let api_call = 'http://127.0.0.1:23119/better-bibtex/cayw?format='.format.'&brackets=1'
-    let ref = system('curl -s '.shellescape(api_call))
-    silent exe '!open -a kitty'
-    if ref != ''
-        exe 'normal! i' . ref
-    endif
+" Open fuzzy finder in split terminal
+function functions#FZTerm(list_command, callback, prompt) abort
+    " Open a Neovim terminal emulator buffer in a new window using termopen,
+    " execute list_command piping its output to the fuzzy selector, and call
+    " callback.on_select with the item selected by the user as the first
+    " argument.
+    "
+    " Parameters
+    " ----------
+    " list_command : String
+    "     Shell command to generate list user will choose from.
+    " callback.on_select : String -> Void
+    "     Function executed with the item selected by the user as the
+    "     first argument.
+
+    let filename = tempname()
+
+    function a:callback.on_exit(job_id, data, event) abort closure
+        bdelete!
+        setlocal laststatus=2 showmode showcmd
+        if filereadable(filename)
+            try
+                call self.on_select(readfile(filename)[0])
+            catch /E684/
+            endtry
+            call delete(filename)
+        endif
+    endfunction
+
+    execute 'botright' . &pumheight . 'new'
+    let term_command = a:list_command . ' | '
+                \ . 'fzy' .  ' -l ' . &pumheight .
+                \ ' -p ' . shellescape(a:prompt) . ' > ' . filename
+    call termopen(term_command, a:callback)
+
+    setlocal nonumber norelativenumber laststatus=0 noshowmode noshowcmd noruler
+    setfiletype picker
+    startinsert!
 endfunction
 
 " Intuitive prompt (romain-l)
@@ -74,13 +100,32 @@ function functions#CCR() abort
     endif
 endfunction
 
+" Toggle Terminal
+let s:term_win_id = -1
+
+function functions#ToggleTerminal() abort
+    if win_gotoid(s:term_win_id)
+        hide
+    else
+        if bufexists('Terminal')
+            vertical sbuffer Terminal
+        else
+            vnew term://fish
+            silent file Terminal
+            setlocal norelativenumber nobuflisted
+        endif
+        let s:term_win_id = win_getid()
+        startinsert
+    endif
+endfunction
+
 " Search documentation on Dash.app
 function functions#DevDocs(args) abort
-    let query = 'open '
+    let query = '!open '
     " let URL = 'https://devdocs.io/#q='
     let URL = 'dash://'
 
-    if len(split(a:args, ' ')) == 1
+    if len(split(a:args)) == 1
         " let query .= shellescape(URL . &filetype . '%20' . a:args)
         let query .= shellescape(URL . &filetype . '\%3A' . a:args)
     else
