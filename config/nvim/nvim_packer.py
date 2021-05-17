@@ -43,12 +43,6 @@ for directory in (DIR, START, OPT):
     if not directory.is_dir():
         directory.mkdir()
 
-for index, pack in enumerate(packages):
-    if isinstance(pack, str):
-        packages[index] = [pack, {"type": "start"}]
-    elif not pack[1].get("type"):
-        packages[index][1]["type"] = "start"
-
 
 def clean() -> None:
     paths: Dict[str, List[str]] = {"start": [], "opt": []}

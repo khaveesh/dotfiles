@@ -44,6 +44,8 @@ set expandtab softtabstop=4 shiftwidth=4    " Expand tabstops to be 4 spaces
 set keywordprg=:DD                          " Search Dash.app for keywords
 let &grepprg = 'rg --vimgrep --smart-case'  " Customize grep to use ripgrep
 
+set spelloptions=camel " Spellcheck individual components of CamelCased words
+
 " Completion popup
 set completeopt=menuone,noselect
 let &pumheight = (&lines - 2) / 3
@@ -74,16 +76,18 @@ let g:netrw_winsize      = 25
 
 " Left section
 let &statusline = '%#statusline# %m %f %h%w   '
-let &statusline .= '%{&bl' .
-            \ "&& len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1" .
-            \ "? '[Buffers Listed]' : ''}"
+let &statusline .= '%{' .
+            \ "&bl && len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1"
+            \ . "? '[Buffers Listed]' : '' }"
+
 let &statusline .= '%='
 
 " Right section
 " Git Status
-let &statusline .= "%{exists('b:gitsigns_status') ? ' '.b:gitsigns_status : ''}"
+let &statusline .= "%{ exists('b:gitsigns_status')"
+            \              "? ' ' . b:gitsigns_status : '' }"
 " Position info
-let &statusline .= ' %#info# %l:%c | %P '
+let &statusline .= ' %#info# %l,%c | %P '
 
 " }}}
 
@@ -99,15 +103,8 @@ nnoremap \ <C-w>
 map <Tab> %
 map <S-Tab> g%
 
-" Jetpack mapping - Fast switch, split or unload buffers
-nmap gb <cmd>ls<CR>
-nnoremap gB :ls<CR>:vert sb
-
-" Quick copy/delete into system clipboard
-nnoremap cy "+y
-nnoremap cd "+d
-xnoremap cy "+y
-xnoremap cd "+d
+" Clear search highlighting
+noremap <C-l> <cmd>nohlsearch<CR><C-l>
 
 " Call macro
 nnoremap Q @q
@@ -115,11 +112,25 @@ nnoremap Q @q
 " Edit recorded macros
 nnoremap cm :<C-r>='let @'.v:register.'='.string(getreg(v:register))<CR><C-f><left>
 
-" Clear search highlighting
-noremap <silent> <C-l> <cmd>nohls<CR><C-l>
-
 " Toggle netrw
 nnoremap <silent> yd :Lexplore<CR>
+
+" Toggle spell check
+nnoremap ysc :setlocal <C-R>=&spell ? 'nospell' : 'spell'<CR><CR>
+
+" Jetpack mapping - Fast switch, split or unload buffers
+nmap gb :ls<CR>
+nnoremap gB :ls<CR>:vert sb
+
+" View register contents
+nnoremap gr :registers<CR>
+inoremap <M-r> <cmd>registers<CR>
+
+" Quick copy/delete into system clipboard
+nnoremap cy "+y
+nnoremap cd "+d
+xnoremap cy "+y
+xnoremap cd "+d
 
 " Toggle Quickfix & Location Lists
 nnoremap <silent><expr> <leader>q
@@ -147,19 +158,26 @@ nnoremap <leader>E :qa<CR>
 nnoremap <silent> <C-q> :bd<CR>
 nnoremap <silent> <M-q> :bd!<CR>
 
+" Better in-buffer search
+set wildcharm=<C-z>
+cnoremap <expr> <Tab>   getcmdtype() =~ '[\/?]' ? "<C-g>" : "<C-z>"
+cnoremap <expr> <S-Tab> getcmdtype() =~ '[\/?]' ? "<C-t>" : "<S-Tab>"
+
+" Clear search highlighting or call CCR
+cnoremap <expr> <CR> getcmdtype() =~ '[\/?]' ? "<CR><C-l>" : functions#CCR()
+
 " Use CCR to provide intuitive auto prompt
-cnoremap <expr> <CR> functions#CCR()
 nnoremap gm :g//#<left><left>
-nmap <leader>m <cmd>marks<CR>
-nmap <leader>j <cmd>jumps<CR>
-nmap <leader>Q <cmd>clist<CR>
-nmap <leader>L <cmd>llist<CR>
+nmap <leader>m :marks<CR>
+nmap <leader>j :jumps<CR>
+nmap <leader>Q :clist<CR>
+nmap <leader>L :llist<CR>
 nnoremap <leader>o :browse oldfiles<CR>
 
 " Toggle Terminal
 tnoremap <ESC> <C-\><C-n>
 nnoremap <M-z> :call functions#ToggleTerminal()<CR>
-tnoremap <M-z> <C-\><C-n>:call functions#ToggleTerminal()<CR>
+tnoremap <silent> <M-z> <C-\><C-n>:call functions#ToggleTerminal()<CR>
 
 " }}}
 
@@ -176,6 +194,9 @@ cnoreabbrev <expr> grep
 " Look up documentation in Dash.app
 command -nargs=+ DD silent execute functions#DevDocs(<q-args>)
 
+" Clean->Install->Update neovim packages
+command VP execute 'vsplit | terminal '.stdpath('config').'/nvim_packer.py'
+
 " }}}
 
 " Plugins {{{
@@ -184,7 +205,7 @@ let g:packages = []
 
 function s:packadd(pack, args = {}) abort
     if empty(a:args)
-        call add(g:packages, a:pack)
+        call add(g:packages, [a:pack, { 'type': 'start' }])
     else
         call add(g:packages, [a:pack, a:args])
     endif
@@ -215,7 +236,7 @@ Pack 'lewis6991/gitsigns.nvim'
 Pack 'khaveesh/vim-fish-syntax'
 Pack 'vim-pandoc/vim-pandoc-syntax'
 Pack 'hrsh7th/vim-vsnip'
-Pack 'gruvbox-community/gruvbox', {'type':'opt'}
+Pack 'gruvbox-community/gruvbox', { 'type': 'opt' }
 
 " Utilities
 Pack 'khaveesh/vim-commentary-yank'
@@ -226,9 +247,9 @@ Pack 'tommcdo/vim-exchange'
 
 " }}}
 
-" Plugin Configuration {{{
+" Plugin Configuration & Keymappings {{{
 
-" Initializes configuration for Lua plugins (Neovim only)
+" Initializes configuration for Lua plugins
 lua require('init')
 
 " Nvim-Compe
@@ -238,7 +259,7 @@ inoremap <expr> <C-f> compe#scroll({ 'delta': +4 })
 inoremap <expr> <C-d> compe#scroll({ 'delta': -4 })
 
 " vim-vsnip - LSP & VSCode snippets
-let g:vsnip_snippet_dir = stdpath('config') . '/vsnip'
+let g:vsnip_snippet_dir = stdpath('config').'/vsnip'
 
 " Use (s-)tab to:
 "   - move to prev/next item in completion menu
@@ -270,18 +291,18 @@ smap <expr> <Tab> <SID>tab()
 imap <expr> <S-Tab> <SID>s_tab()
 smap <expr> <S-Tab> <SID>s_tab()
 
-" Some niceties on top of vim-commentary
-nnoremap co ox<ESC>:Commentary<CR>0fx"_cl
-nnoremap cO Ox<ESC>:Commentary<CR>0fx"_cl
-nnoremap cA ox<ESC>:Commentary<CR>$kJfx"_cl
-
 " Change/Delete surrounding function
 nnoremap csf F(cb
 nmap dsf dsbdb
 
+" Some niceties on top of vim-commentary
+nnoremap co ox<ESC>:Commentary<CR>W"_s
+nnoremap cO Ox<ESC>:Commentary<CR>W"_s
+nnoremap cA ox<ESC>:Commentary<CR>k$J2W"_s
+
 " Invert comments for given range
-xnoremap <silent> gC :g/./Commentary<CR>:set nohls<CR>
-nnoremap <silent> gC :set opfunc=<SID>InvertComment<CR>g@
+xnoremap <silent> gcy :g/./Commentary<CR>:set nohlsearch<CR>
+nnoremap <silent> gcy :set opfunc=<SID>InvertComment<CR>g@
 function s:InvertComment(type) abort
     execute "'[,']g/./Commentary"
 endfunction

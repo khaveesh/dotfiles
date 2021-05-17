@@ -1,17 +1,11 @@
 {
     "autocmd": {
-        "prefix": [
-            "aut"
-        ],
-        "body": [
-            "autocmd $1 ${2:* $0}"
-        ],
+        "prefix": "aut",
+        "body": "autocmd $1 ${2:* $0}",
         "description": "autocmd"
     },
     "augroup": {
-        "prefix": [
-            "aug"
-        ],
+        "prefix": "aug",
         "body": [
             "augroup ${1:Foo}",
             "    autocmd!",

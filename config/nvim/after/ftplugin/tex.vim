@@ -1,1 +1,1 @@
-nnoremap <silent><buffer> <leader>t :up <bar> TexlabBuild<CR>
+nnoremap <buffer> <leader>t :up <bar> TexlabBuild<CR>

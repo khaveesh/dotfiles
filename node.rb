@@ -1,5 +1,5 @@
 cask "node" do
-  version "16.0.0"
+  version "16.1.0"
   sha256 :no_check
 
   url "https://nodejs.org/dist/v#{version}/node-v#{version}-darwin-x64.tar.gz"

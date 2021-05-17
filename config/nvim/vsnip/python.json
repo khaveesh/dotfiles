@@ -198,7 +198,7 @@
         ],
         "description": "Code snippet for a lambda statement"
     },
-    "if(main)": {
+    "main": {
         "prefix": "__main__",
         "body": [
             "if __name__ == \"__main__\":",
@@ -240,29 +240,9 @@
         ],
         "description": "Code snippet for an async with statement"
     },
-    "ipdb": {
-        "prefix": "ipdb",
-        "body": "import ipdb; ipdb.set_trace()",
-        "description": "Code snippet for ipdb debug"
-    },
-    "pdb": {
-        "prefix": "pdb",
-        "body": "import pdb; pdb.set_trace()",
-        "description": "Code snippet for pdb debug"
-    },
-    "pudb": {
-        "prefix": "pudb",
-        "body": "import pudb; pudb.set_trace()",
-        "description": "Code snippet for pudb debug"
-    },
-    "add/new/cell": {
-        "prefix": "add/new/cell",
-        "body": "# %%",
-        "description": "Code snippet to add a new cell"
-    },
-    "mark/markdown": {
-        "prefix": "mark/markdown",
-        "body": "# %% [markdown]",
-        "description": "Code snippet to add a new markdown cell"
+    "from ... import ...": {
+        "prefix": "from",
+        "body": "from ${1:package/module} import ${2:names}$0",
+        "description": "Import statement that allows individual objects from the module to be imported directly into the caller\u2019s symbol table."
     }
 }

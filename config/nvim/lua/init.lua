@@ -22,25 +22,33 @@ local function on_attach(client, bufnr)
         end
         mode = mode or 'n'
 
-        vim.api.nvim_buf_set_keymap(bufnr, mode, key, prefix .. 'lua vim.lsp.' .. action .. '()<CR>', {
-            noremap = true,
-            silent = true,
-        })
+        vim.api.nvim_buf_set_keymap(
+            bufnr,
+            mode,
+            key,
+            prefix .. 'lua vim.lsp.' .. action .. '()<CR>',
+            {
+                noremap = true,
+                silent = true,
+            }
+        )
     end
 
     -- Override built-in keymaps only when client is attached
-    lsp_map('<C-k>', 'buf.signature_help', 'i')
-    lsp_map('<C-k>', 'buf.signature_help')
+    lsp_map('<leader>a', 'buf.range_code_action', 'v')
+    lsp_map('<leader>a', 'buf.code_action')
+    lsp_map('<M-k>', 'buf.signature_help', 'i')
+    lsp_map('<M-k>', 'buf.signature_help')
     lsp_map('<C-]>', 'buf.definition')
-    lsp_map('<M-k>', 'buf.hover')
-    lsp_map('ga', 'buf.range_code_action', 'v')
-    lsp_map('ga', 'buf.code_action')
-    lsp_map('gd', 'buf.declaration')
-    lsp_map('dr', 'buf.references')
     lsp_map('cr', 'buf.rename')
+    lsp_map('dr', 'buf.references')
+    lsp_map('gd', 'buf.declaration')
+    lsp_map('gh', 'buf.hover')
     lsp_map('gs', 'buf.document_symbol')
+
     lsp_map('[d', 'diagnostic.goto_prev')
     lsp_map(']d', 'diagnostic.goto_next')
+    lsp_map('gl', 'diagnostic.set_loclist')
 
     -- Set formatprg to the lsp client
     if client.resolved_capabilities.document_formatting then
@@ -63,7 +71,7 @@ local servers = {
 
     texlab = {
         settings = {
-            latex = {
+            texlab = {
                 build = {
                     args = {
                         '-lualatex',
@@ -96,26 +104,37 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 }
 
 -- Setup client
-local nvim_lsp = require('lspconfig')
 for server, config in pairs(servers) do
     config.on_attach = on_attach
     config.capabilities = capabilities
-    nvim_lsp[server].setup(config)
+    require('lspconfig')[server].setup(config)
 end
 
 -- Delay diagnostics while in insert mode & don't show signs
-lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(lsp.diagnostic.on_publish_diagnostics, {
-    update_in_insert = false,
-    signs = false,
-})
+lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
+    lsp.diagnostic.on_publish_diagnostics,
+    {
+        update_in_insert = false,
+        signs = false,
+    }
+)
 
 -- }}}
 
 -- Treesitter {{{
 
 require('nvim-treesitter.configs').setup({
-    ensure_installed = { 'c', 'cpp', 'python', 'lua' },
-    highlight = { enable = true },
+    ensure_installed = {
+        'c',
+        'cpp',
+        'python',
+        'lua',
+        'fish',
+        'json',
+        'yaml',
+        'toml',
+    },
+    highlight = { enable = true, additional_vim_regex_highlighting = true },
 
     textobjects = {
         select = {
@@ -133,7 +152,6 @@ require('nvim-treesitter.configs').setup({
                 ['il'] = '@loop.inner',
                 ['aa'] = '@parameter.outer',
                 ['ia'] = '@parameter.inner',
-                ['as'] = '@statement.outer',
             },
         },
 

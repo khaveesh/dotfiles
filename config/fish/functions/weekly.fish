@@ -6,5 +6,5 @@ function weekly --description 'Run weekly updates'
     brew reinstall --no-quarantine --cask neovim
     rm /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask/Casks/neovim.rb
     echo
-    ~/.config/nvim/nvim_update_packages.py
+    ~/.config/nvim/nvim_packer.py
 end

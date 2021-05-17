@@ -2,24 +2,30 @@
 function functions#Format() abort
     " LSP provided formatting
     if &formatprg ==# 'lsp'
-        lua vim.lsp.buf.formatting_sync(nil, 1000)
+        lua vim.lsp.buf.formatting_sync()
 
     else
-        let original_lines = getbufline(bufnr(), 1, '$')
+        const original_lines = getbufline(bufnr(), 1, '$')
 
         if &formatprg ==# ''
             " Trim trailing whitespace and leading blank lines
-            let formatted_lines = systemlist("sed 's/[[:space:]]*$//'", original_lines)
+            const formatted_lines = systemlist(
+                        \   "sed 's/[[:space:]]*$//'",
+                        \   original_lines
+                        \ )
         else
             " Format using CLI tools via stdin
-            let formatted_lines = systemlist(&formatprg, original_lines)
+            const formatted_lines = systemlist(&formatprg, original_lines)
         endif
 
         if v:shell_error != 0
             echoerr 'formatprg exited with error code ' . v:shell_error
         elseif formatted_lines !=# original_lines
-            let view = winsaveview()
-            lua vim.api.nvim_buf_set_lines(0, 0, -1, true, vim.lsp.util.trim_empty_lines(vim.api.nvim_eval('formatted_lines')))
+            const view = winsaveview()
+            lua vim.api.nvim_buf_set_lines(0, 0, -1, true,
+                        \ vim.lsp.util.trim_empty_lines(
+                        \     vim.api.nvim_eval('formatted_lines')
+                        \ ))
             call winrestview(view)
         endif
     endif
@@ -40,7 +46,7 @@ function functions#FZTerm(list_command, callback, prompt) abort
     "     Function executed with the item selected by the user as the
     "     first argument.
 
-    let filename = tempname()
+    const filename = tempname()
 
     function a:callback.on_exit(job_id, data, event) abort closure
         bdelete!
@@ -55,7 +61,7 @@ function functions#FZTerm(list_command, callback, prompt) abort
     endfunction
 
     execute 'botright' . &pumheight . 'new'
-    let term_command = a:list_command . ' | '
+    const term_command = a:list_command . ' | '
                 \ . 'fzy' .  ' -l ' . &pumheight .
                 \ ' -p ' . shellescape(a:prompt) . ' > ' . filename
     call termopen(term_command, a:callback)
@@ -67,10 +73,10 @@ endfunction
 
 " Intuitive prompt (romain-l)
 function functions#CCR() abort
-    let cmdline = getcmdline()
     if getcmdtype() != ':'
         return "\<CR>"
     endif
+    const cmdline = getcmdline()
     if cmdline =~ '\v\C^(ls|files|buffers)'
         " like :ls but prompts for a buffer command
         return "\<CR>:b"
@@ -79,7 +85,8 @@ function functions#CCR() abort
         return "\<CR>:"
     elseif cmdline =~ '\v\C^(dli|il)'
         " like :dlist or :ilist but prompts for a count for :djump or :ijump
-        return "\<CR>:" . cmdline[0] . "j  " . split(cmdline, " ")[1] . "\<S-Left>\<Left>"
+        return "\<CR>:" . cmdline[0] . "j  " .
+                    \ split(cmdline, " ")[1] . "\<S-Left>\<Left>"
     elseif cmdline =~ '\v\C^(cli|lli)'
         " like :clist or :llist but prompts for an error/location number
         return "\<CR>:sil " . repeat(cmdline[0], 2) . "\<Space>"
@@ -123,7 +130,7 @@ endfunction
 function functions#DevDocs(args) abort
     let query = '!open '
     " let URL = 'https://devdocs.io/#q='
-    let URL = 'dash://'
+    const URL = 'dash://'
 
     if len(split(a:args)) == 1
         " let query .= shellescape(URL . &filetype . '%20' . a:args)
