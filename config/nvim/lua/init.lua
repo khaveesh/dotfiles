@@ -13,7 +13,8 @@ function LspWarningsSL()
     return (w ~= 0) and (' W:' .. w .. ' ') or ''
 end
 
--- Custom LSP on_attach
+-- Custom LSP on_attach function
+-- executed after the language server attaches to the current buffer
 local function on_attach(client, bufnr)
     local function lsp_map(key, action, mode)
         local prefix = ':'
@@ -35,8 +36,8 @@ local function on_attach(client, bufnr)
     end
 
     -- Override built-in keymaps only when client is attached
-    lsp_map('<leader>a', 'buf.range_code_action', 'v')
-    lsp_map('<leader>a', 'buf.code_action')
+    lsp_map('cv', 'buf.range_code_action', 'v')
+    lsp_map('cv', 'buf.code_action')
     lsp_map('<M-k>', 'buf.signature_help', 'i')
     lsp_map('<M-k>', 'buf.signature_help')
     lsp_map('<C-]>', 'buf.definition')
@@ -103,7 +104,8 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
     },
 }
 
--- Setup client
+-- Use a loop to conveniently call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
 for server, config in pairs(servers) do
     config.on_attach = on_attach
     config.capabilities = capabilities

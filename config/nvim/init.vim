@@ -29,7 +29,7 @@ augroup custom
     " Use Pandoc Markdown syntax for all md files
     autocmd BufNewFile,BufRead *.md setfiletype markdown.pandoc
 
-    " Format the file before saving (Neovim only)
+    " Format the file before saving
     autocmd BufWritePre * call functions#Format()
 augroup END
 
@@ -40,7 +40,7 @@ augroup END
 set termguicolors                           " Enable 24-Bit Truecolor
 set shell=dash                              " Use POSIX-compliant shell
 set gdefault                                " Better substitute
-set expandtab softtabstop=4 shiftwidth=4    " Expand tabstops to be 4 spaces
+set expandtab tabstop=4 shiftwidth=4        " Expand tabstops to be 4 spaces
 set keywordprg=:DD                          " Search Dash.app for keywords
 let &grepprg = 'rg --vimgrep --smart-case'  " Customize grep to use ripgrep
 
@@ -164,7 +164,7 @@ cnoremap <expr> <Tab>   getcmdtype() =~ '[\/?]' ? "<C-g>" : "<C-z>"
 cnoremap <expr> <S-Tab> getcmdtype() =~ '[\/?]' ? "<C-t>" : "<S-Tab>"
 
 " Clear search highlighting or call CCR
-cnoremap <expr> <CR> getcmdtype() =~ '[\/?]' ? "<CR><C-l>" : functions#CCR()
+cnoremap <expr> <CR> getcmdtype() =~ '[\/?]' ? "<CR><cmd>nohlsearch<CR>" : functions#CCR()
 
 " Use CCR to provide intuitive auto prompt
 nnoremap gm :g//#<left><left>
@@ -213,7 +213,7 @@ endfunction
 
 command -buffer -nargs=+ Pack call s:packadd(<args>)
 
-" Neovim only plugins {{{
+" Lua plugins {{{
 
 " Sensible Defaults
 Pack 'khaveesh/nvim-sensibly-opinionated-defaults'
@@ -232,18 +232,38 @@ Pack 'lewis6991/gitsigns.nvim'
 
 " }}}
 
-" Essentials
+" Essentials {{{
+
+" Syntax files
 Pack 'khaveesh/vim-fish-syntax'
 Pack 'vim-pandoc/vim-pandoc-syntax'
-Pack 'hrsh7th/vim-vsnip'
+
+" ColorScheme
 Pack 'gruvbox-community/gruvbox', { 'type': 'opt' }
 
-" Utilities
+" VSCode/LSP style snippet plugin
+Pack 'hrsh7th/vim-vsnip'
+
+" }}}
+
+" Utilities {{{
+
+" Comment out lines
 Pack 'khaveesh/vim-commentary-yank'
+
+" Handy square bracket mappings
 Pack 'khaveesh/vim-unimpaired'
+
+" Surround selection with delimiters
 Pack 'tpope/vim-surround'
+
+" Dot-repeat support for plugins
 Pack 'tpope/vim-repeat'
+
+" Easy text exchange operator
 Pack 'tommcdo/vim-exchange'
+
+" }}}
 
 " }}}
 

@@ -10,7 +10,7 @@ end tell
 tell application "Google Chrome"
 	-- Open Chrome, or bring it to the front if it's already open
 	activate
-	delay 1
+	delay 2
 
 	-- Get the front window
 	set theWindow to first window
