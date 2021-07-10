@@ -391,7 +391,7 @@
                                     }
                                 },
                                 "to": {
-                                    "shell_command": "~/.config/AppleScripts/Open\\ Tab\\ in\\ Chrome.applescript"
+                                    "shell_command": "~/.config/AppleScripts/Open\\ tab\\ in\\ Chrome.applescript"
                                 },
                                 "type": "basic"
                             }
@@ -502,31 +502,6 @@
                         ]
                     },
                     {
-                        "description": "Change shift + delete to forward delete (rev 2)",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "delete_or_backspace",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "shift"
-                                        ],
-                                        "optional": [
-                                            "caps_lock",
-                                            "option"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "delete_forward"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Toggle caps_lock by pressing left_shift then right_shift",
                         "manipulators": [
                             {
@@ -575,6 +550,29 @@
                                         "key_code": "right_shift"
                                     }
                                 ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "OCR the selected region to clipboard",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "2",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "shift",
+                                            "command"
+                                        ],
+                                        "optional": [
+                                            "caps_lock"
+                                        ]
+                                    }
+                                },
+                                "to": {
+                                    "shell_command": "/usr/local/bin/ocr | pbcopy"
+                                },
                                 "type": "basic"
                             }
                         ]

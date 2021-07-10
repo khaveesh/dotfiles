@@ -1,4 +1,4 @@
 # Defined in - @ line 1
 function rg --wraps=rg --description 'alias rg kitty +kitten hyperlinked_grep'
-    kitty +kitten hyperlinked_grep $argv
+    kitty +kitten hyperlinked_grep --engine auto $argv
 end

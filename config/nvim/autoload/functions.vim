@@ -1,24 +1,24 @@
 " Run formatters with perfect undo history
 function functions#Format() abort
     " LSP provided formatting
-    if &formatprg ==# 'lsp'
+    if &formatprg == 'lsp'
         lua vim.lsp.buf.formatting_sync()
 
     else
         const original_lines = getbufline(bufnr(), 1, '$')
 
-        if &formatprg ==# ''
+        if &formatprg
+            " Format using CLI tools via stdin
+            const formatted_lines = systemlist(&formatprg, original_lines)
+        else
             " Trim trailing whitespace and leading blank lines
             const formatted_lines = systemlist(
                         \   "sed 's/[[:space:]]*$//'",
                         \   original_lines
                         \ )
-        else
-            " Format using CLI tools via stdin
-            const formatted_lines = systemlist(&formatprg, original_lines)
         endif
 
-        if v:shell_error != 0
+        if v:shell_error
             echoerr 'formatprg exited with error code ' . v:shell_error
         elseif formatted_lines !=# original_lines
             const view = winsaveview()
@@ -67,6 +67,7 @@ function functions#FZTerm(list_command, callback, prompt) abort
     call termopen(term_command, a:callback)
 
     setlocal nonumber norelativenumber laststatus=0 noshowmode noshowcmd noruler
+    tnoremap <Esc> <Esc>
     setfiletype picker
     startinsert!
 endfunction

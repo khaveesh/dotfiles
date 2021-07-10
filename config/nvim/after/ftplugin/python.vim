@@ -1,12 +1,13 @@
-setlocal keywordprg=:DD
-
 let &l:formatprg = 'isort - | black -'
+
+setlocal keywordprg=:DD
 
 nnoremap <buffer> gx :up <bar> vsp <bar> term python %:S<CR>:startinsert<CR>
 
 command Lint lgetexpr system(expandcmd('flake8 %:S;echo; pylint %:S; mypy %:S'))
             \ | call setloclist(0, [], 'a', { 'title': 'Pylint: '.expand('%') })
             \ | lwindow
+
 nnoremap <silent><buffer> gl :up <bar> Lint<CR>
 
 function s:PyDoc() abort

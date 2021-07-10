@@ -1,7 +1,0 @@
-BasedOnStyle: LLVM
-IndentWidth: 4
-BreakBeforeBraces: Linux
-AllowShortIfStatementsOnASingleLine: false
-IndentCaseLabels: false
-SortIncludes: false
-ColumnLimit: 100

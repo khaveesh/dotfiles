@@ -7,204 +7,13 @@
 "      ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝
 "
 
-" Autocmds {{{
-
-" Highlights for the statusline
-function s:Highlight() abort
-    " Gruvbox Light colors
-    highlight statusline guibg=#665c54 guifg=#ebdbb2
-    highlight info       guibg=#d5c4a1 guifg=#282828
-    highlight warning    guibg=#b57614 guifg=#fbf1c7
-    highlight error      guibg=#fbf1c7 guifg=#9d0006
-
-    highlight! link TabLineSel BufTabLineCurrent
-endfunction
-
-augroup custom
-    autocmd!
-
-    " Prevent the custom highlights from being cleared on reload
-    autocmd ColorScheme * call s:Highlight()
-
-    " Use Pandoc Markdown syntax for all md files
-    autocmd BufNewFile,BufRead *.md setfiletype markdown.pandoc
-
-    " Format the file before saving
-    autocmd BufWritePre * call functions#Format()
-augroup END
-
-" }}}
-
-" EditorConfig {{{
-
-set termguicolors                           " Enable 24-Bit Truecolor
-set shell=dash                              " Use POSIX-compliant shell
-set gdefault                                " Better substitute
-set expandtab tabstop=4 shiftwidth=4        " Expand tabstops to be 4 spaces
-set keywordprg=:DD                          " Search Dash.app for keywords
-let &grepprg = 'rg --vimgrep --smart-case'  " Customize grep to use ripgrep
-
-set spelloptions=camel " Spellcheck individual components of CamelCased words
-
-" Completion popup
-set completeopt=menuone,noselect
-let &pumheight = (&lines - 2) / 3
-
-" Colorscheme
-set background=light
-let g:gruvbox_invert_selection = 0
-let g:gruvbox_italic           = 1
-let g:gruvbox_contrast_light   = 'hard'
-colorscheme gruvbox
-
-" Disable unused providers to reduce startup time
-let g:loaded_node_provider    = 0
-let g:loaded_perl_provider    = 0
-let g:loaded_python_provider  = 0
-let g:loaded_python3_provider = 0
-let g:loaded_ruby_provider    = 0
-
-" NerdTree style netrw
-let g:netrw_banner       = 0
-let g:netrw_browse_split = 2
-let g:netrw_liststyle    = 3
-let g:netrw_winsize      = 25
-
-" }}}
-
-" Statusline {{{
-
-" Left section
-let &statusline = '%#statusline# %m %f %h%w   '
-let &statusline .= '%{' .
-            \ "&bl && len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1"
-            \ . "? '[Buffers Listed]' : '' }"
-
-let &statusline .= '%='
-
-" Right section
-" Git Status
-let &statusline .= "%{ exists('b:gitsigns_status')"
-            \              "? ' ' . b:gitsigns_status : '' }"
-" Position info
-let &statusline .= ' %#info# %l,%c | %P '
-
-" }}}
-
-" Keymappings {{{
-
-" Use spacebar as leader
-let mapleader = "\<Space>"
-nnoremap <Space> <nop>
-
-" Map unused large sized normal mode keys to useful functions
-nnoremap <BS> <C-^>
-nnoremap \ <C-w>
-map <Tab> %
-map <S-Tab> g%
-
-" Clear search highlighting
-noremap <C-l> <cmd>nohlsearch<CR><C-l>
-
-" Call macro
-nnoremap Q @q
-
-" Edit recorded macros
-nnoremap cm :<C-r>='let @'.v:register.'='.string(getreg(v:register))<CR><C-f><left>
-
-" Toggle netrw
-nnoremap <silent> yd :Lexplore<CR>
-
-" Toggle spell check
-nnoremap ysc :setlocal <C-R>=&spell ? 'nospell' : 'spell'<CR><CR>
-
-" Jetpack mapping - Fast switch, split or unload buffers
-nmap gb :ls<CR>
-nnoremap gB :ls<CR>:vert sb
-
-" View register contents
-nnoremap gr :registers<CR>
-inoremap <M-r> <cmd>registers<CR>
-
-" Quick copy/delete into system clipboard
-nnoremap cy "+y
-nnoremap cd "+d
-xnoremap cy "+y
-xnoremap cd "+d
-
-" Toggle Quickfix & Location Lists
-nnoremap <silent><expr> <leader>q
-            \ empty(filter(getwininfo(), 'v:val.quickfix'))
-            \ ? ':cwindow<CR>' : ':cclose<CR>'
-nnoremap <silent><expr> <leader>l
-            \ empty(filter(getwininfo(), 'v:val.loclist'))
-            \ ? ':lwindow<CR>' : ':lclose<CR>'
-
-" Echo current file's info
-nnoremap <leader>f :echo "\t" &ft &fenc &ff<CR>
-
-" Reload init.vim
-nnoremap <leader>v :source ~/.config/nvim/init.vim<CR>
-
-" Substitute the word under the cursor.
-nnoremap <leader>s :%s/<C-r><C-w>/<C-r><C-w>
-nnoremap <leader>S :%s/\<<C-r><C-w>\>/<C-r><C-w>
-
-" Quick save & exit
-nnoremap <leader>w :up<CR>
-nnoremap <leader>W mwgg=G`w:up<CR>
-nnoremap <leader>e :q<CR>
-nnoremap <leader>E :qa<CR>
-nnoremap <silent> <C-q> :bd<CR>
-nnoremap <silent> <M-q> :bd!<CR>
-
-" Better in-buffer search
-set wildcharm=<C-z>
-cnoremap <expr> <Tab>   getcmdtype() =~ '[\/?]' ? "<C-g>" : "<C-z>"
-cnoremap <expr> <S-Tab> getcmdtype() =~ '[\/?]' ? "<C-t>" : "<S-Tab>"
-
-" Clear search highlighting or call CCR
-cnoremap <expr> <CR> getcmdtype() =~ '[\/?]' ? "<CR><cmd>nohlsearch<CR>" : functions#CCR()
-
-" Use CCR to provide intuitive auto prompt
-nnoremap gm :g//#<left><left>
-nmap <leader>m :marks<CR>
-nmap <leader>j :jumps<CR>
-nmap <leader>Q :clist<CR>
-nmap <leader>L :llist<CR>
-nnoremap <leader>o :browse oldfiles<CR>
-
-" Toggle Terminal
-tnoremap <ESC> <C-\><C-n>
-nnoremap <M-z> :call functions#ToggleTerminal()<CR>
-tnoremap <silent> <M-z> <C-\><C-n>:call functions#ToggleTerminal()<CR>
-
-" }}}
-
-" Commands {{{
-
-" Better grep command (romain-l)
-function s:Grep(...) abort
-    return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
-endfunction
-command -nargs=+ -complete=file_in_path -bar Grep cgetexpr s:Grep(<f-args>) | cw
-cnoreabbrev <expr> grep
-            \ (getcmdtype() == ':' && getcmdline() ==# 'grep') ? 'Grep' : 'grep'
-
-" Look up documentation in Dash.app
-command -nargs=+ DD silent execute functions#DevDocs(<q-args>)
-
-" Clean->Install->Update neovim packages
-command VP execute 'vsplit | terminal '.stdpath('config').'/nvim_packer.py'
-
-" }}}
-
 " Plugins {{{
 
 let g:packages = []
 
 function s:packadd(pack, args = {}) abort
     if empty(a:args)
+        " Default type is 'start'
         call add(g:packages, [a:pack, { 'type': 'start' }])
     else
         call add(g:packages, [a:pack, a:args])
@@ -213,16 +22,16 @@ endfunction
 
 command -buffer -nargs=+ Pack call s:packadd(<args>)
 
-" Lua plugins {{{
+" Lua Plugins {{{
 
 " Sensible Defaults
 Pack 'khaveesh/nvim-sensibly-opinionated-defaults'
 
-" LSP - Actions & Completion
+" LSP - Language Services & Completion
 Pack 'neovim/nvim-lspconfig'
 Pack 'hrsh7th/nvim-compe'
 
-" Semantic syntax highlight & Textobjs
+" Semantic highlighting & text-objects
 Pack 'nvim-treesitter/nvim-treesitter'
 Pack 'nvim-treesitter/nvim-treesitter-textobjects'
 
@@ -241,49 +50,195 @@ Pack 'vim-pandoc/vim-pandoc-syntax'
 " ColorScheme
 Pack 'gruvbox-community/gruvbox', { 'type': 'opt' }
 
-" VSCode/LSP style snippet plugin
+" VSCode/LSP snippets
 Pack 'hrsh7th/vim-vsnip'
 
 " }}}
 
 " Utilities {{{
 
-" Comment out lines
+" Comment & uncomment lines
 Pack 'khaveesh/vim-commentary-yank'
 
 " Handy square bracket mappings
 Pack 'khaveesh/vim-unimpaired'
 
-" Surround selection with delimiters
+" Manipulate surrounding delimiters
 Pack 'tpope/vim-surround'
 
 " Dot-repeat support for plugins
 Pack 'tpope/vim-repeat'
 
-" Easy text exchange operator
+" Text exchange operator
 Pack 'tommcdo/vim-exchange'
 
 " }}}
 
 " }}}
 
-" Plugin Configuration & Keymappings {{{
+" Autocmds {{{
 
-" Initializes configuration for Lua plugins
-lua require('init')
+augroup custom | autocmd!
+    " Prevent custom highlights from being cleared on reload
+    autocmd ColorScheme GruvBox call s:Highlight()
 
-" Nvim-Compe
-inoremap <expr> <CR>  compe#confirm("\<CR>")
-inoremap <expr> <C-e> compe#close("\<C-e>")
+    " Use Pandoc Markdown syntax for all .md files
+    autocmd BufNewFile,BufRead *.md setfiletype markdown.pandoc
+
+    " Format the file before saving
+    autocmd BufWritePre * call functions#Format()
+augroup END
+
+" Highlights for the statusline
+function s:Highlight() abort
+    " Gruvbox Light colors
+    highlight statusline guibg=#665c54 guifg=#ebdbb2
+    highlight info       guibg=#d5c4a1 guifg=#282828
+    highlight warning    guibg=#b57614 guifg=#fbf1c7
+    highlight error      guibg=#fbf1c7 guifg=#9d0006
+    highlight! link TabLineSel BufTabLineCurrent
+endfunction
+
+highlight! default link LspSignatureActiveParameter WarningMsg
+
+" }}}
+
+" EditorConfig {{{
+
+set termguicolors                     " Enable 24-Bit Truecolor
+set shell=dash                        " Use POSIX-compliant shell
+set gdefault                          " Better substitute
+set expandtab tabstop=4 shiftwidth=4  " Expand tab stops to be 4 spaces
+set keywordprg=:DD                    " Search Dash.app for documentation
+set spelloptions=camel                " Spell check camelCased components
+
+" Completion popup
+set completeopt=menuone,noselect
+let &pumheight = (&lines - 2) / 3
+
+" Use ripgrep as grep program
+let &grepprg = 'rg --vimgrep --smart-case'
+
+" ColorScheme
+set background=light
+let g:gruvbox_invert_selection = 0
+let g:gruvbox_italic           = 1
+let g:gruvbox_contrast_light   = 'hard'
+colorscheme gruvbox
+
+let g:vsnip_snippet_dir = stdpath('config').'/vsnip'
+
+" NerdTree style netrw
+let g:netrw_banner       = 0
+let g:netrw_browse_split = 2
+let g:netrw_liststyle    = 3
+let g:netrw_winsize      = 25
+
+" Disable unused providers to reduce startup time
+let g:loaded_node_provider    = 0
+let g:loaded_perl_provider    = 0
+let g:loaded_python_provider  = 0
+let g:loaded_python3_provider = 0
+let g:loaded_ruby_provider    = 0
+
+" }}}
+
+" Keymaps {{{
+
+" Use space as leader
+nnoremap <Space> <nop>
+let mapleader = "\<Space>"
+
+" Clear search highlighting
+noremap <C-l> <cmd>nohlsearch<CR><C-l>
+
+" Call macro recorded in register q
+nnoremap Q @q
+
+" Edit recorded macro
+nnoremap cm :let @<C-r>=v:register.'='.string(getreg(v:register))<CR><C-f><left>
+
+" Toggle netrw
+nnoremap <silent> yd :Lexplore<CR>
+
+" Toggle spell check
+nnoremap zy :syntax match SingleChar '\<\A*\a\A*\>' contains=@NoSpell<CR>
+            \ :setlocal <C-r>=&spell ? 'nospell' : 'spell'<CR><CR>
+
+" Jetpack mapping - Fast switch, split or unload buffers
+nmap gb :ls<CR>
+nnoremap gB :ls<CR>:vert sb
+
+" View register contents
+nnoremap gr :registers<CR>
+noremap! <M-r> <cmd>registers<CR>
+
+" Quick copy/delete into system clipboard
+nnoremap cd "+d
+nnoremap cy "+y
+xnoremap cd "+d
+xnoremap cy "+y
+
+" Map unused large size normal mode keys to useful functions
+nnoremap <BS> <C-^>
+nnoremap \ <C-w>
+map <Tab> %
+map <S-Tab> g%
+
+" Echo file info
+nnoremap <leader>f :echo "\t" &ft &fenc &ff<CR>
+
+" Reload init.vim
+nnoremap <leader>v :source ~/.config/nvim/init.vim<CR>
+
+" Substitute the word under the cursor.
+nnoremap <leader>s :%s/<C-r><C-w>/<C-r><C-w>
+nnoremap <leader>S :%s/\<<C-r><C-w>\>/<C-r><C-w>
+
+" Toggle Quickfix & Location lists
+nnoremap <silent><expr> <leader>l
+            \ empty(filter(getwininfo(), 'v:val.loclist'))
+            \ ? ':lwindow<CR>' : ':lclose<CR>'
+nnoremap <silent><expr> <leader>q
+            \ empty(filter(getwininfo(), 'v:val.quickfix'))
+            \ ? ':cwindow<CR>' : ':cclose<CR>'
+
+" Quick save & exit
+nnoremap <silent> <leader>w :up<CR>
+nnoremap <silent> <leader>W mwgg=G`w:up<CR>
+nnoremap <silent> <leader>e :q<CR>
+nnoremap <leader>E :qa<CR>
+nnoremap <silent> <C-q> :bd<CR>
+nnoremap <silent> <M-q> :bd!<CR>
+
+" Better in-buffer search
+set wildcharm=<C-z>
+cnoremap <expr> <Tab>   getcmdtype() =~ '[\/?]' ? '<C-g>' : '<C-z>'
+cnoremap <expr> <S-Tab> getcmdtype() =~ '[\/?]' ? '<C-t>' : '<S-Tab>'
+
+" Clear search highlighting on <CR>
+cnoremap <expr> <CR> getcmdtype() =~ '[\/?]' ? '<CR><cmd>nohlsearch<CR>' : functions#CCR()
+
+" Use CCR to provide intuitive auto prompt
+nmap <leader>j :jumps<CR>
+nmap <leader>m :marks<CR>
+nmap <leader>L :llist<CR>
+nmap <leader>Q :clist<CR>
+nnoremap gm :g//#<left><left>
+nnoremap <leader>o :browse oldfiles<CR>
+
+" Terminal
+tnoremap <Esc> <C-\><C-n>
+tnoremap <silent> <M-z> <C-\><C-n>:call functions#ToggleTerminal()<CR>
+nnoremap <M-z> :call functions#ToggleTerminal()<CR>
+
+" nvim-compe
+inoremap <expr> <CR>  compe#confirm({ 'keys': '<CR>', 'select': v:true })
+inoremap <expr> <C-e> compe#close('<C-e>')
 inoremap <expr> <C-f> compe#scroll({ 'delta': +4 })
 inoremap <expr> <C-d> compe#scroll({ 'delta': -4 })
 
-" vim-vsnip - LSP & VSCode snippets
-let g:vsnip_snippet_dir = stdpath('config').'/vsnip'
-
-" Use (s-)tab to:
-"   - move to prev/next item in completion menu
-"   - jump to prev/next snippet's placeholder
+" vim-vsnip
 function s:tab() abort
     if pumvisible()
         return "\<C-n>"
@@ -306,6 +261,9 @@ function s:s_tab() abort
     endif
 endfunction
 
+" Use (s-)tab to:
+"   - move to prev/next item in completion menu
+"   - jump to prev/next snippet's placeholder
 imap <expr> <Tab> <SID>tab()
 smap <expr> <Tab> <SID>tab()
 imap <expr> <S-Tab> <SID>s_tab()
@@ -316,15 +274,46 @@ nnoremap csf F(cb
 nmap dsf dsbdb
 
 " Some niceties on top of vim-commentary
-nnoremap co ox<ESC>:Commentary<CR>W"_s
-nnoremap cO Ox<ESC>:Commentary<CR>W"_s
-nnoremap cA ox<ESC>:Commentary<CR>k$J2W"_s
-
+nnoremap co ox<Esc>:Commentary<CR>W"_s
+nnoremap cO Ox<Esc>:Commentary<CR>W"_s
+nnoremap cA ox<Esc>:Commentary<CR>k$J2W"_s
 " Invert comments for given range
-xnoremap <silent> gcy :g/./Commentary<CR>:set nohlsearch<CR>
-nnoremap <silent> gcy :set opfunc=<SID>InvertComment<CR>g@
-function s:InvertComment(type) abort
-    execute "'[,']g/./Commentary"
+xnoremap <silent> gy :g/./Commentary<CR>:set nohlsearch<CR>
+
+" }}}
+
+" Statusline {{{
+
+" File info
+let &statusline = '%#statusline# %m %f %h%w   '
+" Multiple Buffers indicator
+let &statusline .= '%{ &bl && '
+            \ . "len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1"
+            \ . " ? '[Buffers Listed]' : '' }"
+
+let &statusline .= '%='
+
+" Git Status
+let &statusline .= "%{ exists('b:gitsigns_status')"
+            \             . " ? ' ' . b:gitsigns_status : '' }"
+" Position info
+let &statusline .= ' %#info# %l,%c | %P '
+
+" }}}
+
+" Commands {{{
+
+" Look up documentation in Dash.app
+command -nargs=+ DD silent execute functions#DevDocs(<q-args>)
+
+" Better grep command (romain-l)
+command -nargs=+ -complete=file_in_path -bar Grep cgetexpr s:Grep(<f-args>) | cw
+
+function s:Grep(...) abort
+    return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
 endfunction
+
+cnoreabbrev <expr> grep
+            \ (getcmdtype() == ':' && getcmdline() ==# 'grep') ? 'Grep' : 'grep'
 
 " }}}

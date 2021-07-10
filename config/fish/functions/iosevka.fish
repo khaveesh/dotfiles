@@ -1,5 +1,5 @@
 # Defined in - @ line 1
-function fontu --description 'Builds the latest Iosevka version with custom build plan'
+function iosevka --description 'Builds the latest Iosevka version with custom build plan'
     cd ~/Developer/Iosevka \
         && set tag (curl -s https://api.github.com/repos/be5invis/Iosevka/releases/latest | awk -F '"' '/tag_name/{print $4}') \
         && curl -sL "https://github.com/be5invis/Iosevka/archive/$tag.tar.gz" | tar xf - --strip-components=1 \
