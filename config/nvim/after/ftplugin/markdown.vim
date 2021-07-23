@@ -1,5 +1,14 @@
 let &l:formatprg = 'pandoc -s -t markdown'
 
+" Insert fenced code block
+inoremap <buffer> ``` ```<C-m>```<up>
+
+" Select from list of headers
+nmap <buffer> gh :g/^#/#<CR>
+
+" Preview current document using Pandoc
+nnoremap <silent><buffer> <leader>p :up <bar> silent !fish -c 'panhtml %:S'<CR>
+
 " Fuzzy select from references
 function s:Cite(mode) abort
     let callback = {}
@@ -26,7 +35,7 @@ function s:Cite(mode) abort
 endfunction
 
 nnoremap <silent><buffer> cr :call <SID>Cite('n')<CR>
-inoremap <silent><buffer> <C-c> <C-o>:call <SID>Cite('i')<CR>
+inoremap <silent><buffer> <M-c> <C-o>:call <SID>Cite('i')<CR>
 
 " Markdown header jumping (romain-l)
 function s:JumpToNextHeading(direction, count) abort
@@ -44,12 +53,3 @@ endfunction
 
 nnoremap <silent><buffer> [[ :call <SID>JumpToNextHeading('up', v:count1)<CR>
 nnoremap <silent><buffer> ]] :call <SID>JumpToNextHeading('down', v:count1)<CR>
-
-" Select from list of headers
-nmap <leader>h :g/^#/#<CR>
-
-" Preview current document using Pandoc
-nnoremap <silent><buffer> <leader>p :up <bar> silent !fish -c 'panhtml %:S'<CR>
-
-" Insert fenced code block
-inoremap <buffer> ``` ```<C-m>```<up>

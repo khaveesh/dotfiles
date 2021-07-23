@@ -47,11 +47,18 @@ Pack 'lewis6991/gitsigns.nvim'
 Pack 'khaveesh/vim-fish-syntax'
 Pack 'vim-pandoc/vim-pandoc-syntax'
 
-" ColorScheme
+" Color Scheme
 Pack 'gruvbox-community/gruvbox', { 'type': 'opt' }
+set background=light
+let g:gruvbox_invert_selection = 0
+let g:gruvbox_italic           = 1
+let g:gruvbox_contrast_light   = 'hard'
+colorscheme gruvbox
+highlight! default link LspSignatureActiveParameter WarningMsg
 
 " VSCode/LSP snippets
 Pack 'hrsh7th/vim-vsnip'
+let g:vsnip_snippet_dir = stdpath('config').'/vsnip'
 
 " }}}
 
@@ -80,7 +87,9 @@ Pack 'tommcdo/vim-exchange'
 
 augroup custom | autocmd!
     " Prevent custom highlights from being cleared on reload
-    autocmd ColorScheme GruvBox call s:Highlight()
+    autocmd ColorScheme GruvBox
+                \ highlight Error guibg=#fbf1c7 guifg=#9d0006
+                \ | highlight Warning guibg=#b57614 guifg=#fbf1c7
 
     " Use Pandoc Markdown syntax for all .md files
     autocmd BufNewFile,BufRead *.md setfiletype markdown.pandoc
@@ -88,18 +97,6 @@ augroup custom | autocmd!
     " Format the file before saving
     autocmd BufWritePre * call functions#Format()
 augroup END
-
-" Highlights for the statusline
-function s:Highlight() abort
-    " Gruvbox Light colors
-    highlight statusline guibg=#665c54 guifg=#ebdbb2
-    highlight info       guibg=#d5c4a1 guifg=#282828
-    highlight warning    guibg=#b57614 guifg=#fbf1c7
-    highlight error      guibg=#fbf1c7 guifg=#9d0006
-    highlight! link TabLineSel BufTabLineCurrent
-endfunction
-
-highlight! default link LspSignatureActiveParameter WarningMsg
 
 " }}}
 
@@ -109,30 +106,19 @@ set termguicolors                     " Enable 24-Bit Truecolor
 set shell=dash                        " Use POSIX-compliant shell
 set gdefault                          " Better substitute
 set expandtab tabstop=4 shiftwidth=4  " Expand tab stops to be 4 spaces
-set keywordprg=:DD                    " Search Dash.app for documentation
 set spelloptions=camel                " Spell check camelCased components
 
 " Completion popup
 set completeopt=menuone,noselect
-let &pumheight = (&lines - 2) / 3
+let &pumheight = (&lines - 5) / 3
 
 " Use ripgrep as grep program
 let &grepprg = 'rg --vimgrep --smart-case'
 
-" ColorScheme
-set background=light
-let g:gruvbox_invert_selection = 0
-let g:gruvbox_italic           = 1
-let g:gruvbox_contrast_light   = 'hard'
-colorscheme gruvbox
-
-let g:vsnip_snippet_dir = stdpath('config').'/vsnip'
-
 " NerdTree style netrw
-let g:netrw_banner       = 0
-let g:netrw_browse_split = 2
-let g:netrw_liststyle    = 3
-let g:netrw_winsize      = 25
+let g:netrw_banner    = 0
+let g:netrw_liststyle = 3
+let g:netrw_winsize   = 25
 
 " Disable unused providers to reduce startup time
 let g:loaded_node_provider    = 0
@@ -147,10 +133,7 @@ let g:loaded_ruby_provider    = 0
 
 " Use space as leader
 nnoremap <Space> <nop>
-let mapleader = "\<Space>"
-
-" Clear search highlighting
-noremap <C-l> <cmd>nohlsearch<CR><C-l>
+let mapleader = ' '
 
 " Call macro recorded in register q
 nnoremap Q @q
@@ -162,8 +145,8 @@ nnoremap cm :let @<C-r>=v:register.'='.string(getreg(v:register))<CR><C-f><left>
 nnoremap <silent> yd :Lexplore<CR>
 
 " Toggle spell check
-nnoremap zy :syntax match SingleChar '\<\A*\a\A*\>' contains=@NoSpell<CR>
-            \ :setlocal <C-r>=&spell ? 'nospell' : 'spell'<CR><CR>
+nnoremap zy :syntax match SingleChar '\<\A*\a\A*\>' contains=@NoSpell<CR>:
+            \ setlocal <C-r>=&spell ? 'nospell' : 'spell'<CR><CR>
 
 " Jetpack mapping - Fast switch, split or unload buffers
 nmap gb :ls<CR>
@@ -173,17 +156,21 @@ nnoremap gB :ls<CR>:vert sb
 nnoremap gr :registers<CR>
 noremap! <M-r> <cmd>registers<CR>
 
-" Quick copy/delete into system clipboard
-nnoremap cd "+d
-nnoremap cy "+y
-xnoremap cd "+d
-xnoremap cy "+y
+" Clear search highlighting
+nnoremap <C-l> :nohlsearch<CR><C-l>
+vnoremap <C-l> <cmd>nohlsearch<CR><C-l>
 
 " Map unused large size normal mode keys to useful functions
 nnoremap <BS> <C-^>
 nnoremap \ <C-w>
 map <Tab> %
 map <S-Tab> g%
+
+" Quick copy/delete into system clipboard
+nnoremap cd "+d
+nnoremap cy "+y
+xnoremap cd "+d
+xnoremap cy "+y
 
 " Echo file info
 nnoremap <leader>f :echo "\t" &ft &fenc &ff<CR>
@@ -230,10 +217,10 @@ nnoremap <leader>o :browse oldfiles<CR>
 " Terminal
 tnoremap <Esc> <C-\><C-n>
 tnoremap <silent> <M-z> <C-\><C-n>:call functions#ToggleTerminal()<CR>
-nnoremap <M-z> :call functions#ToggleTerminal()<CR>
+nnoremap <silent> <M-z> :call functions#ToggleTerminal()<CR>
 
 " nvim-compe
-inoremap <expr> <CR>  compe#confirm({ 'keys': '<CR>', 'select': v:true })
+inoremap <expr> <CR>  compe#confirm('<CR>')
 inoremap <expr> <C-e> compe#close('<C-e>')
 inoremap <expr> <C-f> compe#scroll({ 'delta': +4 })
 inoremap <expr> <C-d> compe#scroll({ 'delta': -4 })
@@ -277,16 +264,14 @@ nmap dsf dsbdb
 nnoremap co ox<Esc>:Commentary<CR>W"_s
 nnoremap cO Ox<Esc>:Commentary<CR>W"_s
 nnoremap cA ox<Esc>:Commentary<CR>k$J2W"_s
-" Invert comments for given range
-xnoremap <silent> gy :g/./Commentary<CR>:set nohlsearch<CR>
 
 " }}}
 
 " Statusline {{{
 
 " File info
-let &statusline = '%#statusline# %m %f %h%w   '
-" Multiple Buffers indicator
+let &statusline = '%#StatusLineNC# %m %f %h%w '
+" Multiple buffers indicator
 let &statusline .= '%{ &bl && '
             \ . "len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1"
             \ . " ? '[Buffers Listed]' : '' }"
@@ -297,7 +282,7 @@ let &statusline .= '%='
 let &statusline .= "%{ exists('b:gitsigns_status')"
             \             . " ? ' ' . b:gitsigns_status : '' }"
 " Position info
-let &statusline .= ' %#info# %l,%c | %P '
+let &statusline .= ' %#StatusLine# %l,%c │ %P '
 
 " }}}
 
@@ -305,6 +290,7 @@ let &statusline .= ' %#info# %l,%c | %P '
 
 " Look up documentation in Dash.app
 command -nargs=+ DD silent execute functions#DevDocs(<q-args>)
+set keywordprg=:DD
 
 " Better grep command (romain-l)
 command -nargs=+ -complete=file_in_path -bar Grep cgetexpr s:Grep(<f-args>) | cw

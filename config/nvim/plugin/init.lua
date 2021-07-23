@@ -3,13 +3,13 @@
 local lsp = vim.lsp
 local fmt = string.format
 
--- Statusline diagnostics
+-- Statusline diagnostic info
 function LspDiagnosticsSL()
     local e = lsp.diagnostic.get_count(0, 'Error')
     local w = lsp.diagnostic.get_count(0, 'Warning')
 
-    local sl_error = (e ~= 0) and fmt('%%#error# E:%d ', e) or ''
-    local sl_warning = (w ~= 0) and fmt('%%#warning# W:%d ', w) or ''
+    local sl_error = (e ~= 0) and fmt('%%#Error# E:%d ', e) or ''
+    local sl_warning = (w ~= 0) and fmt('%%#Warning# W:%d ', w) or ''
     return sl_error .. sl_warning
 end
 
@@ -45,7 +45,7 @@ local function on_attach(client, bufnr)
     lsp_map(']d', 'diagnostic.goto_next')
     lsp_map('gl', 'diagnostic.set_loclist')
 
-    -- Set formatprg to the lsp client
+    -- Indicate server provides formatter
     if client.resolved_capabilities.document_formatting then
         vim.bo.formatprg = 'lsp'
     end
@@ -57,8 +57,6 @@ end
 -- Server config
 local servers = {
     clangd = {},
-
-    denols = { init_options = { lint = true, unstable = true } },
 
     jedi_language_server = {},
 
@@ -81,8 +79,6 @@ local servers = {
             },
         },
     },
-
-    vimls = {},
 }
 
 -- Indicate snippet support to server
@@ -96,17 +92,14 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
     },
 }
 
--- Use a loop to conveniently call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
+-- Use a loop to conveniently setup multiple servers with custom config
 for server, config in pairs(servers) do
-    require('lspconfig')[server].setup {
-        on_attach = on_attach,
-        capabilities = capabilities,
-        unpack(config),
-    }
+    config.on_attach = on_attach
+    config.capabilities = capabilities
+    require('lspconfig')[server].setup(config)
 end
 
--- Disable signs
+-- Disable LSP signs
 lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(lsp.diagnostic.on_publish_diagnostics, {
     signs = false,
 })
@@ -127,7 +120,7 @@ require('nvim-treesitter.configs').setup {
         'yaml',
     },
 
-    highlight = { enable = true, additional_vim_regex_highlighting = true },
+    highlight = { enable = true },
 
     textobjects = {
         select = {
@@ -186,7 +179,7 @@ require('nvim-treesitter.configs').setup {
 
 -- }}}
 
--- Compe {{{
+-- nvim-compe {{{
 
 require('compe').setup {
     preselect = 'always',
@@ -207,7 +200,7 @@ require('gitsigns').setup {
     signs = {
         add = { hl = 'DiffAdd', text = '+' },
         change = { hl = 'DiffChange', text = '~' },
-        changedelete = { hl = 'DiffText', text = '-' },
+        changedelete = { hl = 'DiffText' },
         delete = { hl = 'DiffDelete' },
         topdelete = { hl = 'DiffDelete' },
     },

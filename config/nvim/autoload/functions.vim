@@ -7,15 +7,15 @@ function functions#Format() abort
     else
         const original_lines = getbufline(bufnr(), 1, '$')
 
-        if &formatprg
-            " Format using CLI tools via stdin
-            const formatted_lines = systemlist(&formatprg, original_lines)
-        else
+        if empty(&formatprg)
             " Trim trailing whitespace and leading blank lines
             const formatted_lines = systemlist(
                         \   "sed 's/[[:space:]]*$//'",
                         \   original_lines
                         \ )
+        else
+            " Format using CLI tools via stdin
+            const formatted_lines = systemlist(&formatprg, original_lines)
         endif
 
         if v:shell_error
@@ -31,7 +31,6 @@ function functions#Format() abort
     endif
 endfunction
 
-" Open fuzzy finder in split terminal
 function functions#FZTerm(list_command, callback, prompt) abort
     " Open a Neovim terminal emulator buffer in a new window using termopen,
     " execute list_command piping its output to the fuzzy selector, and call
@@ -45,7 +44,6 @@ function functions#FZTerm(list_command, callback, prompt) abort
     " callback.on_select : String -> Void
     "     Function executed with the item selected by the user as the
     "     first argument.
-
     const filename = tempname()
 
     function a:callback.on_exit(job_id, data, event) abort closure
@@ -62,12 +60,12 @@ function functions#FZTerm(list_command, callback, prompt) abort
 
     execute 'botright' . &pumheight . 'new'
     const term_command = a:list_command . ' | '
-                \ . 'fzy' .  ' -l ' . &pumheight .
-                \ ' -p ' . shellescape(a:prompt) . ' > ' . filename
+                \ . 'fzy' .  ' -l ' . &pumheight . ' -p '
+                \ . shellescape(a:prompt) . ' > ' . filename
     call termopen(term_command, a:callback)
 
     setlocal nonumber norelativenumber laststatus=0 noshowmode noshowcmd noruler
-    tnoremap <Esc> <Esc>
+    tnoremap <buffer> <Esc> <Esc>
     setfiletype picker
     startinsert!
 endfunction
@@ -83,14 +81,14 @@ function functions#CCR() abort
         return "\<CR>:b"
     elseif cmdline =~ '\v\C/(#|nu|num|numb|numbe|number)$'
         " like :g//# but prompts for a command
-        return "\<CR>:"
+        return "\<CR>"
     elseif cmdline =~ '\v\C^(dli|il)'
         " like :dlist or :ilist but prompts for a count for :djump or :ijump
         return "\<CR>:" . cmdline[0] . "j  " .
                     \ split(cmdline, " ")[1] . "\<S-Left>\<Left>"
     elseif cmdline =~ '\v\C^(cli|lli)'
         " like :clist or :llist but prompts for an error/location number
-        return "\<CR>:sil " . repeat(cmdline[0], 2) . "\<Space>"
+        return "\<CR>:silent " . repeat(cmdline[0], 2) . "\<Space>"
     elseif cmdline =~ '\C^changes'
         " like :changes but prompts for a change to jump to
         return "\<CR>:norm! g;\<S-Left>"
@@ -110,7 +108,6 @@ endfunction
 
 " Toggle Terminal
 let s:term_win_id = -1
-
 function functions#ToggleTerminal() abort
     if win_gotoid(s:term_win_id)
         hide
@@ -130,7 +127,7 @@ endfunction
 " Search documentation on Dash.app
 function functions#DevDocs(args) abort
     let query = '!open '
-    " let URL = 'https://devdocs.io/#q='
+    " const URL = 'https://devdocs.io/#q='
     const URL = 'dash://'
 
     if len(split(a:args)) == 1

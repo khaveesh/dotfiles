@@ -1,10 +1,11 @@
-let &l:formatprg = 'isort - | black -'
+let &l:formatprg = 'isort - | black -q -'
 
 setlocal keywordprg=:DD
 
 nnoremap <buffer> gx :up <bar> vsp <bar> term python %:S<CR>:startinsert<CR>
 
-command Lint lgetexpr system(expandcmd('flake8 %:S;echo; pylint %:S; mypy %:S'))
+command -buffer Lint
+            \ lgetexpr system(expandcmd('flake8 %:S; echo; pylint %:S; mypy %:S'))
             \ | call setloclist(0, [], 'a', { 'title': 'Pylint: '.expand('%') })
             \ | lwindow
 
