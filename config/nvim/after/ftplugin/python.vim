@@ -1,6 +1,4 @@
-let &l:formatprg = 'isort - | black -q -'
-
-setlocal keywordprg=:DD
+let &l:formatprg = 'isort - | black -'
 
 nnoremap <buffer> gx :up <bar> vsp <bar> term python %:S<CR>:startinsert<CR>
 
@@ -11,6 +9,7 @@ command -buffer Lint
 
 nnoremap <silent><buffer> gl :up <bar> Lint<CR>
 
+" Snippetized docstrings for functions
 function s:PyDoc() abort
     ?def
     const firstline = line('.')

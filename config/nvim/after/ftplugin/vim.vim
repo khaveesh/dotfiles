@@ -1,3 +1,4 @@
+" Eliminate leading backslashes on VimScript line joins
 function s:VimImprovedJoin() abort
     if line('.') != line('$')
         normal! J

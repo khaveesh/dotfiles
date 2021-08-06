@@ -11,6 +11,10 @@
 
 let g:packages = []
 
+" Custom Pack command to interface with external `python` plugin manager
+" via JSON dump call made through a headless nvim process
+command -buffer -nargs=+ Pack call s:packadd(<args>)
+
 function s:packadd(pack, args = {}) abort
     if empty(a:args)
         " Default type is 'start'
@@ -19,8 +23,6 @@ function s:packadd(pack, args = {}) abort
         call add(g:packages, [a:pack, a:args])
     endif
 endfunction
-
-command -buffer -nargs=+ Pack call s:packadd(<args>)
 
 " Lua Plugins {{{
 
@@ -49,6 +51,7 @@ Pack 'vim-pandoc/vim-pandoc-syntax'
 
 " Color Scheme
 Pack 'gruvbox-community/gruvbox', { 'type': 'opt' }
+set termguicolors
 set background=light
 let g:gruvbox_invert_selection = 0
 let g:gruvbox_italic           = 1
@@ -83,26 +86,8 @@ Pack 'tommcdo/vim-exchange'
 
 " }}}
 
-" Autocmds {{{
-
-augroup custom | autocmd!
-    " Prevent custom highlights from being cleared on reload
-    autocmd ColorScheme GruvBox
-                \ highlight Error guibg=#fbf1c7 guifg=#9d0006
-                \ | highlight Warning guibg=#b57614 guifg=#fbf1c7
-
-    " Use Pandoc Markdown syntax for all .md files
-    autocmd BufNewFile,BufRead *.md setfiletype markdown.pandoc
-
-    " Format the file before saving
-    autocmd BufWritePre * call functions#Format()
-augroup END
-
-" }}}
-
 " EditorConfig {{{
 
-set termguicolors                     " Enable 24-Bit Truecolor
 set shell=dash                        " Use POSIX-compliant shell
 set gdefault                          " Better substitute
 set expandtab tabstop=4 shiftwidth=4  " Expand tab stops to be 4 spaces
@@ -110,10 +95,7 @@ set spelloptions=camel                " Spell check camelCased components
 
 " Completion popup
 set completeopt=menuone,noselect
-let &pumheight = (&lines - 5) / 3
-
-" Use ripgrep as grep program
-let &grepprg = 'rg --vimgrep --smart-case'
+set pumheight=15
 
 " NerdTree style netrw
 let g:netrw_banner    = 0
@@ -129,17 +111,28 @@ let g:loaded_ruby_provider    = 0
 
 " }}}
 
+" Commands {{{
+
+" Format before save
+autocmd! BufWritePre * call functions#Format()
+
+" Look up documentation, mapped to K
+set keywordprg=:DD
+command -nargs=+ DD call system(functions#DevDocs(<q-args>))
+
+" Better grep command (romain-l)
+command -nargs=+ -complete=file_in_path -bar Grep cgetexpr s:Grep(<f-args>) | cw
+
+function s:Grep(...) abort
+    return system(join(['rg --vimgrep --smart-case'] + [expandcmd(join(a:000, ' '))], ' '))
+endfunction
+
+cnoreabbrev <expr> grep
+            \ (getcmdtype() == ':' && getcmdline() ==# 'grep') ? 'Grep' : 'grep'
+
+" }}}
+
 " Keymaps {{{
-
-" Use space as leader
-nnoremap <Space> <nop>
-let mapleader = ' '
-
-" Call macro recorded in register q
-nnoremap Q @q
-
-" Edit recorded macro
-nnoremap cm :let @<C-r>=v:register.'='.string(getreg(v:register))<CR><C-f><left>
 
 " Toggle netrw
 nnoremap <silent> yd :Lexplore<CR>
@@ -149,8 +142,19 @@ nnoremap zy :syntax match SingleChar '\<\A*\a\A*\>' contains=@NoSpell<CR>:
             \ setlocal <C-r>=&spell ? 'nospell' : 'spell'<CR><CR>
 
 " Jetpack mapping - Fast switch, split or unload buffers
-nmap gb :ls<CR>
+nnoremap gb :ls<CR>:b
 nnoremap gB :ls<CR>:vert sb
+
+" Call macro recorded in register q
+nnoremap Q @q
+" Edit recorded macro
+nnoremap cm :let @<C-r>=v:register.'='.string(getreg(v:register))<CR><C-f><left>
+
+" Quick copy/cut into system clipboard
+nnoremap cd "+d
+nnoremap cy "+y
+xnoremap cd "+d
+xnoremap cy "+y
 
 " View register contents
 nnoremap gr :registers<CR>
@@ -161,26 +165,29 @@ nnoremap <C-l> :nohlsearch<CR><C-l>
 vnoremap <C-l> <cmd>nohlsearch<CR><C-l>
 
 " Map unused large size normal mode keys to useful functions
-nnoremap <BS> <C-^>
-nnoremap \ <C-w>
 map <Tab> %
 map <S-Tab> g%
+nnoremap <BS> <C-^>
+nnoremap \ <C-w>
 
-" Quick copy/delete into system clipboard
-nnoremap cd "+d
-nnoremap cy "+y
-xnoremap cd "+d
-xnoremap cy "+y
+" Use space as leader
+nnoremap <Space> <nop>
+let mapleader = ' '
 
 " Echo file info
 nnoremap <leader>f :echo "\t" &ft &fenc &ff<CR>
 
-" Reload init.vim
-nnoremap <leader>v :source ~/.config/nvim/init.vim<CR>
+" Edit init.vim
+nnoremap <silent> <leader>v :edit ~/.config/nvim/init.vim<CR>
 
 " Substitute the word under the cursor.
 nnoremap <leader>s :%s/<C-r><C-w>/<C-r><C-w>
 nnoremap <leader>S :%s/\<<C-r><C-w>\>/<C-r><C-w>
+
+" Format and update
+nnoremap <leader>w :up<CR>
+" Indent and update
+nnoremap <silent> <leader>W mwgg=G`w:delmark w <bar> up<CR>
 
 " Toggle Quickfix & Location lists
 nnoremap <silent><expr> <leader>l
@@ -190,29 +197,11 @@ nnoremap <silent><expr> <leader>q
             \ empty(filter(getwininfo(), 'v:val.quickfix'))
             \ ? ':cwindow<CR>' : ':cclose<CR>'
 
-" Quick save & exit
-nnoremap <silent> <leader>w :up<CR>
-nnoremap <silent> <leader>W mwgg=G`w:up<CR>
+" Quick exit
 nnoremap <silent> <leader>e :q<CR>
 nnoremap <leader>E :qa<CR>
 nnoremap <silent> <C-q> :bd<CR>
 nnoremap <silent> <M-q> :bd!<CR>
-
-" Better in-buffer search
-set wildcharm=<C-z>
-cnoremap <expr> <Tab>   getcmdtype() =~ '[\/?]' ? '<C-g>' : '<C-z>'
-cnoremap <expr> <S-Tab> getcmdtype() =~ '[\/?]' ? '<C-t>' : '<S-Tab>'
-
-" Clear search highlighting on <CR>
-cnoremap <expr> <CR> getcmdtype() =~ '[\/?]' ? '<CR><cmd>nohlsearch<CR>' : functions#CCR()
-
-" Use CCR to provide intuitive auto prompt
-nmap <leader>j :jumps<CR>
-nmap <leader>m :marks<CR>
-nmap <leader>L :llist<CR>
-nmap <leader>Q :clist<CR>
-nnoremap gm :g//#<left><left>
-nnoremap <leader>o :browse oldfiles<CR>
 
 " Terminal
 tnoremap <Esc> <C-\><C-n>
@@ -225,7 +214,9 @@ inoremap <expr> <C-e> compe#close('<C-e>')
 inoremap <expr> <C-f> compe#scroll({ 'delta': +4 })
 inoremap <expr> <C-d> compe#scroll({ 'delta': -4 })
 
-" vim-vsnip
+" vim-vsnip: Use (s-)tab to
+"   - move to prev/next item in completion menu
+"   - jump to prev/next snippet's placeholder
 function s:tab() abort
     if pumvisible()
         return "\<C-n>"
@@ -248,9 +239,6 @@ function s:s_tab() abort
     endif
 endfunction
 
-" Use (s-)tab to:
-"   - move to prev/next item in completion menu
-"   - jump to prev/next snippet's placeholder
 imap <expr> <Tab> <SID>tab()
 smap <expr> <Tab> <SID>tab()
 imap <expr> <S-Tab> <SID>s_tab()
@@ -270,36 +258,18 @@ nnoremap cA ox<Esc>:Commentary<CR>k$J2W"_s
 " Statusline {{{
 
 " File info
-let &statusline = '%#StatusLineNC# %m %f %h%w '
+let &statusline = '%#StatusLineNC# %m %f %h%w  '
 " Multiple buffers indicator
 let &statusline .= '%{ &bl && '
             \ . "len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1"
             \ . " ? '[Buffers Listed]' : '' }"
 
-let &statusline .= '%='
+set statusline+=%=
 
 " Git Status
 let &statusline .= "%{ exists('b:gitsigns_status')"
             \             . " ? ' ' . b:gitsigns_status : '' }"
 " Position info
 let &statusline .= ' %#StatusLine# %l,%c │ %P '
-
-" }}}
-
-" Commands {{{
-
-" Look up documentation in Dash.app
-command -nargs=+ DD silent execute functions#DevDocs(<q-args>)
-set keywordprg=:DD
-
-" Better grep command (romain-l)
-command -nargs=+ -complete=file_in_path -bar Grep cgetexpr s:Grep(<f-args>) | cw
-
-function s:Grep(...) abort
-    return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
-endfunction
-
-cnoreabbrev <expr> grep
-            \ (getcmdtype() == ':' && getcmdline() ==# 'grep') ? 'Grep' : 'grep'
 
 " }}}

@@ -8,8 +8,8 @@ function LspDiagnosticsSL()
     local e = lsp.diagnostic.get_count(0, 'Error')
     local w = lsp.diagnostic.get_count(0, 'Warning')
 
-    local sl_error = (e ~= 0) and fmt('%%#Error# E:%d ', e) or ''
-    local sl_warning = (w ~= 0) and fmt('%%#Warning# W:%d ', w) or ''
+    local sl_error = (e ~= 0) and fmt('%%#ErrorMsg# E:%d ', e) or ''
+    local sl_warning = (w ~= 0) and fmt('%%#Search# W:%d ', w) or ''
     return sl_error .. sl_warning
 end
 
@@ -41,9 +41,11 @@ local function on_attach(client, bufnr)
     lsp_map('gh', 'buf.hover')
     lsp_map('gs', 'buf.document_symbol')
 
-    lsp_map('[d', 'diagnostic.goto_prev')
-    lsp_map(']d', 'diagnostic.goto_next')
-    lsp_map('gl', 'diagnostic.set_loclist')
+    if vim.bo.filetype ~= 'python' then
+        lsp_map('[d', 'diagnostic.goto_prev')
+        lsp_map(']d', 'diagnostic.goto_next')
+        lsp_map('gl', 'diagnostic.set_loclist')
+    end
 
     -- Indicate server provides formatter
     if client.resolved_capabilities.document_formatting then

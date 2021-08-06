@@ -31,5 +31,5 @@ for tab in tabs:
             exit()
 
 run(split("kitty @ new-window --new-tab"))
-run(split(f'kitty @ send-text "v +{line_no} {filename}\x0d"'))
+run(split(f'kitty @ send-text "nvim +{line_no} {filename}\x0d"'))
 run(split("open -a kitty"))

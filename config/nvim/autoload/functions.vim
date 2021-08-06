@@ -19,7 +19,7 @@ function functions#Format() abort
         endif
 
         if v:shell_error
-            echoerr 'formatprg exited with error code ' . v:shell_error
+            throw join(formatted_lines)
         elseif formatted_lines !=# original_lines
             const view = winsaveview()
             lua vim.api.nvim_buf_set_lines(0, 0, -1, true,
@@ -70,42 +70,6 @@ function functions#FZTerm(list_command, callback, prompt) abort
     startinsert!
 endfunction
 
-" Intuitive prompt (romain-l)
-function functions#CCR() abort
-    if getcmdtype() != ':'
-        return "\<CR>"
-    endif
-    const cmdline = getcmdline()
-    if cmdline =~ '\v\C^(ls|files|buffers)'
-        " like :ls but prompts for a buffer command
-        return "\<CR>:b"
-    elseif cmdline =~ '\v\C/(#|nu|num|numb|numbe|number)$'
-        " like :g//# but prompts for a command
-        return "\<CR>"
-    elseif cmdline =~ '\v\C^(dli|il)'
-        " like :dlist or :ilist but prompts for a count for :djump or :ijump
-        return "\<CR>:" . cmdline[0] . "j  " .
-                    \ split(cmdline, " ")[1] . "\<S-Left>\<Left>"
-    elseif cmdline =~ '\v\C^(cli|lli)'
-        " like :clist or :llist but prompts for an error/location number
-        return "\<CR>:silent " . repeat(cmdline[0], 2) . "\<Space>"
-    elseif cmdline =~ '\C^changes'
-        " like :changes but prompts for a change to jump to
-        return "\<CR>:norm! g;\<S-Left>"
-    elseif cmdline =~ '\C^ju'
-        " like :jumps but prompts for a position to jump to
-        return "\<CR>:norm! \<C-o>\<S-Left>"
-    elseif cmdline =~ '\C^marks'
-        " like :marks but prompts for a mark to jump to
-        return "\<CR>:norm! `"
-    elseif cmdline =~ '\C^undol'
-        " like :undolist but prompts for a change to undo
-        return "\<CR>:u "
-    else
-        return "\<CR>"
-    endif
-endfunction
-
 " Toggle Terminal
 let s:term_win_id = -1
 function functions#ToggleTerminal() abort
@@ -124,17 +88,15 @@ function functions#ToggleTerminal() abort
     endif
 endfunction
 
-" Search documentation on Dash.app
+" Search documentation
 function functions#DevDocs(args) abort
-    let query = '!open '
-    " const URL = 'https://devdocs.io/#q='
-    const URL = 'dash://'
+    let query = '~/.config/AppleScripts/DevDocs.applescript '
+    const URL = 'https://devdocs.io/#q='
 
     if len(split(a:args)) == 1
-        " let query .= shellescape(URL . &filetype . '%20' . a:args)
-        let query .= shellescape(URL . &filetype . '\%3A' . a:args)
+        let query .= shellescape(URL . &filetype . '%20' . a:args)
     else
-        let query .= shellescape(URL . substitute(a:args, '\s\+', '\\%3A', 'g'))
+        let query .= shellescape(URL . substitute(a:args, '\s\+', '%20', 'g'))
     endif
 
     return query
