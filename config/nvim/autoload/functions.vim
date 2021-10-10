@@ -44,6 +44,7 @@ function functions#FZTerm(list_command, callback, prompt) abort
     " callback.on_select : String -> Void
     "     Function executed with the item selected by the user as the
     "     first argument.
+
     const filename = tempname()
 
     function a:callback.on_exit(job_id, data, event) abort closure
@@ -65,8 +66,6 @@ function functions#FZTerm(list_command, callback, prompt) abort
     call termopen(term_command, a:callback)
 
     setlocal nonumber norelativenumber laststatus=0 noshowmode noshowcmd noruler
-    tnoremap <buffer> <Esc> <Esc>
-    setfiletype picker
     startinsert!
 endfunction
 
@@ -82,6 +81,7 @@ function functions#ToggleTerminal() abort
             vnew term://fish
             silent file Terminal
             setlocal norelativenumber nobuflisted
+            tnoremap <buffer> <Esc> <C-\><C-n>
         endif
         let s:term_win_id = win_getid()
         startinsert

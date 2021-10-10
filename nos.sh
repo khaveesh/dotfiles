@@ -13,6 +13,7 @@ function prevent_sleep() {
     echo -n "Preventing sleep for $timeout_len seconds; press <enter> to continue..."
 
     sudo pmset disablesleep 1
+    caffeinate -dimsu -t $timeout_len &
 }
 
 function enable_sleep() {
@@ -23,6 +24,7 @@ function enable_sleep() {
     echo "Restoring previous battery sleep setting: $BATTERY_SLEEP"
 
     sudo pmset disablesleep 0
+    kill `pgrep caffeinate`
 
     exit 0
 }

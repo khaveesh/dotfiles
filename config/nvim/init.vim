@@ -31,7 +31,11 @@ Pack 'khaveesh/nvim-sensibly-opinionated-defaults'
 
 " LSP - Language Services & Completion
 Pack 'neovim/nvim-lspconfig'
-Pack 'hrsh7th/nvim-compe'
+Pack 'hrsh7th/nvim-cmp'
+Pack 'hrsh7th/cmp-nvim-lsp'
+Pack 'hrsh7th/cmp-vsnip'
+Pack 'hrsh7th/cmp-buffer'
+Pack 'hrsh7th/cmp-path'
 
 " Semantic highlighting & text-objects
 Pack 'nvim-treesitter/nvim-treesitter'
@@ -40,6 +44,10 @@ Pack 'nvim-treesitter/nvim-treesitter-textobjects'
 " Git Gutter
 Pack 'nvim-lua/plenary.nvim'
 Pack 'lewis6991/gitsigns.nvim'
+
+" Faster ftdetect
+Pack 'nathom/filetype.nvim'
+let g:did_load_filetypes = 1
 
 " }}}
 
@@ -67,11 +75,11 @@ let g:vsnip_snippet_dir = stdpath('config').'/vsnip'
 
 " Utilities {{{
 
-" Comment & uncomment lines
-Pack 'khaveesh/vim-commentary-yank'
-
 " Handy square bracket mappings
 Pack 'khaveesh/vim-unimpaired'
+
+" Comment & uncomment lines
+Pack 'khaveesh/vim-commentary-yank'
 
 " Manipulate surrounding delimiters
 Pack 'tpope/vim-surround'
@@ -94,7 +102,6 @@ set expandtab tabstop=4 shiftwidth=4  " Expand tab stops to be 4 spaces
 set spelloptions=camel                " Spell check camelCased components
 
 " Completion popup
-set completeopt=menuone,noselect
 set pumheight=15
 
 " NerdTree style netrw
@@ -150,29 +157,30 @@ nnoremap Q @q
 " Edit recorded macro
 nnoremap cm :let @<C-r>=v:register.'='.string(getreg(v:register))<CR><C-f><left>
 
-" Quick copy/cut into system clipboard
-nnoremap cd "+d
-nnoremap cy "+y
-xnoremap cd "+d
-xnoremap cy "+y
+" Format and update
+nnoremap gw :up<CR>
+" Indent and update
+nnoremap <silent> gW mwgg=G`w:delmark w <bar> up<CR>
+
+" Quick exit
+nnoremap <silent> gq :q<CR>
+nnoremap          gQ :qa<CR>
 
 " View register contents
-nnoremap gr :registers<CR>
+nnoremap gr    :registers<CR>
 noremap! <M-r> <cmd>registers<CR>
 
-" Clear search highlighting
-nnoremap <C-l> :nohlsearch<CR><C-l>
-vnoremap <C-l> <cmd>nohlsearch<CR><C-l>
+" Quick copy/cut into system clipboard
+nnoremap cy "+y
+nnoremap cd "+d
+xnoremap cy "+y
+xnoremap cd "+d
 
 " Map unused large size normal mode keys to useful functions
-map <Tab> %
+map <Tab>   %
 map <S-Tab> g%
-nnoremap <BS> <C-^>
-nnoremap \ <C-w>
-
-" Use space as leader
-nnoremap <Space> <nop>
-let mapleader = ' '
+nnoremap <BS>    <C-^>
+nnoremap <Space> <C-w>
 
 " Echo file info
 nnoremap <leader>f :echo "\t" &ft &fenc &ff<CR>
@@ -184,69 +192,25 @@ nnoremap <silent> <leader>v :edit ~/.config/nvim/init.vim<CR>
 nnoremap <leader>s :%s/<C-r><C-w>/<C-r><C-w>
 nnoremap <leader>S :%s/\<<C-r><C-w>\>/<C-r><C-w>
 
-" Format and update
-nnoremap <leader>w :up<CR>
-" Indent and update
-nnoremap <silent> <leader>W mwgg=G`w:delmark w <bar> up<CR>
+" Buffer delete
+nnoremap <silent> <leader>q :bd<CR>
+nnoremap <silent> <leader>Q :bd!<CR>
 
 " Toggle Quickfix & Location lists
 nnoremap <silent><expr> <leader>l
             \ empty(filter(getwininfo(), 'v:val.loclist'))
             \ ? ':lwindow<CR>' : ':lclose<CR>'
-nnoremap <silent><expr> <leader>q
+nnoremap <silent><expr> <leader>c
             \ empty(filter(getwininfo(), 'v:val.quickfix'))
             \ ? ':cwindow<CR>' : ':cclose<CR>'
 
-" Quick exit
-nnoremap <silent> <leader>e :q<CR>
-nnoremap <leader>E :qa<CR>
-nnoremap <silent> <C-q> :bd<CR>
-nnoremap <silent> <M-q> :bd!<CR>
-
 " Terminal
-tnoremap <Esc> <C-\><C-n>
-tnoremap <silent> <M-z> <C-\><C-n>:call functions#ToggleTerminal()<CR>
 nnoremap <silent> <M-z> :call functions#ToggleTerminal()<CR>
-
-" nvim-compe
-inoremap <expr> <CR>  compe#confirm('<CR>')
-inoremap <expr> <C-e> compe#close('<C-e>')
-inoremap <expr> <C-f> compe#scroll({ 'delta': +4 })
-inoremap <expr> <C-d> compe#scroll({ 'delta': -4 })
-
-" vim-vsnip: Use (s-)tab to
-"   - move to prev/next item in completion menu
-"   - jump to prev/next snippet's placeholder
-function s:tab() abort
-    if pumvisible()
-        return "\<C-n>"
-    elseif vsnip#available(1)
-        return "\<Plug>(vsnip-expand-or-jump)"
-    elseif col('.') == 1 || getline('.')[col('.') - 2] =~ '\s'
-        return "\<Tab>"
-    else
-        return compe#complete()
-    endif
-endfunction
-
-function s:s_tab() abort
-    if pumvisible()
-        return "\<C-p>"
-    elseif vsnip#jumpable(-1)
-        return "\<Plug>(vsnip-jump-prev)"
-    else
-        return "\<S-Tab>"
-    endif
-endfunction
-
-imap <expr> <Tab> <SID>tab()
-smap <expr> <Tab> <SID>tab()
-imap <expr> <S-Tab> <SID>s_tab()
-smap <expr> <S-Tab> <SID>s_tab()
+tnoremap <silent> <M-z> <C-\><C-n>:call functions#ToggleTerminal()<CR>
 
 " Change/Delete surrounding function
 nnoremap csf F(cb
-nmap dsf dsbdb
+nmap     dsf dsbdb
 
 " Some niceties on top of vim-commentary
 nnoremap co ox<Esc>:Commentary<CR>W"_s

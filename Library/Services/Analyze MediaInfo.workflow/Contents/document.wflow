@@ -62,8 +62,8 @@
 					<string>open -a kitty
 
 for f in "$@"; do
-	/usr/local/bin/kitty @ --to=unix:/tmp/mykitty new-window --new-tab
-	/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text "mediainfo \"$(echo "$f" | sed 's/\$/\\\\$/g' | sed 's/"/\\\\"/g')\" | less\\x0d"
+	/usr/local/bin/kitty @ --to=unix:/tmp/kitty new-window --new-tab
+	/usr/local/bin/kitty @ --to=unix:/tmp/kitty send-text "mediainfo '$(sed "s/'/\\\\\\\'/g" &lt;&lt;&lt; "$f")' | less\\x0d"
 done</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
@@ -177,7 +177,7 @@ done</string>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>521.750000:305.000000</string>
+				<string>539.000000:305.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>

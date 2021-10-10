@@ -61,14 +61,14 @@
 					<key>COMMAND_STRING</key>
 					<string>open -a kitty
 
-/usr/local/bin/kitty @ --to=unix:/tmp/mykitty new-window --new-tab
-/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text 'nvim '
+/usr/local/bin/kitty @ --to=unix:/tmp/kitty new-window --new-tab
+/usr/local/bin/kitty @ --to=unix:/tmp/kitty send-text 'nvim '
 
 for f in "$@"; do
-	/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text " \"$(echo "$f" | sed 's/\$/\\\\$/g' | sed 's/"/\\\\"/g')\""
+	/usr/local/bin/kitty @ --to=unix:/tmp/kitty send-text "'$(sed "s/'/\\\\\\\'/g" &lt;&lt;&lt; "$f")' "
 done
 
-/usr/local/bin/kitty @ --to=unix:/tmp/mykitty send-text '\x0d'</string>
+/usr/local/bin/kitty @ --to=unix:/tmp/kitty send-text '\x0d'</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>

@@ -18,8 +18,7 @@ if (
 ):
     run(split("open -a kitty"))
 
-tabs = json.loads(run(split("kitty @ ls"), stdout=PIPE).stdout)[0]["tabs"]
-for tab in tabs:
+for tab in json.loads(run(split("kitty @ ls"), stdout=PIPE).stdout)[0]["tabs"]:
     for window in tab["windows"]:
         if "NVIM" in window["title"] and filename in window["title"]:
             if not tab["is_focused"]:
