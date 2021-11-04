@@ -4,15 +4,12 @@ SETUVAR --export EDITOR:nvim
 SETUVAR --export GNUPGHOME:/Users/khaveesh/\x2elocal/share/gnupg
 SETUVAR --export HOMEBREW_NO_COMPAT:1
 SETUVAR --export HOMEBREW_NO_INSECURE_REDIRECT:1
-SETUVAR --export IPYTHONDIR:/Users/khaveesh/\x2elocal/share/ipython
 SETUVAR --export JUPYTER_CONFIG_DIR:/tmp
 SETUVAR --export LANG:en_GB\x2eUTF\x2d8
 SETUVAR --export LC_ALL:en_GB\x2eUTF\x2d8
 SETUVAR --export LESSHISTFILE:\x2d
 SETUVAR --export MANPAGER:nvim\x20\x2bMan\x21
 SETUVAR --export MPLCONFIGDIR:/Users/khaveesh/\x2econfig/matplotlib
-SETUVAR --export NPM_CONFIG_CACHE:/Users/khaveesh/\x2ecache/npm
-SETUVAR --export NPM_CONFIG_PREFIX:/Users/khaveesh/\x2elocal/share/npm
 SETUVAR --export PYLINTHOME:/Users/khaveesh/\x2ecache/pylint
 SETUVAR --export PYLINTRC:/Users/khaveesh/pyproject\x2etoml
 SETUVAR --export VISUAL:nvim
@@ -54,4 +51,4 @@ SETUVAR fish_pager_color_completion:normal
 SETUVAR fish_pager_color_description:B3A06D\x1eyellow
 SETUVAR fish_pager_color_prefix:white\x1e\x2d\x2dbold\x1e\x2d\x2dunderline
 SETUVAR fish_pager_color_progress:brwhite\x1e\x2d\x2dbackground\x3dcyan
-SETUVAR fish_user_paths:/Users/khaveesh/Library/Python/3\x2e8/bin
+SETUVAR fish_user_paths:/Users/khaveesh/Library/Python/3\x2e8/bin\x1e/usr/local/opt/openjdk/bin

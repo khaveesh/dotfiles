@@ -103,12 +103,10 @@
 						<string>0</string>
 					</dict>
 				</dict>
-				<key>conversionLabel</key>
-				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>521.750000:368.000000</string>
+				<string>539.000000:368.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run JavaScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -156,7 +154,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>on run {input, parameters}	tell application "Safari Technology Preview" to set the URL of (make new tab in window 1) to "https://www.google.com/search?q=" &amp; input		return inputend run</string>
+					<string>on run {input, parameters}	tell application "Safari" to set the URL of (make new tab in window 1) to "https://www.google.com/search?q=" &amp; input		return inputend run</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -210,7 +208,7 @@ end run</string>
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>521.750000:613.000000</string>
+				<string>539.000000:613.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -220,7 +218,7 @@ end run</string>
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>1BE71F13-CC8A-489D-9F0D-27CC802C77A2</key>
+		<key>8C045A55-F4D0-4426-8156-7AEF2AC810A5</key>
 		<dict>
 			<key>from</key>
 			<string>AB4E8522-7D16-416C-9BB1-B883BBCBA23E - AB4E8522-7D16-416C-9BB1-B883BBCBA23E</string>

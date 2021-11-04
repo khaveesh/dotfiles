@@ -3,33 +3,6 @@ if executable('pandoc')
 
     " Preview current document using Pandoc
     nnoremap <silent><buffer> <leader>p :up <bar> silent !fish -c 'panhtml %:S'<CR>
-
-    " Fuzzy select from references
-    function s:Cite(mode) abort
-        let callback = {}
-
-        function callback.on_select(content) abort closure
-            if a:content != ''
-                const cite_key = '[@' . a:content[0 : match(a:content, ':') - 1] . ']'
-                if a:mode == 'i'
-                    call feedkeys('i'.cite_key, 'n')
-                else
-                    execute 'normal! i' . cite_key
-                endif
-            endif
-        endfunction
-
-        const refs = json_decode(system('(echo ---; cat references.yaml; echo ---) | pandoc -t csljson'))
-        let pairs = ''
-        for ref in refs
-            let pairs .= ref['id'] . ': ' . ref['title'] . '\n'
-        endfor
-
-        call functions#FZTerm('echo ' . shellescape(pairs), callback, '> ')
-    endfunction
-
-    nnoremap <silent><buffer> cr    :call <SID>Cite('n')<CR>
-    inoremap <silent><buffer> <M-c> <C-o>:call <SID>Cite('i')<CR>
 endif
 
 " Insert fenced code block

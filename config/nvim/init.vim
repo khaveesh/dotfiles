@@ -9,11 +9,12 @@
 
 " Plugins {{{
 
-let g:packages = []
+" External Plugin Manager Interface {{{
 
 " Custom Pack command to interface with external `python` plugin manager
 " via JSON dump call made through a headless nvim process
-command -buffer -nargs=+ Pack call s:packadd(<args>)
+
+let g:packages = []
 
 function s:packadd(pack, args = {}) abort
     if empty(a:args)
@@ -24,10 +25,17 @@ function s:packadd(pack, args = {}) abort
     endif
 endfunction
 
+command -buffer -nargs=+ Pack call s:packadd(<args>)
+
+" }}}
+
 " Lua Plugins {{{
 
 " Sensible Defaults
 Pack 'khaveesh/nvim-sensibly-opinionated-defaults'
+
+" Faster ftdetect
+Pack 'nathom/filetype.nvim'
 
 " LSP - Language Services & Completion
 Pack 'neovim/nvim-lspconfig'
@@ -40,14 +48,6 @@ Pack 'hrsh7th/cmp-path'
 " Semantic highlighting & text-objects
 Pack 'nvim-treesitter/nvim-treesitter'
 Pack 'nvim-treesitter/nvim-treesitter-textobjects'
-
-" Git Gutter
-Pack 'nvim-lua/plenary.nvim'
-Pack 'lewis6991/gitsigns.nvim'
-
-" Faster ftdetect
-Pack 'nathom/filetype.nvim'
-let g:did_load_filetypes = 1
 
 " }}}
 
@@ -99,43 +99,19 @@ Pack 'tommcdo/vim-exchange'
 set shell=dash                        " Use POSIX-compliant shell
 set gdefault                          " Better substitute
 set expandtab tabstop=4 shiftwidth=4  " Expand tab stops to be 4 spaces
+set pumheight=15                      " Completion popup max height
 set spelloptions=camel                " Spell check camelCased components
 
-" Completion popup
-set pumheight=15
+" Trim trailing whitespace and leading blank lines by default
+let &formatprg = "sed 's/[[:space:]]*$//'"
+
+" Format before saving the file
+autocmd! BufWritePre * call functions#Format()
 
 " NerdTree style netrw
 let g:netrw_banner    = 0
 let g:netrw_liststyle = 3
 let g:netrw_winsize   = 25
-
-" Disable unused providers to reduce startup time
-let g:loaded_node_provider    = 0
-let g:loaded_perl_provider    = 0
-let g:loaded_python_provider  = 0
-let g:loaded_python3_provider = 0
-let g:loaded_ruby_provider    = 0
-
-" }}}
-
-" Commands {{{
-
-" Format before save
-autocmd! BufWritePre * call functions#Format()
-
-" Look up documentation, mapped to K
-set keywordprg=:DD
-command -nargs=+ DD call system(functions#DevDocs(<q-args>))
-
-" Better grep command (romain-l)
-command -nargs=+ -complete=file_in_path -bar Grep cgetexpr s:Grep(<f-args>) | cw
-
-function s:Grep(...) abort
-    return system(join(['rg --vimgrep --smart-case'] + [expandcmd(join(a:000, ' '))], ' '))
-endfunction
-
-cnoreabbrev <expr> grep
-            \ (getcmdtype() == ':' && getcmdline() ==# 'grep') ? 'Grep' : 'grep'
 
 " }}}
 
@@ -159,7 +135,7 @@ nnoremap cm :let @<C-r>=v:register.'='.string(getreg(v:register))<CR><C-f><left>
 
 " Format and update
 nnoremap gw :up<CR>
-" Indent and update
+" Indent, Format, and update
 nnoremap <silent> gW mwgg=G`w:delmark w <bar> up<CR>
 
 " Quick exit
@@ -192,7 +168,7 @@ nnoremap <silent> <leader>v :edit ~/.config/nvim/init.vim<CR>
 nnoremap <leader>s :%s/<C-r><C-w>/<C-r><C-w>
 nnoremap <leader>S :%s/\<<C-r><C-w>\>/<C-r><C-w>
 
-" Buffer delete
+" Buffer unload
 nnoremap <silent> <leader>q :bd<CR>
 nnoremap <silent> <leader>Q :bd!<CR>
 
@@ -204,15 +180,7 @@ nnoremap <silent><expr> <leader>c
             \ empty(filter(getwininfo(), 'v:val.quickfix'))
             \ ? ':cwindow<CR>' : ':cclose<CR>'
 
-" Terminal
-nnoremap <silent> <M-z> :call functions#ToggleTerminal()<CR>
-tnoremap <silent> <M-z> <C-\><C-n>:call functions#ToggleTerminal()<CR>
-
-" Change/Delete surrounding function
-nnoremap csf F(cb
-nmap     dsf dsbdb
-
-" Some niceties on top of vim-commentary
+" vim-commentary extras
 nnoremap co ox<Esc>:Commentary<CR>W"_s
 nnoremap cO Ox<Esc>:Commentary<CR>W"_s
 nnoremap cA ox<Esc>:Commentary<CR>k$J2W"_s
@@ -230,9 +198,6 @@ let &statusline .= '%{ &bl && '
 
 set statusline+=%=
 
-" Git Status
-let &statusline .= "%{ exists('b:gitsigns_status')"
-            \             . " ? ' ' . b:gitsigns_status : '' }"
 " Position info
 let &statusline .= ' %#StatusLine# %l,%c │ %P '
 

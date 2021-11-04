@@ -23,7 +23,7 @@ def term(attr: str, msg: str) -> None:
 output = (
     run(
         split(
-            '/usr/local/bin/nvim --headless --noplugin +"echo json_encode(packages)'
+            'nvim --headless --noplugin +"echo json_encode(packages)'
             + " | echo get(g:, 'packdir', stdpath('data'))"
             + ' | q"'
         ),
@@ -41,7 +41,7 @@ OPT = DIR / "opt"
 
 for directory in (DIR, START, OPT):
     if not directory.is_dir():
-        directory.mkdir()
+        directory.mkdir(parents=True)
 
 
 def clean() -> None:
