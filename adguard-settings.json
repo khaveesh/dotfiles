@@ -41,15 +41,13 @@
         "custom-filters": [],
         "user-filter": {
             "enabled": true,
-            "rules": "@@||wikipedia.org^$generichide,badfilter\nwikipedia.org#%#if (window.location.search === \"\") { var lang = window.location.hostname.split('.')[0]; var article = window.location.pathname.split('/')[2]; window.location.href = \"https://www.wikiwand.com/\" + lang + \"/\" + article; }\nlwn.net##div.pure-grid.maincolumn:nth-child(5) > div.lwn-u-1.pure-u-md-19-24:first-child > div.ArticleText:nth-child(2) > center:first-child\nlwn.net##div.topnav-container:nth-child(4)",
+            "rules": "@@||wikipedia.org^$generichide,badfilter\nwikipedia.org#%#if (window.location.search === \"\") { var lang = window.location.hostname.split('.')[0]; var article = window.location.pathname.split('/')[2]; window.location.href = \"https://www.wikiwand.com/\" + lang + \"/\" + article; }\nlwn.net##div.pure-grid.maincolumn:nth-child(5) > div.lwn-u-1.pure-u-md-19-24:first-child > div.ArticleText:nth-child(2) > center:first-child\nlwn.net##div.topnav-container:nth-child(4)\nthehindu.com##div.container-main:nth-child(15) > header.article-header-cont:first-child > div.container:last-child > div.row > div.col-sm-12.col-xs-12 > nav.navbar.main-menu.clear:nth-child(3) > div.subsEntrymenu.hidden-sm.hidden-xs:nth-child(7)\ncinemaexpress.com###section_content_check_713 > div.col-lg-12.col-md-12.col-sm-12.col-xs-12.margin-bottom-10 > div.scc.section_content_check_713\ncinemaexpress.com###section_content_check_697 > div.col-lg-12.col-md-12.col-sm-12.col-xs-12.margin-bottom-10 > div.scc.section_content_check_697\nfirstpost.com###article-wrapper > div.header-sticky:first-child > nav.main-menu-wrap:nth-child(3) > div.menu-wrap.container > ul.sub-menu:last-child > li.hdfc-events:last-child\nwikiwand.com###main_menu > li.upgrade_btn.menu-tooltip.activation_install.tooltipstered:last-child\nwikiwand.com###main_menu > span.menu_line:nth-child(8)\nwikiwand.com###main_menu > li.article_btn.article:nth-child(2)",
             "disabled-rules": ""
         },
         "allowlist": {
             "enabled": true,
             "inverted": false,
-            "domains": [
-                ""
-            ],
+            "domains": [],
             "inverted-domains": []
         }
     }
