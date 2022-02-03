@@ -1,6 +1,5 @@
 #!/bin/dash
-fd -t d -d 1 -x dash -c '
-f=$(fd -e flac -1 . "{}")
+f=$(find "$1" -name '*.flac' -print -quit)
 a=$(metaflac --show-tag=Album "$f")
 y=$(metaflac --show-tag=ORIGINALYEAR "$f")
 b=$(mediainfo "$f" | grep depth)
@@ -11,7 +10,6 @@ t="$a [$y]"
 # if [ "$b" != "16 bits" ]; then
 #     t="$t ($b)"
 # fi
-if [ "{}" != "$t" ]; then
-    echo "{} -> $t"
+if [ "$1" != "./$t" ]; then
+    echo "${1#*/} -> $t"
 fi
-'

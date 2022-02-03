@@ -1,66 +1,40 @@
--- FileType {{{
-
-require('filetype').setup {
-  overrides = {
-    extensions = {
-      md = 'markdown.pandoc',
-    },
-  },
-}
-
---}}}
+-- vim: foldmethod=marker
 
 -- LSP {{{
 
-local lsp = vim.lsp
-local fmt = string.format
-
--- Statusline diagnostic info
-function LspDiagnosticsSL()
-  local e = lsp.diagnostic.get_count(0, 'Error')
-  local w = lsp.diagnostic.get_count(0, 'Warning')
-
-  local sl_error = (e ~= 0) and fmt('%%#ErrorMsg# E:%d ', e) or ''
-  local sl_warning = (w ~= 0) and fmt('%%#Search# W:%d ', w) or ''
-  vim.b.lsp_sl = sl_error .. sl_warning
-end
-
--- Custom LSP on_attach function
+-- Custom on_attach function
 local function on_attach(client, bufnr)
   local function lsp_map(key, action, mode)
-    mode = mode or 'n'
-    local prefix = (mode == 'v') and ':' or '<cmd>'
-
-    vim.api.nvim_buf_set_keymap(bufnr, mode, key, fmt('%slua vim.lsp.%s()<CR>', prefix, action), {
-      noremap = true,
-    })
+    vim.keymap.set(mode or 'n', key, vim.lsp.buf[action], { buffer = bufnr })
   end
 
-  lsp_map('<C-]>', 'buf.definition')
-  lsp_map('<M-k>', 'buf.signature_help')
-  lsp_map('<M-k>', 'buf.signature_help', 'i')
-  lsp_map('<M-k>', 'buf.signature_help', 's')
-  lsp_map('cq', 'buf.code_action')
-  lsp_map('cq', 'buf.range_code_action', 'v')
-  lsp_map('cr', 'buf.rename')
-  lsp_map('dr', 'buf.references')
-  lsp_map('gd', 'buf.declaration')
-  lsp_map('gh', 'buf.hover')
-  lsp_map('gs', 'buf.document_symbol')
+  local function diagnostic_map(key, action)
+    vim.keymap.set('n', key, vim.diagnostic[action], { buffer = bufnr })
+  end
+
+  lsp_map('<C-]>', 'definition')
+  lsp_map('<M-k>', 'signature_help', { 'n', 'i', 's' })
+  lsp_map('cq', 'code_action')
+  lsp_map('cq', 'range_code_action', 'v')
+  lsp_map('cr', 'rename')
+  lsp_map('dr', 'references')
+  lsp_map('gd', 'declaration')
+  lsp_map('gh', 'hover')
+  lsp_map('gs', 'document_symbol')
 
   -- Diagnostics
   if vim.bo.filetype ~= 'python' then
-    lsp_map('[d', 'diagnostic.goto_prev')
-    lsp_map(']d', 'diagnostic.goto_next')
-    lsp_map('gl', 'diagnostic.set_loclist')
+    diagnostic_map('[d', 'goto_prev')
+    diagnostic_map(']d', 'goto_next')
+    diagnostic_map('gl', 'setloclist')
     vim.b.lsp_sl = ''
-    vim.cmd 'autocmd! User DiagnosticsChanged lua LspDiagnosticsSL()'
-    vim.opt_local.statusline:append '%{%b:lsp_sl%}'
+    vim.cmd [[ autocmd! DiagnosticChanged <buffer> lua require('diagnostics_sl')() ]]
+    vim.wo.statusline = vim.o.statusline .. '%{%b:lsp_sl%}'
   end
 
   -- Indicate server provides formatter
   if client.resolved_capabilities.document_formatting then
-    vim.bo.formatprg = 'lsp'
+    vim.b.formatprg = 'lsp'
   end
 end
 
@@ -92,19 +66,14 @@ local servers = {
 }
 
 -- Indicate snippet support to server
-local capabilities = require('cmp_nvim_lsp').update_capabilities(lsp.protocol.make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
--- Use a loop to conveniently setup multiple servers with custom config
+-- Use a loop to setup multiple servers with custom config
 for server, config in pairs(servers) do
   config.on_attach = on_attach
   config.capabilities = capabilities
   require('lspconfig')[server].setup(config)
 end
-
--- Disable LSP signs
-lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(lsp.diagnostic.on_publish_diagnostics, {
-  signs = false,
-})
 
 -- }}}
 
@@ -121,10 +90,13 @@ require('nvim-treesitter.configs').setup {
     'lua',
     'python',
     'toml',
+    'vim',
     'yaml',
   },
 
   highlight = { enable = true },
+
+  matchup = { enable = true },
 
   textobjects = {
     select = {
@@ -210,7 +182,7 @@ cmp.setup {
       elseif vim.fn['vsnip#available']() == 1 then
         feedkey('<Plug>(vsnip-expand-or-jump)', '')
       elseif has_words_before() then
-        cmp.complete()
+        cmp.mapping.complete()
       else
         fallback()
       end
@@ -232,24 +204,36 @@ cmp.setup {
 
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-e>'] = cmp.mapping.close(),
-    ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
-    },
+    ['<CR>'] = cmp.mapping.confirm(),
   },
 
-  sources = {
+  sources = cmp.config.sources {
     { name = 'nvim_lsp' },
     { name = 'vsnip' },
     {
       name = 'buffer',
-      opts = {
+      option = {
         get_bufnrs = vim.api.nvim_list_bufs,
       },
     },
     { name = 'path' },
   },
 }
+
+-- `/` cmdline setup.
+cmp.setup.cmdline('/', {
+  sources = {
+    { name = 'buffer' },
+  },
+})
+
+-- `:` cmdline setup.
+cmp.setup.cmdline(':', {
+  sources = cmp.config.sources({
+    { name = 'path' },
+  }, {
+    { name = 'cmdline' },
+  }),
+})
 
 -- }}}

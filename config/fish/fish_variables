@@ -1,10 +1,9 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
 SETUVAR --export EDITOR:nvim
-SETUVAR --export GNUPGHOME:/Users/khaveesh/\x2elocal/share/gnupg
 SETUVAR --export HOMEBREW_NO_COMPAT:1
+SETUVAR --export HOMEBREW_NO_ENV_HINTS:1
 SETUVAR --export HOMEBREW_NO_INSECURE_REDIRECT:1
-SETUVAR --export JUPYTER_CONFIG_DIR:/tmp
 SETUVAR --export LANG:en_GB\x2eUTF\x2d8
 SETUVAR --export LC_ALL:en_GB\x2eUTF\x2d8
 SETUVAR --export LESSHISTFILE:\x2d
@@ -18,8 +17,15 @@ SETUVAR Z_CMD:z
 SETUVAR Z_DATA:/Users/khaveesh/\x2elocal/share/z/data
 SETUVAR Z_DATA_DIR:/Users/khaveesh/\x2elocal/share/z
 SETUVAR Z_EXCLUDE:\x5e/Users/khaveesh\x24
-SETUVAR __done_exclude:ve\x7cv
 SETUVAR __done_min_cmd_duration:500
+SETUVAR __fish_git_prompt_char_stateseparator:\x20
+SETUVAR __fish_git_prompt_color_cleanstate:green
+SETUVAR __fish_git_prompt_color_invalidstate:red
+SETUVAR __fish_git_prompt_show_informative_status:1
+SETUVAR __fish_git_prompt_showcolorhints:1
+SETUVAR __fish_git_prompt_showdirtystate:1
+SETUVAR __fish_git_prompt_showstashstate:1
+SETUVAR __fish_git_prompt_showuntrackedfiles:1
 SETUVAR __fish_initialized:3100
 SETUVAR fish_color_autosuggestion:4D5566
 SETUVAR fish_color_cancel:\x2dr
@@ -32,15 +38,16 @@ SETUVAR fish_color_error:FF3333
 SETUVAR fish_color_escape:95E6CB
 SETUVAR fish_color_history_current:\x2d\x2dbold
 SETUVAR fish_color_host:normal
-SETUVAR fish_color_host_remote:yellow
+SETUVAR fish_color_keyword:39BAE6
 SETUVAR fish_color_match:F07178
 SETUVAR fish_color_normal:B3B1AD
 SETUVAR fish_color_operator:E6B450
+SETUVAR fish_color_option:B3B1AD
 SETUVAR fish_color_param:B3B1AD
 SETUVAR fish_color_quote:C2D94C
 SETUVAR fish_color_redirection:FFEE99
-SETUVAR fish_color_search_match:E6B450
-SETUVAR fish_color_selection:E6B450
+SETUVAR fish_color_search_match:\x2d\x2dbackground\x3dE6B450
+SETUVAR fish_color_selection:\x2d\x2dbackground\x3dE6B450
 SETUVAR fish_color_status:red
 SETUVAR fish_color_user:brgreen
 SETUVAR fish_color_valid_path:\x2d\x2dunderline
@@ -49,6 +56,7 @@ SETUVAR fish_greeting:\x1d
 SETUVAR fish_key_bindings:fish_default_key_bindings
 SETUVAR fish_pager_color_completion:normal
 SETUVAR fish_pager_color_description:B3A06D\x1eyellow
-SETUVAR fish_pager_color_prefix:white\x1e\x2d\x2dbold\x1e\x2d\x2dunderline
+SETUVAR fish_pager_color_prefix:normal\x1e\x2d\x2dbold\x1e\x2d\x2dunderline
 SETUVAR fish_pager_color_progress:brwhite\x1e\x2d\x2dbackground\x3dcyan
-SETUVAR fish_user_paths:/Users/khaveesh/Library/Python/3\x2e8/bin\x1e/usr/local/opt/openjdk/bin
+SETUVAR fish_pager_color_selected_background:\x2d\x2dbackground\x3dE6B450
+SETUVAR fish_user_paths:/Users/khaveesh/Library/Python/3\x2e8/bin

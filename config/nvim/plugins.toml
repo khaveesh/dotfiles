@@ -1,0 +1,55 @@
+# vim: foldmethod=marker
+
+start = [
+  # Sensible defaults
+  "khaveesh/nvim-sensibly-opinionated-defaults",
+
+  # Lua plugins {{{
+
+  # LSP - Language Services & Completion
+  "neovim/nvim-lspconfig",
+  "hrsh7th/nvim-cmp",
+  "hrsh7th/cmp-nvim-lsp",
+  "hrsh7th/cmp-vsnip",
+  "hrsh7th/cmp-buffer",
+  "hrsh7th/cmp-cmdline",
+  "hrsh7th/cmp-path",
+
+  # Semantic highlighting & text-objects
+  "nvim-treesitter/nvim-treesitter",
+  "nvim-treesitter/nvim-treesitter-textobjects",
+
+  # }}}
+
+  # Essentials {{{
+
+  # Syntax files
+  "khaveesh/vim-fish-syntax",
+  "vim-pandoc/vim-pandoc-syntax",
+
+  # Matchit replacement compatible with treesitter
+  "andymass/vim-matchup",
+
+  # VSCode/LSP snippets
+  "hrsh7th/vim-vsnip",
+
+  # }}}
+
+  # Utilities {{{
+
+  # Handy square bracket mappings
+  "khaveesh/vim-unimpaired",
+
+  # Manipulate surrounding delimiters
+  "tpope/vim-surround",
+
+  # Dot-repeat support for plugins
+  "tpope/vim-repeat"
+
+  # }}}
+]
+
+opt = [
+  # Colour Scheme
+  "gruvbox-community/gruvbox"
+]

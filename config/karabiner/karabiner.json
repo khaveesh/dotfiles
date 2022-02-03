@@ -108,24 +108,6 @@
                             },
                             {
                                 "from": {
-                                    "key_code": "f",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "option",
-                                            "command",
-                                            "control",
-                                            "shift"
-                                        ],
-                                        "optional": "caps_lock"
-                                    }
-                                },
-                                "to": {
-                                    "shell_command": "osascript -e 'tell application \"Finder\" to activate'"
-                                },
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
                                     "key_code": "s",
                                     "modifiers": {
                                         "mandatory": [
@@ -139,6 +121,24 @@
                                 },
                                 "to": {
                                     "shell_command": "open -a Safari"
+                                },
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "f",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option",
+                                            "command",
+                                            "control",
+                                            "shift"
+                                        ],
+                                        "optional": "caps_lock"
+                                    }
+                                },
+                                "to": {
+                                    "shell_command": "osascript -e 'tell application \"Finder\" to activate'"
                                 },
                                 "type": "basic"
                             },
@@ -198,7 +198,7 @@
                             },
                             {
                                 "from": {
-                                    "key_code": "c",
+                                    "key_code": "w",
                                     "modifiers": {
                                         "mandatory": [
                                             "option",
@@ -210,7 +210,7 @@
                                     }
                                 },
                                 "to": {
-                                    "shell_command": "open -a 'Google Chrome'"
+                                    "shell_command": "open -a Firefox"
                                 },
                                 "type": "basic"
                             },
@@ -340,7 +340,7 @@
                         ]
                     },
                     {
-                        "description": "Open current Safari tab in private mode",
+                        "description": "Open current Safari tab in Firefox",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -352,46 +352,17 @@
                                     }
                                 ],
                                 "from": {
-                                    "key_code": "p",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "command",
-                                            "control"
-                                        ],
-                                        "optional": "caps_lock"
-                                    }
-                                },
-                                "to": {
-                                    "shell_command": "~/.config/AppleScripts/Open\\ current\\ tab\\ in\\ private\\ mode.applescript"
-                                },
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "Open current Safari tab in Chrome",
-                        "manipulators": [
-                            {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com.apple.Safari"
-                                        ],
-                                        "type": "frontmost_application_if"
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "c",
+                                    "key_code": "w",
                                     "modifiers": {
                                         "mandatory": [
                                             "control",
-                                            "option"
+                                            "command"
                                         ],
                                         "optional": "caps_lock"
                                     }
                                 },
                                 "to": {
-                                    "shell_command": "~/.config/AppleScripts/Open\\ tab\\ in\\ Chrome.applescript"
+                                    "shell_command": "~/.config/karabiner/Open\\ tab\\ in\\ Firefox.applescript"
                                 },
                                 "type": "basic"
                             }
@@ -442,7 +413,7 @@
                                     }
                                 },
                                 "to": {
-                                    "shell_command": "/usr/local/bin/ocr | pbcopy"
+                                    "shell_command": "shortcuts run 'OCR Region'"
                                 },
                                 "type": "basic"
                             }

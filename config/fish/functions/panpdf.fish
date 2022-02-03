@@ -1,5 +1,5 @@
 # Defined in - @ line 2
-function panpdf --wraps=pandoc --description 'Converts pandoc file formats to LaTeX-style PDF'
+function panpdf --wraps=pandoc --description 'Convert pandoc file formats to LaTeX-style PDF'
     set author 'Khaveesh N'
-    pandoc --pdf-engine=lualatex -V documentclass=scrartcl --listings -C --csl=ieee -M link-citations $argv[1] -o $argv[2] -V lang=en-GB -V csquotes -V monofont=Consolas -V urlcolor=[HTML]{1A0DAB} -V title="$argv[3]" -V title-meta="$argv[3]" -V author=$author -V author-meta=$author -H ~/.local/share/pandoc/listings.tex $argv[4..]
+    pandoc -L refnos.lua --pdf-engine=latexmk --pdf-engine-opt='-lualatex' --pdf-engine-opt='-outdir=/tmp/pandoc' -C --csl=ieee -M link-citations $argv[1] -o $argv[2] -V documentclass=scrartcl -V lang=en-GB -V csquotes -V urlcolor=[HTML]{1A0DAB} -V title="$argv[3]" -V title-meta="$argv[3]" -V author=$author -V author-meta=$author -V header-includes='\\usepackage[all]{hypcap}' $argv[4..]
 end

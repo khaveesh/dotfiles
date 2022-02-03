@@ -1,4 +1,6 @@
-let &l:formatprg = 'isort - | black -'
+set shiftwidth=4
+
+let b:formatprg = [ [ 'isort', '-' ], [ 'black', '-' ] ]
 
 nnoremap <buffer> gx :up <bar> vsp <bar> term python %:S<CR>:startinsert<CR>
 
@@ -15,8 +17,8 @@ function s:PyDoc() abort
     const firstline = line('.')
     normal ]M
     const lastline = line('.')
-    const lines = getbufline(bufname(), firstline, lastline)
-    call deletebufline(bufname(), firstline, lastline)
+    const lines = bufnr()->getbufline(firstline, lastline)
+    call bufnr()->deletebufline(firstline, lastline)
     const cmd = 'doq --omit self -t '.stdpath('config').'/doq-google-template'
     call vsnip#anonymous(system(cmd, lines))
 endfunction
