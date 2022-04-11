@@ -26,7 +26,10 @@
 --- # Disabling~
 ---
 --- To disable core functionality, set `g:minicomment_disable` (globally) or
---- `b:minicomment_disable` (for a buffer) to `v:true`.
+--- `b:minicomment_disable` (for a buffer) to `v:true`. Considering high number
+--- of different scenarios and customization intentions, writing exact rules
+--- for disabling module's functionality is left to user. See
+--- |mini.nvim-disabling-recipes| for common recipes.
 ---@tag mini.comment
 ---@tag MiniComment
 ---@toc_entry Comment
@@ -92,26 +95,30 @@ function MiniComment.operator(mode)
   -- NOTE: setting `operatorfunc` inside this function enables usage of 'count'
   -- like `10gc_` toggles comments of 10 lines below (starting with current).
   if mode == nil then
-    vim.cmd 'set operatorfunc=v:lua.MiniComment.operator'
+    vim.cmd('set operatorfunc=v:lua.MiniComment.operator')
     return 'g@'
   end
 
   -- If called with non-nil `mode`, get target region and perform comment
   -- toggling over it.
-  local mark1, mark2
+  local mark_left, mark_right = '[', ']'
   if mode == 'visual' then
-    mark1, mark2 = '<', '>'
-  else
-    mark1, mark2 = '[', ']'
+    mark_left, mark_right = '<', '>'
   end
 
-  local l1 = vim.api.nvim_buf_get_mark(0, mark1)[1]
-  local l2 = vim.api.nvim_buf_get_mark(0, mark2)[1]
+  local line_left, col_left = unpack(vim.api.nvim_buf_get_mark(0, mark_left))
+  local line_right, col_right = unpack(vim.api.nvim_buf_get_mark(0, mark_right))
+
+  -- Do nothing if "left" mark is not on the left (earlier in text) of "right"
+  -- mark (indicating that there is nothing to do, like in comment textobject).
+  if (line_left > line_right) or (line_left == line_right and col_left > col_right) then
+    return
+  end
 
   -- Using `vim.cmd()` wrapper to allow usage of `lockmarks` command, because
   -- raw execution will delete marks inside region (due to
   -- `vim.api.nvim_buf_set_lines()`).
-  vim.cmd(string.format('lockmarks lua MiniComment.toggle_lines(%d, %d)', l1, l2))
+  vim.cmd(string.format('lockmarks lua MiniComment.toggle_lines(%d, %d)', line_left, line_right))
   return ''
 end
 
@@ -129,29 +136,33 @@ function MiniComment.operator_yank(mode)
   -- NOTE: setting `operatorfunc` inside this function enables usage of 'count'
   -- like `10gc_` toggles comments of 10 lines below (starting with current).
   if mode == nil then
-    vim.cmd 'set operatorfunc=v:lua.MiniComment.operator_yank'
+    vim.cmd('set operatorfunc=v:lua.MiniComment.operator_yank')
     return 'g@'
   end
 
   -- If called with non-nil `mode`, get target region and perform comment
   -- toggling over it.
-  local mark1, mark2
+  local mark_left, mark_right = '[', ']'
   if mode == 'visual' then
-    mark1, mark2 = '<', '>'
-  else
-    mark1, mark2 = '[', ']'
+    mark_left, mark_right = '<', '>'
   end
 
-  local l1 = vim.api.nvim_buf_get_mark(0, mark1)[1]
-  local l2 = vim.api.nvim_buf_get_mark(0, mark2)[1]
+  local line_left, col_left = unpack(vim.api.nvim_buf_get_mark(0, mark_left))
+  local line_right, col_right = unpack(vim.api.nvim_buf_get_mark(0, mark_right))
 
-  local content = vim.api.nvim_buf_get_lines(0, l1 - 1, l2, true)
+  -- Do nothing if "left" mark is not on the left (earlier in text) of "right"
+  -- mark (indicating that there is nothing to do, like in comment textobject).
+  if (line_left > line_right) or (line_left == line_right and col_left > col_right) then
+    return
+  end
+
+  local content = vim.api.nvim_buf_get_lines(0, line_left - 1, line_right, true)
   vim.fn.setreg('"', content)
 
   -- Using `vim.cmd()` wrapper to allow usage of `lockmarks` command, because
   -- raw execution will delete marks inside region (due to
   -- `vim.api.nvim_buf_set_lines()`).
-  vim.cmd(string.format('lockmarks lua MiniComment.toggle_lines(%d, %d)', l1, l2))
+  vim.cmd(string.format('lockmarks lua MiniComment.toggle_lines(%d, %d)', line_left, line_right))
   return ''
 end
 
@@ -167,11 +178,19 @@ end
 --- 1. Currently call to this function will remove marks inside written range.
 ---    Use |lockmarks| to preserve marks.
 ---
----@param line_start number Start line number.
----@param line_end number End line number.
+---@param line_start number Start line number (inclusive from 1 to number of lines).
+---@param line_end number End line number (inclusive from 1 to number of lines).
 function MiniComment.toggle_lines(line_start, line_end)
   if H.is_disabled() then
     return
+  end
+
+  local n_lines = vim.api.nvim_buf_line_count(0)
+  if not (1 <= line_start and line_start <= n_lines and 1 <= line_end and line_end <= n_lines) then
+    error(('(mini.comment) `line_start` and `line_end` should be within range [1; %s].'):format(n_lines))
+  end
+  if not (line_start <= line_end) then
+    error('(mini.comment) `line_start` should be less than or equal to `line_end`.')
   end
 
   local comment_parts = H.make_comment_parts()
@@ -242,8 +261,12 @@ function H.setup_config(config)
   vim.validate { config = { config, 'table', true } }
   config = vim.tbl_deep_extend('force', H.default_config, config or {})
 
+  -- Validate per nesting level to produce correct error message
   vim.validate {
     mappings = { config.mappings, 'table' },
+  }
+
+  vim.validate {
     ['mappings.comment'] = { config.mappings.comment, 'string' },
     ['mappings.comment_line'] = { config.mappings.comment_line, 'string' },
     ['mappings.textobject'] = { config.mappings.textobject, 'string' },
@@ -314,14 +337,14 @@ function H.make_comment_parts()
   local cs = vim.api.nvim_buf_get_option(0, 'commentstring')
 
   if cs == '' then
-    vim.notify [[(mini.comment) Option 'commentstring' is empty.]]
+    vim.notify([[(mini.comment) Option 'commentstring' is empty.]])
     return { left = '', right = '' }
   end
 
   -- Assumed structure of 'commentstring':
   -- <space> <left> <space> <'%s'> <space> <right> <space>
   -- So this extracts parts without surrounding whitespace
-  local left, right = cs:match '^%s*(.-)%s*%%s%s*(.-)%s*$'
+  local left, right = cs:match('^%s*(.-)%s*%%s%s*(.-)%s*$')
   return { left = left, right = right }
 end
 
@@ -346,7 +369,7 @@ function H.get_lines_info(lines, comment_parts)
   for _, l in pairs(lines) do
     -- Update lines indent: minimum of all indents except empty lines
     if n_indent > 0 then
-      _, n_indent_cur, indent_cur = l:find '^(%s*)'
+      _, n_indent_cur, indent_cur = l:find('^(%s*)')
       -- Condition "current n-indent equals line length" detects empty line
       if (n_indent_cur < n_indent) and (n_indent_cur < l:len()) then
         -- NOTE: Copy of actual indent instead of recreating it with `n_indent`
@@ -357,7 +380,7 @@ function H.get_lines_info(lines, comment_parts)
     end
 
     -- Update comment info: lines are comment if every single line is comment
-    if is_comment then
+    if l ~= '' and is_comment then
       is_comment = comment_check(l)
     end
   end
@@ -383,7 +406,7 @@ function H.make_comment_function(comment_parts, indent)
 
   return function(line)
     -- Line is empty if it doesn't have anything except whitespace
-    if line:find '^%s*$' ~= nil then
+    if line:find('^%s*$') ~= nil then
       -- If doesn't want to comment empty lines, return `line` here
       return empty_comment
     else
@@ -399,7 +422,7 @@ function H.make_uncomment_function(comment_parts)
 
   -- Usage of `lpad` and `rpad` as possbile single space enables uncommenting
   -- of commented empty lines without trailing whitespace (like '  #').
-  local uncomment_regex = string.format([[^(%%s-)%s%s(.-)%s%s%%s-$]], vim.pesc(l), lpad, rpad, vim.pesc(r))
+  local uncomment_regex = string.format([[^(%%s*)%s%s(.-)%s%s%%s-$]], vim.pesc(l), lpad, rpad, vim.pesc(r))
 
   return function(line)
     local indent, new_line = string.match(line, uncomment_regex)
@@ -432,4 +455,4 @@ config = H.setup_config(config)
 -- Apply config
 H.apply_config(config)
 
-vim.cmd 'command! -range Comment lockmarks lua MiniComment.toggle_lines(<line1>, <line2>)'
+vim.cmd('command! -range Comment lockmarks lua MiniComment.toggle_lines(<line1>, <line2>)')

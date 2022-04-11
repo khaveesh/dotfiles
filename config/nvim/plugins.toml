@@ -12,12 +12,14 @@ start = [
   "hrsh7th/cmp-nvim-lsp",
   "hrsh7th/cmp-vsnip",
   "hrsh7th/cmp-buffer",
-  "hrsh7th/cmp-cmdline",
   "hrsh7th/cmp-path",
 
   # Semantic highlighting & text-objects
   "nvim-treesitter/nvim-treesitter",
   "nvim-treesitter/nvim-treesitter-textobjects",
+
+  # Colour Scheme
+  "ellisonleao/gruvbox.nvim",
 
   # }}}
 
@@ -44,12 +46,11 @@ start = [
   "tpope/vim-surround",
 
   # Dot-repeat support for plugins
-  "tpope/vim-repeat"
+  "tpope/vim-repeat",
 
   # }}}
 ]
 
 opt = [
-  # Colour Scheme
-  "gruvbox-community/gruvbox"
+
 ]

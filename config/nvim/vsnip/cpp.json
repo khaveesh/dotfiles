@@ -43,7 +43,7 @@
     },
     "main": {
         "prefix": "main",
-        "body": "main(int argc, char const *argv[])\n{\n\t${1:/* code */}\n\treturn 0;\n}",
+        "body": "int main(int argc, char const *argv[])\n{\n\t${1:/* code */}\n\treturn 0;\n}",
         "description": "Code snippet for main()",
         "scope": "source.c, source.objc, source.c++, source.objc++"
     },

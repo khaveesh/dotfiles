@@ -3,23 +3,15 @@
 " EditorConfig {{{
 
 set gdefault            " Better substitute
-set pumheight=15        " Completion popup max height
 set spelloptions=camel  " Spell check camelCased components
 
 " NerdTree style netrw
-let g:netrw_banner    = 0
-let g:netrw_liststyle = 3
-let g:netrw_winsize   = 25
-
-" Format before saving the file
-autocmd! BufWritePre * lua require('format')()
+let g:netrw_banner  = 0
+let g:netrw_winsize = 25
 
 " Color Scheme
 set termguicolors
 set background=light
-let g:gruvbox_invert_selection = 0
-let g:gruvbox_italic           = 1
-let g:gruvbox_contrast_light   = 'hard'
 colorscheme gruvbox
 highlight! default link LspSignatureActiveParameter WarningMsg
 
@@ -67,9 +59,6 @@ map <S-Tab> g%
 nnoremap <BS>    <C-^>
 nnoremap <Space> <C-w>
 
-" Echo file info
-nnoremap <leader>f :echo "\t" &ft &fenc &ff<CR>
-
 " Substitute the word under the cursor
 nnoremap <leader>s :%s/<C-r><C-w>/<C-r><C-w>
 nnoremap <leader>S :%s/\<<C-r><C-w>\>/<C-r><C-w>
@@ -95,14 +84,8 @@ nnoremap cA ox<Esc>:Comment<CR>k$J2W"_s
 
 " Statusline {{{
 
-autocmd BufAdd,BufWipeout,BufWinEnter * let g:bufs_listed =
-            \ &bl && len(getbufinfo({ 'buflisted': 1 })) > 1
-            \ ? '[Buffers Listed]' : ''
-
-" File info & Multiple buffers indicator
-let &statusline = '%#StatusLineNC# %m %f %h%w  %{g:bufs_listed}'
-
-" Position info
-let &statusline .= '%=%#StatusLine# %l,%c │ %P '
+" File info & Position info
+let &statusline = '%#StatusLineNC# %m %f %h%w  '
+                        \ . '%=%#StatusLine# %l,%c │ %P '
 
 " }}}

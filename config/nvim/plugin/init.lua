@@ -1,15 +1,17 @@
 -- vim: foldmethod=marker
 
+vim.api.nvim_create_augroup('custom', {})
+vim.api.nvim_create_autocmd(
+  'BufWritePre',
+  { desc = 'Format before saving the file', group = 'custom', callback = require('format') }
+)
+
 -- LSP {{{
 
 -- Custom on_attach function
 local function on_attach(client, bufnr)
   local function lsp_map(key, action, mode)
     vim.keymap.set(mode or 'n', key, vim.lsp.buf[action], { buffer = bufnr })
-  end
-
-  local function diagnostic_map(key, action)
-    vim.keymap.set('n', key, vim.diagnostic[action], { buffer = bufnr })
   end
 
   lsp_map('<C-]>', 'definition')
@@ -24,16 +26,37 @@ local function on_attach(client, bufnr)
 
   -- Diagnostics
   if vim.bo.filetype ~= 'python' then
+    local function diagnostic_map(key, action)
+      vim.keymap.set('n', key, vim.diagnostic[action], { buffer = bufnr })
+    end
+
     diagnostic_map('[d', 'goto_prev')
     diagnostic_map(']d', 'goto_next')
     diagnostic_map('gl', 'setloclist')
-    vim.b.lsp_sl = ''
-    vim.cmd [[ autocmd! DiagnosticChanged <buffer> lua require('diagnostics_sl')() ]]
-    vim.wo.statusline = vim.o.statusline .. '%{%b:lsp_sl%}'
+
+    -- Statusline diagnostic info
+    vim.api.nvim_create_autocmd('DiagnosticChanged', {
+      desc = 'Update statusline variable on change in diagnostics',
+      group = 'custom',
+      buffer = bufnr,
+      callback = function()
+        local e = #vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.ERROR })
+        local w = #vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.WARN })
+
+        local sl_error = (e ~= 0) and string.format('%%#ErrorMsg# E:%d ', e) or ''
+        local sl_warning = (w ~= 0) and string.format('%%#Search# W:%d ', w) or ''
+        vim.b.lsp_sl = sl_error .. sl_warning
+      end,
+    })
+
+    if not vim.b.lsp_sl then
+      vim.b.lsp_sl = ''
+      vim.wo.statusline = vim.o.statusline .. '%{%b:lsp_sl%}'
+    end
   end
 
   -- Indicate server provides formatter
-  if client.resolved_capabilities.document_formatting then
+  if client.resolved_capabilities.document_formatting and vim.bo.filetype ~= 'tex' then
     vim.b.formatprg = 'lsp'
   end
 end
@@ -41,6 +64,8 @@ end
 -- Server config
 local servers = {
   clangd = {},
+
+  rust_analyzer = {},
 
   jedi_language_server = {},
 
@@ -89,6 +114,7 @@ require('nvim-treesitter.configs').setup {
     'latex',
     'lua',
     'python',
+    'rust',
     'toml',
     'vim',
     'yaml',
@@ -120,10 +146,10 @@ require('nvim-treesitter.configs').setup {
     swap = {
       enable = true,
       swap_previous = {
-        ['[a'] = '@parameter.inner',
+        ['[x'] = '@parameter.inner',
       },
       swap_next = {
-        [']a'] = '@parameter.inner',
+        [']x'] = '@parameter.inner',
       },
     },
 
@@ -157,15 +183,10 @@ require('nvim-treesitter.configs').setup {
 
 -- nvim-cmp {{{
 
-local cmp = require 'cmp'
-
-local function has_words_before()
-  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match '%s' == nil
-end
+local cmp = require('cmp')
 
 local function feedkey(key, mode)
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode or '', true)
 end
 
 cmp.setup {
@@ -180,9 +201,7 @@ cmp.setup {
       if cmp.visible() then
         cmp.select_next_item()
       elseif vim.fn['vsnip#available']() == 1 then
-        feedkey('<Plug>(vsnip-expand-or-jump)', '')
-      elseif has_words_before() then
-        cmp.mapping.complete()
+        feedkey('<Plug>(vsnip-expand-or-jump)')
       else
         fallback()
       end
@@ -195,15 +214,15 @@ cmp.setup {
       if cmp.visible() then
         cmp.select_prev_item()
       elseif vim.fn['vsnip#jumpable'](-1) == 1 then
-        feedkey('<Plug>(vsnip-jump-prev)', '')
+        feedkey('<Plug>(vsnip-jump-prev)')
       end
     end, {
       'i',
       's',
     }),
 
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
     ['<CR>'] = cmp.mapping.confirm(),
   },
 
@@ -219,21 +238,5 @@ cmp.setup {
     { name = 'path' },
   },
 }
-
--- `/` cmdline setup.
-cmp.setup.cmdline('/', {
-  sources = {
-    { name = 'buffer' },
-  },
-})
-
--- `:` cmdline setup.
-cmp.setup.cmdline(':', {
-  sources = cmp.config.sources({
-    { name = 'path' },
-  }, {
-    { name = 'cmdline' },
-  }),
-})
 
 -- }}}

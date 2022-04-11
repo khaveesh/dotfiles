@@ -1,5 +1,3 @@
-set shiftwidth=4
-
 let b:formatprg = [ [ 'isort', '-' ], [ 'black', '-' ] ]
 
 nnoremap <buffer> gx :up <bar> vsp <bar> term python %:S<CR>:startinsert<CR>
