@@ -1,11 +1,12 @@
 " Eliminate leading backslashes on Vim script line joins
 function s:VimImprovedJoin() abort
-    if line('.') != line('$')
-        normal! J
-        if getline('.')[col('.')] == '\'
-            normal! ldwh
+    let line_no = line('.')
+    if line_no != line('$')
+        if getline(line_no + 1)->matchstr('\S') == '\'
+            return 'Jldw'
         endif
+        return 'J'
     endif
 endfunction
 
-nnoremap <silent><buffer> J :call <SID>VimImprovedJoin()<CR>
+nnoremap <buffer><expr> J <SID>VimImprovedJoin()

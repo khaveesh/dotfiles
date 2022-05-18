@@ -8,6 +8,9 @@ vim.api.nvim_create_autocmd(
 
 -- LSP {{{
 
+-- Highlight the active parameter in the signature popup
+vim.api.nvim_set_hl(0, 'LspSignatureActiveParameter', { link = 'WarningMsg', default = true })
+
 -- Custom on_attach function
 local function on_attach(client, bufnr)
   local function lsp_map(key, action, mode)
@@ -43,8 +46,8 @@ local function on_attach(client, bufnr)
         local e = #vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.ERROR })
         local w = #vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.WARN })
 
-        local sl_error = (e ~= 0) and string.format('%%#ErrorMsg# E:%d ', e) or ''
-        local sl_warning = (w ~= 0) and string.format('%%#Search# W:%d ', w) or ''
+        local sl_error = (e ~= 0) and string.format('%%#Error# E:%d ', e) or ''
+        local sl_warning = (w ~= 0) and string.format('%%#Warning# W:%d ', w) or ''
         vim.b.lsp_sl = sl_error .. sl_warning
       end,
     })
@@ -56,7 +59,7 @@ local function on_attach(client, bufnr)
   end
 
   -- Indicate server provides formatter
-  if client.resolved_capabilities.document_formatting and vim.bo.filetype ~= 'tex' then
+  if client.server_capabilities.documentFormattingProvider and vim.bo.filetype ~= 'tex' then
     vim.b.formatprg = 'lsp'
   end
 end
@@ -185,8 +188,8 @@ require('nvim-treesitter.configs').setup {
 
 local cmp = require('cmp')
 
-local function feedkey(key, mode)
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode or '', true)
+local function feedkey(key)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), '', false)
 end
 
 cmp.setup {
@@ -196,7 +199,7 @@ cmp.setup {
     end,
   },
 
-  mapping = {
+  mapping = cmp.mapping.preset.insert {
     ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
@@ -221,8 +224,8 @@ cmp.setup {
       's',
     }),
 
-    ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<CR>'] = cmp.mapping.confirm(),
   },
 
@@ -231,6 +234,7 @@ cmp.setup {
     { name = 'vsnip' },
     {
       name = 'buffer',
+      -- Get words from all listed buffers
       option = {
         get_bufnrs = vim.api.nvim_list_bufs,
       },

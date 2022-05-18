@@ -1,16 +1,18 @@
 -- MIT License Copyright (c) 2021 Evgeni Chasnovski
 
 -- Documentation ==============================================================
---- Custom minimal and fast Lua module for code commenting. This is basically a
+--- Minimal and fast Lua module for code commenting. This is basically a
 --- reimplementation of "tpope/vim-commentary". Commenting in Normal mode
 --- respects |count| and is dot-repeatable. Comment structure is inferred
 --- from 'commentstring'. Handles both tab and space indenting (but not when
---- they are mixed).
+--- they are mixed). Allows custom hooks before and after successful commeting.
 ---
 --- What it doesn't do:
 --- - Block and sub-line comments. This will only support per-line commenting.
 --- - Configurable (from module) comment structure. Modify |commentstring|
----   instead.
+---   instead. To enhance support for commenting in multi-language files, see
+---   "JoosepAlviste/nvim-ts-context-commentstring" plugin along with `hooks`
+---   option of this module (see |MiniComment.config|).
 --- - Handle indentation with mixed tab and space.
 --- - Preserve trailing whitespace in empty lines.
 ---
@@ -57,11 +59,10 @@ MiniComment.config = {
     comment_yank = 'yc',
 
     -- Toggle comment on current line
-    comment_line = 'gcc',
-    comment_line_yank = 'ycc',
+    line_textobject = 'c',
 
     -- Define 'comment' textobject (like `dgc` - delete whole comment block)
-    textobject = 'gc',
+    comment_textobject = 'gc',
   },
 }
 --minidoc_afterlines_end
@@ -95,7 +96,7 @@ function MiniComment.operator(mode)
   -- NOTE: setting `operatorfunc` inside this function enables usage of 'count'
   -- like `10gc_` toggles comments of 10 lines below (starting with current).
   if mode == nil then
-    vim.cmd('set operatorfunc=v:lua.MiniComment.operator')
+    vim.o.operatorfunc = 'v:lua.MiniComment.operator'
     return 'g@'
   end
 
@@ -136,7 +137,7 @@ function MiniComment.operator_yank(mode)
   -- NOTE: setting `operatorfunc` inside this function enables usage of 'count'
   -- like `10gc_` toggles comments of 10 lines below (starting with current).
   if mode == nil then
-    vim.cmd('set operatorfunc=v:lua.MiniComment.operator_yank')
+    vim.o.operatorfunc = 'v:lua.MiniComment.operator_yank'
     return 'g@'
   end
 
@@ -157,7 +158,7 @@ function MiniComment.operator_yank(mode)
   end
 
   local content = vim.api.nvim_buf_get_lines(0, line_left - 1, line_right, true)
-  vim.fn.setreg('"', content)
+  vim.fn.setreg(vim.v.register, content)
 
   -- Using `vim.cmd()` wrapper to allow usage of `lockmarks` command, because
   -- raw execution will delete marks inside region (due to
@@ -229,24 +230,22 @@ function MiniComment.textobject()
   local comment_check = H.make_comment_check(comment_parts)
   local line_cur = vim.api.nvim_win_get_cursor(0)[1]
 
-  if not comment_check(vim.fn.getline(line_cur)) then
-    return
-  end
+  if comment_check(vim.api.nvim_get_current_line()) then
+    local line_start = line_cur
+    while (line_start >= 2) and comment_check(H.getline(line_start)) do
+      line_start = line_start - 1
+    end
 
-  local line_start = line_cur
-  while (line_start >= 2) and comment_check(vim.fn.getline(line_start - 1)) do
-    line_start = line_start - 1
-  end
+    local line_end = line_cur
+    local n_lines = vim.api.nvim_buf_line_count(0)
+    while (line_end <= n_lines - 1) and comment_check(H.getline(line_end + 1)) do
+      line_end = line_end + 1
+    end
 
-  local line_end = line_cur
-  local n_lines = vim.api.nvim_buf_line_count(0)
-  while (line_end <= n_lines - 1) and comment_check(vim.fn.getline(line_end + 1)) do
-    line_end = line_end + 1
+    -- This visual selection doesn't seem to change `'<` and `'>` marks when
+    -- executed as `onoremap` mapping
+    vim.cmd(string.format('normal! %dGV%dG', line_start, line_end))
   end
-
-  -- This visual selection doesn't seem to change `'<` and `'>` marks when
-  -- executed as `onoremap` mapping
-  vim.cmd(string.format('normal! %dGV%dG', line_start, line_end))
 end
 
 -- Helper data ================================================================
@@ -268,8 +267,9 @@ function H.setup_config(config)
 
   vim.validate {
     ['mappings.comment'] = { config.mappings.comment, 'string' },
-    ['mappings.comment_line'] = { config.mappings.comment_line, 'string' },
-    ['mappings.textobject'] = { config.mappings.textobject, 'string' },
+    ['mappings.comment_yank'] = { config.mappings.comment_yank, 'string' },
+    ['mappings.line_textobject'] = { config.mappings.line_textobject, 'string' },
+    ['mappings.comment_textobject'] = { config.mappings.comment_textobject, 'string' },
   }
 
   return config
@@ -279,53 +279,33 @@ function H.apply_config(config)
   MiniComment.config = config
 
   -- Make mappings
-  H.keymap('n', config.mappings.comment, 'v:lua.MiniComment.operator()', {
-    expr = true,
-    noremap = true,
-    silent = true,
-  })
-  H.keymap(
+  vim.keymap.set('n', config.mappings.comment, MiniComment.operator, { expr = true, desc = 'Comment' })
+  vim.keymap.set(
     'x',
     config.mappings.comment,
     -- Using `:<c-u>` instead of `<cmd>` as latter results into executing before
     -- proper update of `'<` and `'>` marks which is needed to work correctly.
     [[:<c-u>lua MiniComment.operator('visual')<cr>]],
-    { noremap = true, silent = true }
-  )
-  H.keymap(
-    'n',
-    config.mappings.comment_line,
-    'v:lua.MiniComment.operator() . "_"',
-    { expr = true, noremap = true, silent = true }
+    { desc = 'Comment selection' }
   )
 
-  -- Make yank and comment mappings
-  H.keymap('n', config.mappings.comment_yank, 'v:lua.MiniComment.operator_yank()', {
-    expr = true,
-    noremap = true,
-    silent = true,
-  })
-  H.keymap(
+  vim.keymap.set(
+    'n',
+    config.mappings.comment_yank,
+    MiniComment.operator_yank,
+    { expr = true, desc = 'Yank and Comment' }
+  )
+  vim.keymap.set(
     'x',
     config.mappings.comment_yank,
     -- Using `:<c-u>` instead of `<cmd>` as latter results into executing before
     -- proper update of `'<` and `'>` marks which is needed to work correctly.
     [[:<c-u>lua MiniComment.operator_yank('visual')<cr>]],
-    { noremap = true, silent = true }
-  )
-  H.keymap(
-    'n',
-    config.mappings.comment_line_yank,
-    'v:lua.MiniComment.operator_yank() . "_"',
-    { expr = true, noremap = true, silent = true }
+    { desc = 'Yank and Comment selection' }
   )
 
-  H.keymap(
-    'o',
-    config.mappings.textobject,
-    [[<cmd>lua MiniComment.textobject()<cr>]],
-    { noremap = true, silent = true }
-  )
+  vim.keymap.set('o', config.mappings.line_textobject, '_', { desc = 'Line textobject' })
+  vim.keymap.set('o', config.mappings.comment_textobject, MiniComment.textobject, { desc = 'Comment textobject' })
 end
 
 function H.is_disabled()
@@ -334,10 +314,10 @@ end
 
 -- Core implementations -------------------------------------------------------
 function H.make_comment_parts()
-  local cs = vim.api.nvim_buf_get_option(0, 'commentstring')
+  local cs = vim.bo.commentstring
 
   if cs == '' then
-    vim.notify([[(mini.comment) Option 'commentstring' is empty.]])
+    print([[(mini.comment) Option 'commentstring' is empty.]])
     return { left = '', right = '' }
   end
 
@@ -439,11 +419,8 @@ function H.make_uncomment_function(comment_parts)
 end
 
 -- Utilities ------------------------------------------------------------------
-function H.keymap(mode, keys, cmd, opts)
-  if keys == '' then
-    return
-  end
-  vim.api.nvim_set_keymap(mode, keys, cmd, opts)
+function H.getline(line_no)
+  return vim.api.nvim_buf_get_lines(0, line_no - 1, line_no, true)[1]
 end
 
 -- Export module

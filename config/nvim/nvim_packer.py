@@ -11,11 +11,13 @@ from pydantic import BaseModel, StrictStr, validator
 DIR = Path("~/.local/share/nvim/site/pack/packages").expanduser()
 START = DIR / "start"
 OPT = DIR / "opt"
+# Create the required directories if they don't exist already
 for directory in (START, OPT):
     if not directory.is_dir():
         directory.mkdir(parents=True)
 
 
+# Validate the schema of the TOML file
 class Packs(BaseModel):
     start: FrozenSet[StrictStr] = frozenset()
     opt: FrozenSet[StrictStr] = frozenset()
@@ -29,7 +31,6 @@ class Packs(BaseModel):
 
 
 packages = Packs(**tomli.load(Path("~/.config/nvim/plugins.toml").expanduser().open("rb")))
-# print(packages)
 start_pack = {START / pack.split("/")[1]: pack for pack in packages.start}
 opt_pack = {OPT / pack.split("/")[1]: pack for pack in packages.opt}
 # map_pack = start_pack | opt_pack
@@ -42,9 +43,8 @@ def term(attr: str, msg: str) -> str:
         "bold": "\033[01m",
         "red": "\033[31m",
         "green": "\033[32m",
-        "yellow": "\033[93m",
+        "yellow": "\033[33m",
     }
-
     return colors[attr] + msg + colors["reset"]
 
 
@@ -75,6 +75,7 @@ async def run_git(pack: str, path: Path) -> str:
         )
         if await git_pull.wait() != 0:
             return out + term("red", "Not a valid git local repo")
+
         git_log = await asyncio.create_subprocess_exec(
             *split(f"git -C {path} log --pretty=oneline --color --abbrev-commit ORIG_HEAD.."),
             stdout=asyncio.subprocess.PIPE,

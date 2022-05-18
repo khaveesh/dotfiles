@@ -19,7 +19,9 @@ start = [
   "nvim-treesitter/nvim-treesitter-textobjects",
 
   # Colour Scheme
+  "Iron-E/nvim-highlite",
   "ellisonleao/gruvbox.nvim",
+  "Mofiqul/vscode.nvim",
 
   # }}}
 

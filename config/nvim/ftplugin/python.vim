@@ -1,13 +1,11 @@
 let b:formatprg = [ [ 'isort', '-' ], [ 'black', '-' ] ]
 
-nnoremap <buffer> gx :up <bar> vsp <bar> term python %:S<CR>:startinsert<CR>
-
 command -buffer Lint
-            \ lgetexpr system(expandcmd('flake8 %:S; echo; pylint %:S; mypy %:S'))
-            \ | call setloclist(0, [], 'a', { 'title': 'Pylint: '.expand('%') })
-            \ | lwindow
+          \ lgetexpr system(expandcmd('flake8 %:S; echo; pylint %:S; mypy %:S'))
+          \ | call setloclist(0, [], 'a', { 'title': 'Pylint: '.expand('%') })
+          \ | lwindow
 
-nnoremap <silent><buffer> gl :up <bar> Lint <CR>
+nnoremap <buffer> gl <Cmd>up <bar> Lint<CR>
 
 " Snippetized docstrings for functions
 function s:PyDoc() abort
@@ -21,4 +19,4 @@ function s:PyDoc() abort
     call vsnip#anonymous(system(cmd, lines))
 endfunction
 
-nnoremap <silent><buffer> cp j:call <SID>PyDoc()<CR>
+nnoremap <buffer> cp j<Cmd>call <SID>PyDoc()<CR>

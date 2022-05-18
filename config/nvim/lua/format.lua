@@ -2,17 +2,12 @@
 return function()
   -- LSP powered formatting
   if vim.b.formatprg == 'lsp' then
-    vim.lsp.buf.formatting_sync()
+    vim.lsp.buf.format()
   else
     local original_lines = vim.api.nvim_buf_get_lines(0, 0, -1, true)
     local formatted_lines = nil
 
-    if vim.b.formatprg == nil then
-      -- Trim trailing whitespace and blank lines by default
-      formatted_lines = vim.lsp.util.trim_empty_lines(vim.tbl_map(function(line)
-        return line:gsub('%s+$', '')
-      end, original_lines))
-    else
+    if vim.b.formatprg then
       -- Execute shell program and capture stdout
       local function exec_shell(prg)
         formatted_lines = vim.fn.systemlist(prg, formatted_lines or original_lines)
@@ -26,6 +21,11 @@ return function()
       else
         vim.tbl_map(exec_shell, vim.b.formatprg)
       end
+    else
+      -- Trim trailing whitespace and blank lines by default
+      formatted_lines = vim.lsp.util.trim_empty_lines(vim.tbl_map(function(line)
+        return line:gsub('%s+$', '')
+      end, original_lines))
     end
 
     if not vim.deep_equal(formatted_lines, original_lines) then
