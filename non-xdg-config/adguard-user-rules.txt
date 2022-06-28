@@ -1,0 +1,16 @@
+@@||wikipedia.org^$generichide,badfilter
+wikipedia.org#%#if (window.location.search === "") { var lang = window.location.hostname.split('.')[0]; var article = window.location.pathname.split('/')[2]; window.location.href = "https://www.wikiwand.com/" + lang + "/" + article; }
+wikiwand.com###main_menu > li.article_btn.article:nth-child(2)
+wikiwand.com###main_menu > li.upgrade_btn.menu-tooltip.activation_install.tooltipstered:last-child
+wikiwand.com###main_menu > span.menu_line:nth-child(8)
+wikiwand.com###content > footer.wikiwand_footer:last-child > div.ng-scope:first-child > div.desktop_upsale.ng-scope > div.ng-scope
+lwn.net###menu
+lwn.net##div.topnav-container:nth-child(4)
+lwn.net##div.pure-grid.maincolumn:nth-child(5) > div.lwn-u-1.pure-u-md-19-24:first-child > div.ArticleText:nth-child(2) > center:first-child
+lwn.net##div.pure-grid.maincolumn:nth-child(5) > div.lwn-u-1.pure-u-md-19-24:first-child > div.ArticleText:nth-child(2) > blockquote:nth-child(2) > table.Form
+lwn.net##div.pure-grid.maincolumn:nth-child(5) > div.lwn-u-1.pure-u-md-19-24:first-child > div.ArticleText:last-child > blockquote:first-child
+phoronix.com###sidebar > aside.widget:last-child > p:last-child
+phoronix.com###sidebar > aside.widget:last-child > header:first-child
+phoronix.com###sidebar > aside.widget:nth-child(4) > p:last-child
+phoronix.com###sidebar > aside.widget:nth-child(4) > header:first-child
+phoronix.com###footer-left-content > div.extra-info:nth-child(2)

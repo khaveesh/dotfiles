@@ -1,0 +1,4 @@
+Checks: '*,-altera-id-dependent-backward-branch,-altera-struct-pack-align,-altera-unroll-loops,-android-cloexec-fopen,-cppcoreguidelines-avoid-magic-numbers,-fuchsia-default-arguments-*,-fuchsia-overloaded-operator,-google-readability-braces-around-statements,-hicpp-braces-around-statements,-llvmlibc-callee-namespace,-llvmlibc-implementation-in-namespace,-llvmlibc-restrict-system-libc-headers,-misc-no-recursion,-modernize-use-trailing-return-type,-readability-braces-around-statements,-readability-isolate-declaration,-readability-magic-numbers'
+CheckOptions:
+    - key: hicpp-signed-bitwise.IgnorePositiveIntegerLiterals
+      value: true

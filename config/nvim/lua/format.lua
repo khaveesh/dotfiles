@@ -2,7 +2,11 @@
 return function()
   -- LSP powered formatting
   if vim.b.formatprg == 'lsp' then
-    vim.lsp.buf.format()
+    if vim.version().minor == 7 then
+      vim.lsp.buf.formatting_sync()
+    else
+      vim.lsp.buf.format()
+    end
   else
     local original_lines = vim.api.nvim_buf_get_lines(0, 0, -1, true)
     local formatted_lines = nil

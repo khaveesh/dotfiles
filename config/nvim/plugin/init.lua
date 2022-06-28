@@ -69,6 +69,7 @@ local servers = {
   clangd = {},
 
   rust_analyzer = {},
+  denols = {},
 
   jedi_language_server = {},
 

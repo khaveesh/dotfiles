@@ -1,3 +1,7 @@
+" EditorConfig
+if has('nvim-0.8')
+    set cmdheight=0
+endif
 set gdefault            " Better substitute
 set spelloptions=camel  " Spell check camelCased components
 
@@ -8,7 +12,7 @@ let g:netrw_winsize = 25
 " Color Scheme
 " set background=light
 " colorscheme gruvbox
-" let g:vscode_style = "dark"
+" set background=dark
 " colorscheme vscode
 set termguicolors
 colorscheme highlite

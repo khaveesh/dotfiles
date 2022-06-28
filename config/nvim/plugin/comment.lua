@@ -332,7 +332,7 @@ function H.make_comment_check(comment_parts)
   local l, r = comment_parts.left, comment_parts.right
   -- String is commented if it has structure:
   -- <space> <left> <anything> <right> <space>
-  local regex = string.format([[^%%s-%s.*%s%%s-$]], vim.pesc(l), vim.pesc(r))
+  local regex = string.format('^%%s-%s.*%s%%s-$', vim.pesc(l), vim.pesc(r))
 
   return function(line)
     return line:find(regex) ~= nil
@@ -402,7 +402,7 @@ function H.make_uncomment_function(comment_parts)
 
   -- Usage of `lpad` and `rpad` as possbile single space enables uncommenting
   -- of commented empty lines without trailing whitespace (like '  #').
-  local uncomment_regex = string.format([[^(%%s*)%s%s(.-)%s%s%%s-$]], vim.pesc(l), lpad, rpad, vim.pesc(r))
+  local uncomment_regex = string.format('^(%%s*)%s%s(.-)%s%s%%s-$', vim.pesc(l), lpad, rpad, vim.pesc(r))
 
   return function(line)
     local indent, new_line = string.match(line, uncomment_regex)
@@ -432,4 +432,8 @@ config = H.setup_config(config)
 -- Apply config
 H.apply_config(config)
 
-vim.cmd('command! -range Comment lockmarks lua MiniComment.toggle_lines(<line1>, <line2>)')
+vim.api.nvim_create_user_command(
+  'Comment',
+  'lockmarks lua MiniComment.toggle_lines(<line1>, <line2>)',
+  { range = true }
+)

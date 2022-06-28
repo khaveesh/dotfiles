@@ -7,4 +7,6 @@ function update --description 'alias update sudo softwareupdate -i -a; brew upgr
     pipu
     echo
     tlmgr update --all --self
+    echo
+    ~/.config/nvim/nvim_packer.py
 end

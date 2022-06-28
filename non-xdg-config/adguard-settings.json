@@ -1,0 +1,54 @@
+{
+    "protocol-version": "1.0",
+    "general-settings": {
+        "app-language": "en-GB",
+        "allow-acceptable-ads": false,
+        "show-app-updated-disabled": false,
+        "update-filters-period": 24,
+        "show-tray-icon": false,
+        "launch-at-login": true,
+        "verbose-logging": false,
+        "hardware-acceleration-disabled": false
+    },
+    "filters": {
+        "enabled-groups": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ],
+        "enabled-filters": [
+            208,
+            14,
+            2,
+            3,
+            4,
+            118,
+            122,
+            201,
+            210,
+            207,
+            215,
+            242,
+            204,
+            225,
+            229,
+            240,
+            250
+        ],
+        "custom-filters": [],
+        "user-filter": {
+            "enabled": true,
+            "rules": "@@||wikipedia.org^$generichide,badfilter\nwikipedia.org#%#if (window.location.search === \"\") { var lang = window.location.hostname.split('.')[0]; var article = window.location.pathname.split('/')[2]; window.location.href = \"https://www.wikiwand.com/\" + lang + \"/\" + article; }\nwikiwand.com###main_menu > li.article_btn.article:nth-child(2)\nwikiwand.com###main_menu > li.upgrade_btn.menu-tooltip.activation_install.tooltipstered:last-child\nwikiwand.com###main_menu > span.menu_line:nth-child(8)\nwikiwand.com###content > footer.wikiwand_footer:last-child > div.ng-scope:first-child > div.desktop_upsale.ng-scope > div.ng-scope\nlwn.net###menu\nlwn.net##div.topnav-container:nth-child(4)\nlwn.net##div.pure-grid.maincolumn:nth-child(5) > div.lwn-u-1.pure-u-md-19-24:first-child > div.ArticleText:nth-child(2) > center:first-child\nlwn.net##div.pure-grid.maincolumn:nth-child(5) > div.lwn-u-1.pure-u-md-19-24:first-child > div.ArticleText:nth-child(2) > blockquote:nth-child(2) > table.Form\nlwn.net##div.pure-grid.maincolumn:nth-child(5) > div.lwn-u-1.pure-u-md-19-24:first-child > div.ArticleText:last-child > blockquote:first-child\nphoronix.com###sidebar > aside.widget:last-child > p:last-child\nphoronix.com###sidebar > aside.widget:last-child > header:first-child\nphoronix.com###sidebar > aside.widget:nth-child(4) > p:last-child\nphoronix.com###sidebar > aside.widget:nth-child(4) > header:first-child\nphoronix.com###footer-left-content > div.extra-info:nth-child(2)",
+            "disabled-rules": ""
+        },
+        "allowlist": {
+            "enabled": true,
+            "inverted": false,
+            "domains": [],
+            "inverted-domains": []
+        }
+    }
+}
