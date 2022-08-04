@@ -1,6 +1,7 @@
 [flake8]
 max-line-length = 100
+inline-quotes = double
 classmethod-decorators =
     classmethod
     validator
-ignore = C812, D100, D101, D102, D103, D105, D107, DAR101, DAR201, DAR301, E203, Q000, S105, S322, S404, S603, W503, WPS111, WPS301, WPS305, WPS306, WPS317, WPS332, WPS348, WPS421, WPS432, WPS440, WPS441
+ignore = D400, E203, N817, S105, S404, S603, W503, WPS305, WPS306, WPS332, WPS348, WPS421, WPS432

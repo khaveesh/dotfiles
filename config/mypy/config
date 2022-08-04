@@ -1,7 +1,5 @@
 [mypy]
-follow_imports           = skip
-strict                   = True
-ignore_missing_imports   = True
-no_error_summary         = True
-show_column_numbers      = True
-disallow_subclassing_any = False
+strict                 = True
+ignore_missing_imports = True
+no_error_summary       = True
+show_column_numbers    = True

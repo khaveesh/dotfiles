@@ -19,9 +19,10 @@ start = [
   "nvim-treesitter/nvim-treesitter-textobjects",
 
   # Colour Scheme
-  "Iron-E/nvim-highlite",
   "ellisonleao/gruvbox.nvim",
-  "Mofiqul/vscode.nvim",
+
+  # Manipulate surrounding delimiters
+  "kylechui/nvim-surround",
 
   # }}}
 
@@ -43,9 +44,6 @@ start = [
 
   # Handy square bracket mappings
   "khaveesh/vim-unimpaired",
-
-  # Manipulate surrounding delimiters
-  "tpope/vim-surround",
 
   # Dot-repeat support for plugins
   "tpope/vim-repeat",

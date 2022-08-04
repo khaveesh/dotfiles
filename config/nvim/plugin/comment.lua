@@ -5,7 +5,7 @@
 --- reimplementation of "tpope/vim-commentary". Commenting in Normal mode
 --- respects |count| and is dot-repeatable. Comment structure is inferred
 --- from 'commentstring'. Handles both tab and space indenting (but not when
---- they are mixed). Allows custom hooks before and after successful commeting.
+--- they are mixed). Allows custom hooks before and after successful commenting.
 ---
 --- What it doesn't do:
 --- - Block and sub-line comments. This will only support per-line commenting.
@@ -14,7 +14,7 @@
 ---   "JoosepAlviste/nvim-ts-context-commentstring" plugin along with `hooks`
 ---   option of this module (see |MiniComment.config|).
 --- - Handle indentation with mixed tab and space.
---- - Preserve trailing whitespace in empty lines.
+--- - Preserve trailing white space in empty lines.
 ---
 --- # Setup~
 ---
@@ -82,11 +82,7 @@ MiniComment.config = {
 ---
 ---@return string 'g@' if called without argument, '' otherwise (but after
 ---   performing action).
-function MiniComment.operator(mode)
-  if H.is_disabled() then
-    return ''
-  end
-
+MiniComment.operator = function(mode)
   -- If used without arguments inside expression mapping:
   -- - Set itself as `operatorfunc` to be called later to perform action.
   -- - Return 'g@' which will then be executed resulting into waiting for a
@@ -112,9 +108,7 @@ function MiniComment.operator(mode)
 
   -- Do nothing if "left" mark is not on the left (earlier in text) of "right"
   -- mark (indicating that there is nothing to do, like in comment textobject).
-  if (line_left > line_right) or (line_left == line_right and col_left > col_right) then
-    return
-  end
+  if (line_left > line_right) or (line_left == line_right and col_left > col_right) then return end
 
   -- Using `vim.cmd()` wrapper to allow usage of `lockmarks` command, because
   -- raw execution will delete marks inside region (due to
@@ -123,11 +117,7 @@ function MiniComment.operator(mode)
   return ''
 end
 
-function MiniComment.operator_yank(mode)
-  if H.is_disabled() then
-    return ''
-  end
-
+MiniComment.operator_yank = function(mode)
   -- If used without arguments inside expression mapping:
   -- - Set itself as `operatorfunc` to be called later to perform action.
   -- - Return 'g@' which will then be executed resulting into waiting for a
@@ -153,9 +143,7 @@ function MiniComment.operator_yank(mode)
 
   -- Do nothing if "left" mark is not on the left (earlier in text) of "right"
   -- mark (indicating that there is nothing to do, like in comment textobject).
-  if (line_left > line_right) or (line_left == line_right and col_left > col_right) then
-    return
-  end
+  if (line_left > line_right) or (line_left == line_right and col_left > col_right) then return end
 
   local content = vim.api.nvim_buf_get_lines(0, line_left - 1, line_right, true)
   vim.fn.setreg(vim.v.register, content)
@@ -171,7 +159,7 @@ end
 ---
 --- It uncomments if lines are comment (every line is a comment) and comments
 --- otherwise. It respects indentation and doesn't insert trailing
---- whitespace. Toggle commenting not in visual mode is also dot-repeatable
+--- white space. Toggle commenting not in visual mode is also dot-repeatable
 --- and respects |count|.
 ---
 --- # Notes~
@@ -181,14 +169,12 @@ end
 ---
 ---@param line_start number Start line number (inclusive from 1 to number of lines).
 ---@param line_end number End line number (inclusive from 1 to number of lines).
-function MiniComment.toggle_lines(line_start, line_end)
-  if H.is_disabled() then
-    return
-  end
-
+MiniComment.toggle_lines = function(line_start, line_end)
   local n_lines = vim.api.nvim_buf_line_count(0)
   if not (1 <= line_start and line_start <= n_lines and 1 <= line_end and line_end <= n_lines) then
-    error(('(mini.comment) `line_start` and `line_end` should be within range [1; %s].'):format(n_lines))
+    error(
+      ('(mini.comment) `line_start` and `line_end` should be within range [1; %s].'):format(n_lines)
+    )
   end
   if not (line_start <= line_end) then
     error('(mini.comment) `line_start` should be less than or equal to `line_end`.')
@@ -221,18 +207,14 @@ end
 ---
 --- This selects all commented lines adjacent to cursor line (if it itself is
 --- commented). Designed to be used with operator mode mappings (see |mapmode-o|).
-function MiniComment.textobject()
-  if H.is_disabled() then
-    return
-  end
-
+MiniComment.textobject = function()
   local comment_parts = H.make_comment_parts()
   local comment_check = H.make_comment_check(comment_parts)
   local line_cur = vim.api.nvim_win_get_cursor(0)[1]
 
   if comment_check(vim.api.nvim_get_current_line()) then
     local line_start = line_cur
-    while (line_start >= 2) and comment_check(H.getline(line_start)) do
+    while (line_start >= 2) and comment_check(H.getline(line_start - 1)) do
       line_start = line_start - 1
     end
 
@@ -254,32 +236,37 @@ H.default_config = MiniComment.config
 
 -- Helper functionality =======================================================
 -- Settings -------------------------------------------------------------------
-function H.setup_config(config)
+H.setup_config = function(config)
   -- General idea: if some table elements are not present in user-supplied
   -- `config`, take them from default config
-  vim.validate { config = { config, 'table', true } }
+  vim.validate({ config = { config, 'table', true } })
   config = vim.tbl_deep_extend('force', H.default_config, config or {})
 
   -- Validate per nesting level to produce correct error message
-  vim.validate {
+  vim.validate({
     mappings = { config.mappings, 'table' },
-  }
+  })
 
-  vim.validate {
+  vim.validate({
     ['mappings.comment'] = { config.mappings.comment, 'string' },
     ['mappings.comment_yank'] = { config.mappings.comment_yank, 'string' },
     ['mappings.line_textobject'] = { config.mappings.line_textobject, 'string' },
     ['mappings.comment_textobject'] = { config.mappings.comment_textobject, 'string' },
-  }
+  })
 
   return config
 end
 
-function H.apply_config(config)
+H.apply_config = function(config)
   MiniComment.config = config
 
   -- Make mappings
-  vim.keymap.set('n', config.mappings.comment, MiniComment.operator, { expr = true, desc = 'Comment' })
+  vim.keymap.set(
+    'n',
+    config.mappings.comment,
+    MiniComment.operator,
+    { expr = true, desc = 'Comment' }
+  )
   vim.keymap.set(
     'x',
     config.mappings.comment,
@@ -305,15 +292,16 @@ function H.apply_config(config)
   )
 
   vim.keymap.set('o', config.mappings.line_textobject, '_', { desc = 'Line textobject' })
-  vim.keymap.set('o', config.mappings.comment_textobject, MiniComment.textobject, { desc = 'Comment textobject' })
-end
-
-function H.is_disabled()
-  return vim.g.minicomment_disable == true or vim.b.minicomment_disable == true
+  vim.keymap.set(
+    'o',
+    config.mappings.comment_textobject,
+    MiniComment.textobject,
+    { desc = 'Comment textobject' }
+  )
 end
 
 -- Core implementations -------------------------------------------------------
-function H.make_comment_parts()
+H.make_comment_parts = function()
   local cs = vim.bo.commentstring
 
   if cs == '' then
@@ -323,23 +311,21 @@ function H.make_comment_parts()
 
   -- Assumed structure of 'commentstring':
   -- <space> <left> <space> <'%s'> <space> <right> <space>
-  -- So this extracts parts without surrounding whitespace
+  -- So this extracts parts without surrounding white space
   local left, right = cs:match('^%s*(.-)%s*%%s%s*(.-)%s*$')
   return { left = left, right = right }
 end
 
-function H.make_comment_check(comment_parts)
+H.make_comment_check = function(comment_parts)
   local l, r = comment_parts.left, comment_parts.right
   -- String is commented if it has structure:
   -- <space> <left> <anything> <right> <space>
   local regex = string.format('^%%s-%s.*%s%%s-$', vim.pesc(l), vim.pesc(r))
 
-  return function(line)
-    return line:find(regex) ~= nil
-  end
+  return function(line) return line:find(regex) ~= nil end
 end
 
-function H.get_lines_info(lines, comment_parts)
+H.get_lines_info = function(lines, comment_parts)
   local n_indent, n_indent_cur = math.huge, math.huge
   local indent, indent_cur
 
@@ -360,16 +346,14 @@ function H.get_lines_info(lines, comment_parts)
     end
 
     -- Update comment info: lines are comment if every single line is comment
-    if l ~= '' and is_comment then
-      is_comment = comment_check(l)
-    end
+    if l ~= '' and is_comment then is_comment = comment_check(l) end
   end
 
   -- `indent` can still be `nil` in case all `lines` are empty
   return indent or '', is_comment
 end
 
-function H.make_comment_function(comment_parts, indent)
+H.make_comment_function = function(comment_parts, indent)
   -- NOTE: this assumes that indent doesn't mix tabs with spaces
   local nonindent_start = indent:len() + 1
 
@@ -382,10 +366,15 @@ function H.make_comment_function(comment_parts, indent)
   -- because they have special meaning in `string.format` input. NOTE: don't
   -- use `vim.pesc()` here because it also escapes other special characters
   -- (like '-', '*', etc.).
-  local nonempty_format = indent .. l:gsub('%%', '%%%%') .. lpad .. '%s' .. rpad .. r:gsub('%%', '%%%%')
+  local nonempty_format = indent
+    .. l:gsub('%%', '%%%%')
+    .. lpad
+    .. '%s'
+    .. rpad
+    .. r:gsub('%%', '%%%%')
 
   return function(line)
-    -- Line is empty if it doesn't have anything except whitespace
+    -- Line is empty if it doesn't have anything except white space
     if line:find('^%s*$') ~= nil then
       -- If doesn't want to comment empty lines, return `line` here
       return empty_comment
@@ -395,33 +384,28 @@ function H.make_comment_function(comment_parts, indent)
   end
 end
 
-function H.make_uncomment_function(comment_parts)
+H.make_uncomment_function = function(comment_parts)
   local l, r = comment_parts.left, comment_parts.right
   local lpad = (l == '') and '' or '[ ]?'
   local rpad = (r == '') and '' or '[ ]?'
 
   -- Usage of `lpad` and `rpad` as possbile single space enables uncommenting
-  -- of commented empty lines without trailing whitespace (like '  #').
-  local uncomment_regex = string.format('^(%%s*)%s%s(.-)%s%s%%s-$', vim.pesc(l), lpad, rpad, vim.pesc(r))
+  -- of commented empty lines without trailing white space (like '  #').
+  local uncomment_regex =
+    string.format('^(%%s*)%s%s(.-)%s%s%%s-$', vim.pesc(l), lpad, rpad, vim.pesc(r))
 
   return function(line)
     local indent, new_line = string.match(line, uncomment_regex)
     -- Return original if line is not commented
-    if new_line == nil then
-      return line
-    end
+    if new_line == nil then return line end
     -- Remove indent if line is a commented empty line
-    if new_line == '' then
-      indent = ''
-    end
+    if new_line == '' then indent = '' end
     return ('%s%s'):format(indent, new_line)
   end
 end
 
 -- Utilities ------------------------------------------------------------------
-function H.getline(line_no)
-  return vim.api.nvim_buf_get_lines(0, line_no - 1, line_no, true)[1]
-end
+function H.getline(line_no) return vim.api.nvim_buf_get_lines(0, line_no - 1, line_no, true)[1] end
 
 -- Export module
 _G.MiniComment = MiniComment

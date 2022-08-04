@@ -5,9 +5,9 @@ command -buffer Lint
           \ | call setloclist(0, [], 'a', { 'title': 'Pylint: '.expand('%') })
           \ | lwindow
 
-nnoremap <buffer> gl <Cmd>up <bar> Lint<CR>
+nnoremap <buffer> gp <Cmd>up <bar> Lint<CR>
 
-" Snippetized docstrings for functions
+" Snippetized docstring for functions
 function s:PyDoc() abort
     ?def
     const firstline = line('.')

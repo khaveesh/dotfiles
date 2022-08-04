@@ -26,10 +26,10 @@ return function()
         vim.tbl_map(exec_shell, vim.b.formatprg)
       end
     else
-      -- Trim trailing whitespace and blank lines by default
-      formatted_lines = vim.lsp.util.trim_empty_lines(vim.tbl_map(function(line)
-        return line:gsub('%s+$', '')
-      end, original_lines))
+      -- Trim trailing white space and blank lines by default
+      formatted_lines = vim.lsp.util.trim_empty_lines(
+        vim.tbl_map(function(line) return line:gsub('%s+$', '') end, original_lines)
+      )
     end
 
     if not vim.deep_equal(formatted_lines, original_lines) then

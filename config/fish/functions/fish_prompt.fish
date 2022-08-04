@@ -3,7 +3,7 @@ function fish_prompt --description 'Write out the prompt'
     set -lx __fish_last_status $status # Export for __fish_print_pipestatus.
 
     # PWD
-    echo
+    # echo
     set_color $fish_color_cwd
     echo -n (prompt_pwd)
     set_color normal

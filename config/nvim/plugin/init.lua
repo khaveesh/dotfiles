@@ -1,10 +1,11 @@
 -- vim: foldmethod=marker
 
 vim.api.nvim_create_augroup('custom', {})
-vim.api.nvim_create_autocmd(
-  'BufWritePre',
-  { desc = 'Format before saving the file', group = 'custom', callback = require('format') }
-)
+vim.api.nvim_create_autocmd('BufWritePre', {
+  desc = 'Format before saving the file',
+  group = 'custom',
+  callback = require('format'),
+})
 
 -- LSP {{{
 
@@ -28,34 +29,32 @@ local function on_attach(client, bufnr)
   lsp_map('gs', 'document_symbol')
 
   -- Diagnostics
-  if vim.bo.filetype ~= 'python' then
-    local function diagnostic_map(key, action)
-      vim.keymap.set('n', key, vim.diagnostic[action], { buffer = bufnr })
-    end
+  local function diagnostic_map(key, action)
+    vim.keymap.set('n', key, vim.diagnostic[action], { buffer = bufnr })
+  end
 
-    diagnostic_map('[d', 'goto_prev')
-    diagnostic_map(']d', 'goto_next')
-    diagnostic_map('gl', 'setloclist')
+  diagnostic_map('[d', 'goto_prev')
+  diagnostic_map(']d', 'goto_next')
+  diagnostic_map('gl', 'setloclist')
 
-    -- Statusline diagnostic info
-    vim.api.nvim_create_autocmd('DiagnosticChanged', {
-      desc = 'Update statusline variable on change in diagnostics',
-      group = 'custom',
-      buffer = bufnr,
-      callback = function()
-        local e = #vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.ERROR })
-        local w = #vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.WARN })
+  -- Statusline diagnostic info
+  vim.api.nvim_create_autocmd('DiagnosticChanged', {
+    desc = 'Update statusline variable on change in diagnostics',
+    group = 'custom',
+    buffer = bufnr,
+    callback = function()
+      local e = #vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.ERROR })
+      local w = #vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.WARN })
 
-        local sl_error = (e ~= 0) and string.format('%%#Error# E:%d ', e) or ''
-        local sl_warning = (w ~= 0) and string.format('%%#Warning# W:%d ', w) or ''
-        vim.b.lsp_sl = sl_error .. sl_warning
-      end,
-    })
+      local sl_error = (e ~= 0) and string.format('%%#Error# E:%d ', e) or ''
+      local sl_warning = (w ~= 0) and string.format('%%#Warning# W:%d ', w) or ''
+      vim.b.lsp_sl = sl_error .. sl_warning
+    end,
+  })
 
-    if not vim.b.lsp_sl then
-      vim.b.lsp_sl = ''
-      vim.wo.statusline = vim.o.statusline .. '%{%b:lsp_sl%}'
-    end
+  if not vim.b.lsp_sl then
+    vim.b.lsp_sl = ''
+    vim.wo.statusline = vim.o.statusline .. '%{%b:lsp_sl%}'
   end
 
   -- Indicate server provides formatter
@@ -68,10 +67,9 @@ end
 local servers = {
   clangd = {},
 
-  rust_analyzer = {},
-  denols = {},
-
   jedi_language_server = {},
+
+  rust_analyzer = {},
 
   texlab = {
     settings = {
@@ -95,7 +93,8 @@ local servers = {
 }
 
 -- Indicate snippet support to server
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities =
+  require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- Use a loop to setup multiple servers with custom config
 for server, config in pairs(servers) do
@@ -108,7 +107,7 @@ end
 
 -- Treesitter {{{
 
-require('nvim-treesitter.configs').setup {
+require('nvim-treesitter.configs').setup({
   ensure_installed = {
     'bash',
     'c',
@@ -125,8 +124,6 @@ require('nvim-treesitter.configs').setup {
   },
 
   highlight = { enable = true },
-
-  matchup = { enable = true },
 
   textobjects = {
     select = {
@@ -181,7 +178,9 @@ require('nvim-treesitter.configs').setup {
       },
     },
   },
-}
+
+  matchup = { enable = true },
+})
 
 -- }}}
 
@@ -193,14 +192,12 @@ local function feedkey(key)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), '', false)
 end
 
-cmp.setup {
+cmp.setup({
   snippet = {
-    expand = function(args)
-      vim.fn['vsnip#anonymous'](args.body)
-    end,
+    expand = function(args) vim.fn['vsnip#anonymous'](args.body) end,
   },
 
-  mapping = cmp.mapping.preset.insert {
+  mapping = cmp.mapping.preset.insert({
     ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
@@ -225,12 +222,12 @@ cmp.setup {
       's',
     }),
 
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-u>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<CR>'] = cmp.mapping.confirm(),
-  },
+  }),
 
-  sources = cmp.config.sources {
+  sources = cmp.config.sources({
     { name = 'nvim_lsp' },
     { name = 'vsnip' },
     {
@@ -241,7 +238,16 @@ cmp.setup {
       },
     },
     { name = 'path' },
-  },
-}
+  }),
+})
+
+-- }}}
+
+-- nvim-surround {{{
+
+require('nvim-surround').setup()
+
+vim.keymap.set('n', 'csw', 'ysiw', { remap = true })
+vim.keymap.set('n', 'csW', 'ysiW', { remap = true })
 
 -- }}}

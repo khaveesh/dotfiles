@@ -3,6 +3,7 @@ if has('nvim-0.8')
     set cmdheight=0
 endif
 set gdefault            " Better substitute
+set spelllang=en_gb
 set spelloptions=camel  " Spell check camelCased components
 
 " NerdTree style netrw
@@ -10,12 +11,9 @@ let g:netrw_banner  = 0
 let g:netrw_winsize = 25
 
 " Color Scheme
-" set background=light
-" colorscheme gruvbox
-" set background=dark
-" colorscheme vscode
 set termguicolors
-colorscheme highlite
+set background=light
+colorscheme gruvbox
 
 " Statusline - File info & Position info
 let &statusline = '%#StatusLineNC# %m %f %h%w'
@@ -33,7 +31,7 @@ nnoremap yd <Cmd>Lexplore<CR>
 " Toggle spell check
 nnoremap yz <Cmd>setlocal invspell<CR>
 
-" Jetpack mapping - Fast switch, split or unload buffers
+" Jet pack mapping - Fast switch, split or unload buffers
 nnoremap gb <Cmd>buffers<CR>:b
 nnoremap gB <Cmd>buffers<CR>:vert sb
 
