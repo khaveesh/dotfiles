@@ -1,8 +1,14 @@
 # Defined in - @ line 1
-function panhtml --wraps=pandoc --description 'Convert pandoc file formats to HTML using water.css'
+function panhtml --wraps=pandoc --description 'Convert pandoc file formats to HTML'
     set argv[1] (realpath $argv[1])
-    pushd /tmp
-    set temp_file (basename $argv[1]).html
-    pandoc --toc -L refnos.lua -f markdown+rebase_relative_paths -C --csl=ieee -M link-citations --katex --template markdown -c ~/.local/share/pandoc/style.min.css -c ~/.local/share/pandoc/overrides.css --resource-path=(dirname $argv[1]) -V abstract-title='Abstract:' $argv -o $temp_file && open $temp_file
-    popd
+    set temp_file /tmp/(basename $argv[1]).html
+
+    pandoc --template=modern --embed-resources --toc --mathml -L refnos.lua \
+        -c ~/.local/share/pandoc/style.min.css \
+        -c ~/.local/share/pandoc/overrides.css \
+        -C --csl=ieee -M link-citations \
+        -V abstract-title='Abstract:' \
+        --resource-path=(dirname $argv[1]) \
+        $argv -o $temp_file \
+        && open $temp_file
 end

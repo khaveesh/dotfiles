@@ -2,6 +2,12 @@
 max-line-length = 100
 inline-quotes = double
 classmethod-decorators =
-    classmethod
+    classmethod,
     validator
-ignore = D400, E203, N817, S105, S404, S603, W503, WPS305, WPS306, WPS332, WPS348, WPS421, WPS432
+ignore =
+    D400,
+    E203,
+    N817,
+    S105, S404, S603,
+    W503,
+    WPS305, WPS306, WPS332, WPS337, WPS348, WPS421, WPS432

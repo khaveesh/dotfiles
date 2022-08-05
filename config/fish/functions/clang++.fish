@@ -1,4 +1,7 @@
 # Defined in - @ line 1
 function clang++ --wraps=clang++
-    command clang++ -Weverything -Wno-padded -Wno-poison-system-directories -Wno-c++98-compat -O2 -flto=thin -mmacosx-version-min=12.0 -mavx2 -std=c++17 -march=native -mtune=skylake $argv
+    command clang++ -std=c++17 -O2 -march=native -flto=thin \
+        -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk \
+        -Weverything -Wno-padded -Wno-c++98-compat -Wno-c++98-compat-pedantic \
+        $argv
 end

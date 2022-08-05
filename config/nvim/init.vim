@@ -1,6 +1,6 @@
 " EditorConfig
 if has('nvim-0.8')
-    set cmdheight=0
+  set cmdheight=0
 endif
 set gdefault            " Better substitute
 set spelllang=en_gb
@@ -17,7 +17,7 @@ colorscheme gruvbox
 
 " Statusline - File info & Position info
 let &statusline = '%#StatusLineNC# %m %f %h%w'
-                        \ . '%=%#StatusLine# %l,%c │ %P '
+      \         . '%=%#StatusLine# %l,%c │ %P '
 
 " VSCode/LSP snippets
 let g:vsnip_snippet_dir = stdpath('config') . '/vsnip'
@@ -62,6 +62,6 @@ nnoremap <leader>Q <Cmd>bdelete!<CR>
 
 " Toggle Quickfix & Location lists
 nnoremap <expr> <leader>c empty(getwininfo()->filter('v:val.quickfix'))
-            \ ? '<Cmd>cwindow<CR>' : '<Cmd>cclose<CR>'
+      \                 ? '<Cmd>cwindow<CR>' : '<Cmd>cclose<CR>'
 nnoremap <expr> <leader>l empty(getwininfo()->filter('v:val.loclist'))
-            \ ? '<Cmd>lwindow<CR>' : '<Cmd>lclose<CR>'
+      \                 ? '<Cmd>lwindow<CR>' : '<Cmd>lclose<CR>'
