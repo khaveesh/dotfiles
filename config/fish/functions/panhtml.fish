@@ -7,7 +7,7 @@ function panhtml --wraps=pandoc --description 'Convert pandoc file formats to HT
         -c ~/.local/share/pandoc/style.min.css \
         -c ~/.local/share/pandoc/overrides.css \
         -C --csl=ieee -M link-citations \
-        -V abstract-title='Abstract:' \
+        -V lang=en-GB -V abstract-title='Abstract:' \
         --resource-path=(dirname $argv[1]) \
         $argv -o $temp_file \
         && open $temp_file

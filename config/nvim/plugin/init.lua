@@ -7,6 +7,18 @@ vim.api.nvim_create_autocmd('BufWritePre', {
   callback = require('format'),
 })
 
+-- Colorscheme {{{
+
+require('gruvbox').setup({
+  italic = false,
+  invert_tabline = true,
+  contrast = 'hard',
+})
+vim.o.background = 'light'
+vim.cmd('colorscheme gruvbox')
+
+-- }}}
+
 -- LSP {{{
 
 -- Highlight the active parameter in the signature popup
@@ -46,8 +58,8 @@ local function on_attach(client, bufnr)
       local e = #vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.ERROR })
       local w = #vim.diagnostic.get(bufnr, { severity = vim.diagnostic.severity.WARN })
 
-      local sl_error = (e ~= 0) and string.format('%%#Error# E:%d ', e) or ''
-      local sl_warning = (w ~= 0) and string.format('%%#Warning# W:%d ', w) or ''
+      local sl_error = (e ~= 0) and string.format('%%#ErrorMsg# E:%d ', e) or ''
+      local sl_warning = (w ~= 0) and string.format('%%#DiffText# W:%d ', w) or ''
       vim.b.lsp_sl = sl_error .. sl_warning
     end,
   })
@@ -62,6 +74,10 @@ local function on_attach(client, bufnr)
     vim.b.formatprg = 'lsp'
   end
 end
+
+-- Indicate snippet support to server
+local capabilities =
+  require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- Server config
 local servers = {
@@ -92,15 +108,13 @@ local servers = {
   },
 }
 
--- Indicate snippet support to server
-local capabilities =
-  require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-
 -- Use a loop to setup multiple servers with custom config
 for server, config in pairs(servers) do
-  config.on_attach = on_attach
-  config.capabilities = capabilities
-  require('lspconfig')[server].setup(config)
+  require('lspconfig')[server].setup({
+    on_attach = on_attach,
+    capabilities = capabilities,
+    unpack(config),
+  })
 end
 
 -- }}}
@@ -230,6 +244,7 @@ cmp.setup({
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
     { name = 'vsnip' },
+  }, {
     {
       name = 'buffer',
       -- Get words from all listed buffers

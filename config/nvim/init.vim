@@ -10,14 +10,9 @@ set spelloptions=camel  " Spell check camelCased components
 let g:netrw_banner  = 0
 let g:netrw_winsize = 25
 
-" Color Scheme
-set termguicolors
-set background=light
-colorscheme gruvbox
-
 " Statusline - File info & Position info
 let &statusline = '%#StatusLineNC# %m %f %h%w'
-      \         . '%=%#StatusLine# %l,%c │ %P '
+      \           . '%=%#StatusLine# %l,%c │ %P '
 
 " VSCode/LSP snippets
 let g:vsnip_snippet_dir = stdpath('config') . '/vsnip'
@@ -62,6 +57,6 @@ nnoremap <leader>Q <Cmd>bdelete!<CR>
 
 " Toggle Quickfix & Location lists
 nnoremap <expr> <leader>c empty(getwininfo()->filter('v:val.quickfix'))
-      \                 ? '<Cmd>cwindow<CR>' : '<Cmd>cclose<CR>'
+      \                   ? '<Cmd>cwindow<CR>' : '<Cmd>cclose<CR>'
 nnoremap <expr> <leader>l empty(getwininfo()->filter('v:val.loclist'))
-      \                 ? '<Cmd>lwindow<CR>' : '<Cmd>lclose<CR>'
+      \                   ? '<Cmd>lwindow<CR>' : '<Cmd>lclose<CR>'

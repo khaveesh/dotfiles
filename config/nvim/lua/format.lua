@@ -9,21 +9,15 @@ return function()
     end
   else
     local original_lines = vim.api.nvim_buf_get_lines(0, 0, -1, true)
-    local formatted_lines = nil
+    local formatted_lines
 
     if vim.b.formatprg then
-      -- Execute shell program and capture stdout
-      local function exec_shell(prg)
-        formatted_lines = vim.fn.systemlist(prg, formatted_lines or original_lines)
+      for _, cmd in ipairs(vim.b.formatprg) do
+        -- Execute shell program and capture stdout
+        formatted_lines = vim.fn.systemlist(cmd, formatted_lines or original_lines)
         if vim.v.shell_error ~= 0 then
           error('\n\n' .. table.concat(formatted_lines, '\n') .. '\n')
         end
-      end
-
-      if type(vim.b.formatprg[1]) == 'string' then
-        exec_shell(vim.b.formatprg)
-      else
-        vim.tbl_map(exec_shell, vim.b.formatprg)
       end
     else
       -- Trim trailing white space and blank lines by default

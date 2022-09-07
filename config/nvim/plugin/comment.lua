@@ -5,7 +5,7 @@
 --- reimplementation of "tpope/vim-commentary". Commenting in Normal mode
 --- respects |count| and is dot-repeatable. Comment structure is inferred
 --- from 'commentstring'. Handles both tab and space indenting (but not when
---- they are mixed). Allows custom hooks before and after successful commenting.
+--- they are mixed).
 ---
 --- What it doesn't do:
 --- - Block and sub-line comments. This will only support per-line commenting.
@@ -16,22 +16,6 @@
 --- - Handle indentation with mixed tab and space.
 --- - Preserve trailing white space in empty lines.
 ---
---- # Setup~
----
---- This module needs a setup with `require('mini.comment').setup({})` (replace
---- `{}` with your `config` table). It will create global Lua table
---- `MiniComment` which you can use for scripting or manually (with
---- `:lua MiniComment.*`).
----
---- See |MiniComment.config| for `config` structure and default values.
----
---- # Disabling~
----
---- To disable core functionality, set `g:minicomment_disable` (globally) or
---- `b:minicomment_disable` (for a buffer) to `v:true`. Considering high number
---- of different scenarios and customization intentions, writing exact rules
---- for disabling module's functionality is left to user. See
---- |mini.nvim-disabling-recipes| for common recipes.
 ---@tag mini.comment
 ---@tag MiniComment
 ---@toc_entry Comment
@@ -39,12 +23,6 @@
 -- Module definition ==========================================================
 local MiniComment = {}
 local H = {}
-
---- Module setup
----
----@param config table Module config table. See |MiniComment.config|.
----
----@usage `require('mini.comment').setup({})` (replace `{}` with your `config` table)
 
 --- Module config
 ---
@@ -407,6 +385,7 @@ end
 -- Utilities ------------------------------------------------------------------
 function H.getline(line_no) return vim.api.nvim_buf_get_lines(0, line_no - 1, line_no, true)[1] end
 
+--- Module setup
 -- Export module
 _G.MiniComment = MiniComment
 

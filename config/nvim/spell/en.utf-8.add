@@ -480,3 +480,11 @@ ylabel
 ytick
 z
 zsh
+myers
+deepcopy
+ipairs
+gruvbox
+tabline
+Msg
+setloclist
+lspconfig

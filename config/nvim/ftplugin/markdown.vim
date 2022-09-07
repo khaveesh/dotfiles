@@ -1,4 +1,4 @@
-let b:formatprg = [ 'pandoc', '-s', '-t', 'markdown' ]
+let b:formatprg = [ [ 'pandoc', '-s', '-t', 'markdown', '--columns', 90 ] ]
 
 " Preview current document using Pandoc
 nnoremap <buffer> <leader>p <Cmd>up <bar> silent !fish -c 'panhtml %:S'<CR>

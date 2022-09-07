@@ -1,11 +1,7 @@
 let b:formatprg = [ [ 'isort', '-' ], [ 'black', '-' ] ]
 
-command -buffer Lint
-      \ lgetexpr system(expandcmd('flake8 %:S; echo; pylint %:S; mypy %:S'))
-      \ | call setloclist(0, [], 'a', { 'title': 'Pylint: '.expand('%') })
-      \ | lwindow
-
-nnoremap <buffer> gp <Cmd>up <bar> Lint<CR>
+nnoremap <buffer> gp <Cmd>up <bar>
+      \ lua require('make')({ 'flake8' ,  'pylint' ,  'mypy' }, 'PyLint')<CR>
 
 " Snippetized docstring for functions
 function s:PyDoc() abort

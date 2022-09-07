@@ -3,10 +3,9 @@ import asyncio
 from pathlib import Path
 from shlex import split
 from shutil import move, rmtree
-from typing import Dict, FrozenSet
+from typing import Dict
 
 import tomli
-from pydantic import BaseModel, StrictStr, validator
 
 DIR = Path("~/.local/share/nvim/site/pack/packages").expanduser()
 START = DIR / "start"
@@ -17,22 +16,9 @@ for directory in (START, OPT):
         directory.mkdir(parents=True)
 
 
-# Validate the schema of the TOML file
-class Packs(BaseModel):
-    start: FrozenSet[StrictStr] = frozenset()
-    opt: FrozenSet[StrictStr] = frozenset()
-
-    @validator("*", each_item=True)
-    def single_slash(cls, v: str) -> str:
-        parts = v.split("/")
-        if len(parts) == 2 and parts[0] and parts[1]:
-            return v
-        raise ValueError(f"{v} is not a valid entry")
-
-
-packages = Packs(**tomli.load(Path("~/.config/nvim/plugins.toml").expanduser().open("rb")))
-start_pack = {START / pack.split("/")[1]: pack for pack in packages.start}
-opt_pack = {OPT / pack.split("/")[1]: pack for pack in packages.opt}
+packages = tomli.load(Path("~/.config/nvim/plugins.toml").expanduser().open("rb"))
+start_pack = {START / pack.split("/")[1]: pack for pack in packages["start"]}
+opt_pack = {OPT / pack.split("/")[1]: pack for pack in packages["opt"]}
 # map_pack = start_pack | opt_pack
 map_pack = {**start_pack, **opt_pack}
 
@@ -73,7 +59,7 @@ async def run_git(pack: str, path: Path) -> str:
         git_pull = await asyncio.create_subprocess_exec(
             *split(f"git -C {path} pull --quiet --ff-only"),
         )
-        if await git_pull.wait() != 0:
+        if await git_pull.wait():
             return out + term("red", "Not a valid git local repo")
 
         git_log = await asyncio.create_subprocess_exec(
@@ -88,7 +74,7 @@ async def run_git(pack: str, path: Path) -> str:
         git_clone = await asyncio.create_subprocess_exec(
             *split((f"git -C {path.parent} clone --quiet https://github.com/{pack}.git")),
         )
-        if await git_clone.wait() != 0:
+        if await git_clone.wait():
             return out + term("red", "Invalid repo url")
         out += term("green", "Installed")
 
@@ -96,13 +82,12 @@ async def run_git(pack: str, path: Path) -> str:
 
 
 async def update_and_install(packs: Dict[Path, str]) -> None:
-    output = await asyncio.gather(
-        *(asyncio.create_task(run_git(packs[pack], pack)) for pack in packs),
-    )
+    output = [asyncio.create_task(run_git(packs[pack], pack)) for pack in packs]
+
     for out in output[:-1]:
-        print(out)
+        print(await out)
         print()
-    print(output[-1])
+    print(await output[-1])
 
 
 if __name__ == "__main__":

@@ -1,1 +1,1 @@
-let b:formatprg = [ 'python3', '-m', 'json.tool' ]
+let b:formatprg = [ [ 'python3', '-m', 'json.tool' ] ]
