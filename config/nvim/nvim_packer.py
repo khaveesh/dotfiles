@@ -19,8 +19,7 @@ for directory in (START, OPT):
 packages = tomli.load(Path("~/.config/nvim/plugins.toml").expanduser().open("rb"))
 start_pack = {START / pack.split("/")[1]: pack for pack in packages["start"]}
 opt_pack = {OPT / pack.split("/")[1]: pack for pack in packages["opt"]}
-# map_pack = start_pack | opt_pack
-map_pack = {**start_pack, **opt_pack}
+map_pack = start_pack | opt_pack
 
 
 def term(attr: str, msg: str) -> str:

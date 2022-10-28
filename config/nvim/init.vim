@@ -1,9 +1,7 @@
 " EditorConfig
-if has('nvim-0.8')
-  set cmdheight=0
-endif
 set gdefault            " Better substitute
-set spelllang=en_gb
+set mousescroll=ver:1   " Smooth scroll
+set spelllang=en_gb     " British English
 set spelloptions=camel  " Spell check camelCased components
 
 " NerdTree style netrw
@@ -55,7 +53,7 @@ nnoremap <Space> <C-w>
 nnoremap <leader>q <Cmd>bdelete<CR>
 nnoremap <leader>Q <Cmd>bdelete!<CR>
 
-" Toggle Quickfix & Location lists
+" Toggle Quick-fix & Location lists
 nnoremap <expr> <leader>c empty(getwininfo()->filter('v:val.quickfix'))
       \                   ? '<Cmd>cwindow<CR>' : '<Cmd>cclose<CR>'
 nnoremap <expr> <leader>l empty(getwininfo()->filter('v:val.loclist'))

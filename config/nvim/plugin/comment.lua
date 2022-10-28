@@ -1,11 +1,10 @@
 -- MIT License Copyright (c) 2021 Evgeni Chasnovski
 
 -- Documentation ==============================================================
---- Minimal and fast Lua module for code commenting. This is basically a
---- reimplementation of "tpope/vim-commentary". Commenting in Normal mode
---- respects |count| and is dot-repeatable. Comment structure is inferred
---- from 'commentstring'. Handles both tab and space indenting (but not when
---- they are mixed).
+--- Fast and familiar per-line commenting. Commenting in Normal mode respects
+--- |count| and is dot-repeatable. Comment structure is inferred from
+--- 'commentstring'. Handles both tab and space indenting (but not when they
+--- are mixed).
 ---
 --- What it doesn't do:
 --- - Block and sub-line comments. This will only support per-line commenting.
@@ -18,7 +17,6 @@
 ---
 ---@tag mini.comment
 ---@tag MiniComment
----@toc_entry Comment
 
 -- Module definition ==========================================================
 local MiniComment = {}
@@ -283,7 +281,7 @@ H.make_comment_parts = function()
   local cs = vim.bo.commentstring
 
   if cs == '' then
-    print([[(mini.comment) Option 'commentstring' is empty.]])
+    vim.api.nvim_echo({ { '(mini.comment) ', 'WarningMsg' }, { [[Option 'commentstring' is empty.]] } }, true, {})
     return { left = '', right = '' }
   end
 

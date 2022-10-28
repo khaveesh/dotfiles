@@ -488,3 +488,5 @@ tabline
 Msg
 setloclist
 lspconfig
+VSCode
+netrw

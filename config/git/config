@@ -87,7 +87,7 @@
 [user]
 	name = Khaveesh N (MBP)
 	email = khaveesh@gmail.com
-	signingkey = CB82DEC6404CD52E
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDYwVN13Q1eKk+doBYcoHuPo4tJfIteUF5U/3ulvg9DJ khaveesh@Khaveeshs-MacBook-Pro.local
 
 [difftool "nvimdiff"]
 	cmd = nvim -d "$LOCAL" "$REMOTE"
@@ -97,3 +97,5 @@
 
 [credential]
 	helper = osxkeychain
+[gpg]
+	format = ssh

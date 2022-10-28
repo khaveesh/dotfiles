@@ -8,13 +8,13 @@
 			<key>NSBackgroundColorName</key>
 			<string>background</string>
 			<key>NSBackgroundSystemColorName</key>
-			<string>systemPurpleColor</string>
+			<string>systemRedColor</string>
 			<key>NSIconName</key>
 			<string>NSTouchBarCheck</string>
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
-				<string>Google selected text and focus</string>
+				<string>Search selected text and focus</string>
 			</dict>
 			<key>NSMessage</key>
 			<string>runWorkflowAsService</string>

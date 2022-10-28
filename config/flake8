@@ -4,7 +4,8 @@ inline-quotes = double
 classmethod-decorators =
     classmethod,
     validator
-ignore =
+extend-ignore =
+    C812,
     D400,
     E203,
     N817,

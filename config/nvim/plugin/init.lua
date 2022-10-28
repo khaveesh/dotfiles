@@ -1,5 +1,8 @@
 -- vim: foldmethod=marker
 
+-- Set pandoc as the default markdown flavour
+vim.filetype.add({ extension = { md = 'markdown.pandoc' } })
+
 vim.api.nvim_create_augroup('custom', {})
 vim.api.nvim_create_autocmd('BufWritePre', {
   desc = 'Format before saving the file',
@@ -77,7 +80,7 @@ end
 
 -- Indicate snippet support to server
 local capabilities =
-  require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- Server config
 local servers = {
