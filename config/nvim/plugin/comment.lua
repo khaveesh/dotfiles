@@ -281,7 +281,11 @@ H.make_comment_parts = function()
   local cs = vim.bo.commentstring
 
   if cs == '' then
-    vim.api.nvim_echo({ { '(mini.comment) ', 'WarningMsg' }, { [[Option 'commentstring' is empty.]] } }, true, {})
+    vim.api.nvim_echo(
+      { { '(mini.comment) ', 'WarningMsg' }, { [[Option 'commentstring' is empty.]] } },
+      true,
+      {}
+    )
     return { left = '', right = '' }
   end
 

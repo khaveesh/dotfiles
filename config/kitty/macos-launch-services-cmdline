@@ -1,4 +1,4 @@
 --start-as=fullscreen
 --listen-on=unix:/tmp/kitty
--d ~/Developer
--1
+--directory ~/Developer
+--single-instance

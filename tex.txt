@@ -121,6 +121,7 @@ graphics-def
 grfext
 grffile
 hatching
+hershey-mp
 hologo
 hopatch
 hycolor
@@ -236,6 +237,7 @@ ms
 na-position
 natbib
 newfloat
+ninecolors
 ntgclass
 oberdiek
 pagesel
@@ -290,6 +292,8 @@ subfig
 symbol
 synctex
 synctex.universal-darwin
+tabularray
+tagpdf
 tetragonos
 tex
 tex-gyre
@@ -322,6 +326,7 @@ underscore
 unicode-bidi
 unicode-data
 unicode-math
+unimath-plain-xetex
 uniquecounter
 unisugar
 upquote

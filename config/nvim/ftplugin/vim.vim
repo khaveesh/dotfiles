@@ -1,4 +1,4 @@
-setlocal expandtab tabstop=2 softtabstop=2 shiftwidth=2
+setlocal expandtab tabstop=2 shiftwidth=2
 
 " Eliminate leading backslashes on Vim script line joins
 function s:VimImprovedJoin() abort

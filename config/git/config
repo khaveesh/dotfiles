@@ -89,13 +89,14 @@
 	email = khaveesh@gmail.com
 	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDYwVN13Q1eKk+doBYcoHuPo4tJfIteUF5U/3ulvg9DJ khaveesh@Khaveeshs-MacBook-Pro.local
 
+[gpg]
+	format = ssh
+
+[credential]
+	helper = osxkeychain
+
 [difftool "nvimdiff"]
 	cmd = nvim -d "$LOCAL" "$REMOTE"
 
 [mergetool "nvimdiff"]
 	cmd = nvim -d "$LOCAL" "$REMOTE" "$MERGED" -c 'wincmd w' -c 'wincmd J'
-
-[credential]
-	helper = osxkeychain
-[gpg]
-	format = ssh

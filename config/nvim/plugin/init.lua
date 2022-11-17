@@ -52,7 +52,6 @@ local function on_attach(client, bufnr)
   diagnostic_map(']d', 'goto_next')
   diagnostic_map('gl', 'setloclist')
 
-  -- Statusline diagnostic info
   vim.api.nvim_create_autocmd('DiagnosticChanged', {
     desc = 'Update statusline variable on change in diagnostics',
     group = 'custom',
@@ -67,6 +66,7 @@ local function on_attach(client, bufnr)
     end,
   })
 
+  -- Statusline diagnostic info
   if not vim.b.lsp_sl then
     vim.b.lsp_sl = ''
     vim.wo.statusline = vim.o.statusline .. '%{%b:lsp_sl%}'
@@ -113,11 +113,9 @@ local servers = {
 
 -- Use a loop to setup multiple servers with custom config
 for server, config in pairs(servers) do
-  require('lspconfig')[server].setup({
-    on_attach = on_attach,
-    capabilities = capabilities,
-    unpack(config),
-  })
+  config.on_attach = on_attach
+  config.capabilities = capabilities
+  require('lspconfig')[server].setup(config)
 end
 
 -- }}}
@@ -240,7 +238,7 @@ cmp.setup({
     }),
 
     ['<C-u>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-d>'] = cmp.mapping.scroll_docs(4),
     ['<CR>'] = cmp.mapping.confirm(),
   }),
 
