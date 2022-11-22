@@ -1,7 +1,7 @@
 let b:formatprg = [ [ 'pandoc', '--standalone', '--to=markdown', '--columns=90' ] ]
 
 " Preview current document using Pandoc
-nnoremap <buffer> <leader>p <Cmd>up <bar> silent !fish -c 'panhtml %:S'<CR>
+nnoremap <buffer> <leader>p <Cmd>up <bar> silent !fish -c 'cd /tmp && panhtml %:p'<CR>
 
 " Select from list of headers
 nnoremap <buffer><expr> gh '<Cmd>g/^#/#<CR>:'

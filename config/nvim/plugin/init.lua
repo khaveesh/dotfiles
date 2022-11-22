@@ -127,13 +127,17 @@ require('nvim-treesitter.configs').setup({
     'bash',
     'c',
     'cpp',
+    'css',
     'fish',
+    'html',
+    'javascript',
     'json',
     'latex',
     'lua',
     'python',
     'rust',
     'toml',
+    'typescript',
     'vim',
     'yaml',
   },
@@ -263,7 +267,7 @@ cmp.setup({
 
 require('nvim-surround').setup()
 
-vim.keymap.set('n', 'csw', 'ysiw', { remap = true })
-vim.keymap.set('n', 'csW', 'ysiW', { remap = true })
+vim.keymap.set('n', 'csw', '<Plug>(nvim-surround-normal)iw')
+vim.keymap.set('n', 'csW', '<Plug>(nvim-surround-normal)iW')
 
 -- }}}
