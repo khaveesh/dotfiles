@@ -3,7 +3,7 @@
     "general-settings": {
         "app-language": "en-GB",
         "allow-acceptable-ads": false,
-        "show-app-updated-disabled": false,
+        "show-app-updated-disabled": true,
         "update-filters-period": 24,
         "show-tray-icon": false,
         "launch-at-login": true,
@@ -25,29 +25,28 @@
             2,
             3,
             4,
-            122,
-            201,
+            118,
             253,
             207,
             215,
             242,
             204,
             225,
+            122,
+            201,
             229,
             250
         ],
         "custom-filters": [],
         "user-filter": {
             "enabled": true,
-            "rules": "@@||wikipedia.org^$generichide,badfilter\nwikipedia.org#%#if (window.location.search === \"\") { window.location.href = \"https://www.wikiwand.com/en\" + window.location.pathname.slice(5); }\nphoronix.com###sidebar > aside.widget:last-child > p:last-child\nphoronix.com###sidebar > aside.widget:last-child > header:first-child\nphoronix.com###sidebar > aside.widget:nth-child(4) > p:last-child\nphoronix.com###sidebar > aside.widget:nth-child(4) > header:first-child\nphoronix.com###footer-left-content > div.extra-info:nth-child(2)\nlwn.net##div.topnav-container:nth-child(4)\nlwn.net###menu",
+            "rules": "@@||wikipedia.org^$generichide,badfilter\nwikipedia.org#%#if (window.location.search === \"\") { window.location.href = \"https://www.wikiwand.com/en\" + window.location.pathname.slice(5); }\nphoronix.com###sidebar > aside.widget:nth-child(4) > header:first-child\nphoronix.com###sidebar > aside.widget:last-child > header:first-child\nphoronix.com###sidebar > aside.widget:nth-child(4) > p:last-child\nphoronix.com###sidebar > aside.widget:last-child > p:last-child\nphoronix.com###footer-left-content > div.extra-info:nth-child(2)\nlwn.net###menu\nlwn.net##div.topnav-container:nth-child(4)\nlwn.net##div.maincolumn.flexcol:nth-child(5) > div.middlecolumn:first-child > div.ArticleText:last-child > blockquote:first-child",
             "disabled-rules": ""
         },
         "allowlist": {
             "enabled": false,
             "inverted": false,
-            "domains": [
-                ""
-            ],
+            "domains": [],
             "inverted-domains": []
         }
     }

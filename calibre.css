@@ -1,5 +1,5 @@
 body {
-  font-family: Bookerly !important;
+  font-family: Bookerly, serif !important;
 }
 
 p {
@@ -8,7 +8,7 @@ p {
   -epub-hyphens: auto !important;
   margin-bottom: 1em !important;
   text-align: justify !important;
-  text-indent: 2em !important;
+  hanging-punctuation: first last;
 }
 
 hr {
@@ -26,27 +26,13 @@ h4,
 h5,
 h6,
 hgroup {
-  break-after: avoid;
   break-inside: avoid;
-  font-weight: 700;
+  break-after: avoid;
+  font-weight: bold;
   hyphens: none;
   -epub-hyphens: none;
   margin: 3em 0;
   text-align: center;
-}
-
-p.continued,
-h2 + p,
-h3 + p,
-h4 + p,
-h5 + p,
-h6 + p,
-header + p,
-hr + p,
-hgroup + p,
-p:first-child {
-  hanging-punctuation: first last;
-  text-indent: 0 !important;
 }
 
 abbr {
@@ -56,6 +42,5 @@ abbr {
 
 ol,
 ul {
-  margin-bottom: 1em;
-  margin-top: 1em;
+  margin: 1em 0;
 }
