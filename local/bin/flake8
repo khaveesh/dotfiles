@@ -1,3 +1,0 @@
-#!/usr/bin/env dash
-
-~/Library/Python/3.9/bin/flake8 --append-config ~/.config/flake8 "$@"

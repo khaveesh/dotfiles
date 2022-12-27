@@ -40,11 +40,11 @@
         "custom-filters": [],
         "user-filter": {
             "enabled": true,
-            "rules": "@@||wikipedia.org^$generichide,badfilter\nwikipedia.org#%#if (window.location.search === \"\") { window.location.href = \"https://www.wikiwand.com/en\" + window.location.pathname.slice(5); }\nphoronix.com###sidebar > aside.widget:nth-child(4) > header:first-child\nphoronix.com###sidebar > aside.widget:last-child > header:first-child\nphoronix.com###sidebar > aside.widget:nth-child(4) > p:last-child\nphoronix.com###sidebar > aside.widget:last-child > p:last-child\nphoronix.com###footer-left-content > div.extra-info:nth-child(2)\nlwn.net###menu\nlwn.net##div.topnav-container:nth-child(4)\nlwn.net##div.maincolumn.flexcol:nth-child(5) > div.middlecolumn:first-child > div.ArticleText:last-child > blockquote:first-child",
+            "rules": "@@||wikipedia.org^$generichide,badfilter\nwikipedia.org#%#if (window.location.search === \"\") { window.location.href = \"https://www.wikiwand.com/en\" + window.location.pathname.slice(5); }\nphoronix.com###sidebar > aside.widget:nth-child(4)\nphoronix.com###sidebar > aside.widget:last-child\nphoronix.com###about-author\nphoronix.com###footer\nlwn.net###menu\nlwn.net##div.topnav-container\nlwn.net##center:last-child\n1337x.unban.workers.dev##footer\n1337x.unban.workers.dev##div.top-bar:nth-child(2)\nfinance.yahoo.com###masterNav\nfinance.yahoo.com###header-mail-button\nduckduckgo.com##div.footer",
             "disabled-rules": ""
         },
         "allowlist": {
-            "enabled": false,
+            "enabled": true,
             "inverted": false,
             "domains": [],
             "inverted-domains": []

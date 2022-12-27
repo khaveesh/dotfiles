@@ -8,12 +8,10 @@ return function()
     local formatted_lines
 
     if vim.b.formatprg then
-      for _, cmd in ipairs(vim.b.formatprg) do
-        -- Execute shell program and capture stdout
-        formatted_lines = vim.fn.systemlist(cmd, formatted_lines or original_lines)
-        if vim.v.shell_error ~= 0 then
-          error('\n\n' .. table.concat(formatted_lines, '\n') .. '\n')
-        end
+      -- Execute shell program and capture stdout
+      formatted_lines = vim.fn.systemlist(vim.b.formatprg, original_lines)
+      if vim.v.shell_error ~= 0 then
+        error('\n\n' .. table.concat(formatted_lines, '\n') .. '\n')
       end
     else
       -- Trim trailing white space and blank lines by default

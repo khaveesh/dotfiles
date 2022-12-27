@@ -84,11 +84,10 @@ local capabilities =
 
 -- Server config
 local servers = {
-  clangd = {},
-
-  jedi_language_server = {},
-
-  rust_analyzer = {},
+  'clangd',
+  'jedi_language_server',
+  'ruff_lsp',
+  'rust_analyzer',
 
   texlab = {
     settings = {
@@ -113,6 +112,11 @@ local servers = {
 
 -- Use a loop to setup multiple servers with custom config
 for server, config in pairs(servers) do
+  if type(config) == 'string' then
+    server = config
+    config = {}
+  end
+
   config.on_attach = on_attach
   config.capabilities = capabilities
   require('lspconfig')[server].setup(config)

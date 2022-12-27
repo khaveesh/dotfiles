@@ -9,6 +9,7 @@ SETUVAR --export MANPAGER:nvim\x20\x2bMan\x21
 SETUVAR --export MPLCONFIGDIR:/Users/khaveesh/\x2econfig/matplotlib
 SETUVAR --export PYLINTHOME:/Users/khaveesh/\x2ecache/pylint
 SETUVAR --export PYLINTRC:/Users/khaveesh/pyproject\x2etoml
+SETUVAR --export RUFF_CACHE_DIR:/Users/khaveesh/\x2ecache/ruff
 SETUVAR --export VISUAL:nvim
 SETUVAR ZO_CMD:zo
 SETUVAR Z_CMD:z

@@ -1,7 +1,7 @@
-let b:formatprg = [ [ 'isort', '-' ], [ 'black', '-' ] ]
+let b:formatprg = [ 'black', '-' ]
 
 nnoremap <buffer> gp <Cmd>up <bar>
-      \ lua require('make')({ 'flake8' ,  'pylint' ,  'mypy' }, 'PyLint')<CR>
+      \ lua require('make')({ 'pylint', 'mypy' }, 'Lint')<CR>
 
 " Snippetized docstring for functions
 function s:PyDoc() abort

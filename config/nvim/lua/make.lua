@@ -10,7 +10,7 @@ return function(cmds, title)
 
       vim.schedule(function()
         vim.fn.setloclist(0, {}, 'a', {
-          title = title or 'Lint',
+          title = title or 'Output',
           lines = stdout,
         })
         if i == #cmds then vim.cmd('lopen') end

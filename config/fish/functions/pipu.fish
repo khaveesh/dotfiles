@@ -3,11 +3,11 @@ function pipu --wraps='pip install -U' --description 'Upgrade outdated pip packa
     pip install -U \
         black \
         doq \
-        isort \
         jedi-language-server \
         mypy \
         pip \
         pylint \
         requests \
-        wemake-python-styleguide
+        ruff \
+        ruff-lsp
 end
