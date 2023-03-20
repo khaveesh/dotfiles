@@ -10,7 +10,7 @@ extension-pkg-allow-list = "pydantic"
 [tool.ruff]
 fix = true
 select = [
-            "E", "F", "B", "Q", "W", "C90", "I", "D", "UP", "N", "YTT", "BLE",
-            "FBT", "A", "C4", "ICN", "RET", "SIM", "ARG", "PLC", "PLE", "PLR",
-            "PLW"
+            "F", "B", "Q", "W", "C90", "I", "UP", "N", "YTT", "BLE", "A", "C4",
+            "ICN", "RET", "SIM", "ARG", "PL", "COM", "DTZ", "EM", "EXE", "ISC",
+            "G", "PIE", "PYI", "PT", "RSE", "SLF", "TCH", "PTH", "RUF"
          ]

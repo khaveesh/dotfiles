@@ -40,7 +40,7 @@
         "custom-filters": [],
         "user-filter": {
             "enabled": true,
-            "rules": "@@||wikipedia.org^$generichide,badfilter\nwikipedia.org#%#if (window.location.search === \"\") { window.location.href = \"https://www.wikiwand.com/en\" + window.location.pathname.slice(5); }\nphoronix.com###sidebar > aside.widget:nth-child(4)\nphoronix.com###sidebar > aside.widget:last-child\nphoronix.com###about-author\nphoronix.com###footer\nlwn.net###menu\nlwn.net##div.topnav-container\nlwn.net##center:last-child\n1337x.unban.workers.dev##footer\n1337x.unban.workers.dev##div.top-bar:nth-child(2)\nfinance.yahoo.com###masterNav\nfinance.yahoo.com###header-mail-button\nduckduckgo.com##div.footer",
+            "rules": "phoronix.com###sidebar\nphoronix.com###about-author\nlwn.net###menu\nlwn.net##div.topnav-container\nlwn.net##center:last-child\n1337x.unban.workers.dev##div.top-bar:nth-child(2)\nduckduckgo.com##div.footer\nen.wikipedia.org#$#body { font-family: ui-serif !important; }\nen.wikipedia.org#$#h1,h2,h3,nav,th,form,caption { font-family: ui-sans-serif !important; }\nen.wikipedia.org###siteSub\nen.wikipedia.org###p-lang-btn\nen.wikipedia.org###coordinates\nen.wikipedia.org##div.mw-editsection\nen.wikipedia.org##div.mw-footer-container\nen.wikipedia.org##div.vector-page-toolbar\nen.wikipedia.org##nav.vector-user-links",
             "disabled-rules": ""
         },
         "allowlist": {

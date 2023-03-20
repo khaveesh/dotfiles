@@ -13,7 +13,12 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 -- Colorscheme {{{
 
 require('gruvbox').setup({
-  italic = false,
+  italic = {
+    strings = false,
+    comments = true,
+    operators = false,
+    folds = true,
+  },
   invert_tabline = true,
   contrast = 'hard',
 })
@@ -273,5 +278,32 @@ require('nvim-surround').setup()
 
 vim.keymap.set('n', 'csw', '<Plug>(nvim-surround-normal)iw')
 vim.keymap.set('n', 'csW', '<Plug>(nvim-surround-normal)iW')
+
+-- }}}
+
+-- oil.nvim {{{
+
+require('nvim-web-devicons').setup()
+
+require('oil').setup({
+  columns = {
+    'icon',
+    'permissions',
+    'size',
+    'mtime',
+  },
+  view_options = {
+    show_hidden = true,
+  },
+})
+
+-- }}}
+
+-- iswap {{{
+
+require('iswap').setup{
+  flash_style = false,
+  autoswap = true,
+}
 
 -- }}}

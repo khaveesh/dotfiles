@@ -3,7 +3,6 @@ import asyncio
 from pathlib import Path
 from shlex import split
 from shutil import move, rmtree
-from typing import Dict
 
 import tomli
 
@@ -71,7 +70,7 @@ async def run_git(pack: str, path: Path) -> str:
             out += "Already up to date"
     else:
         git_clone = await asyncio.create_subprocess_exec(
-            *split((f"git -C {path.parent} clone --quiet https://github.com/{pack}.git")),
+            *split(f"git -C {path.parent} clone --quiet https://github.com/{pack}.git"),
         )
         if await git_clone.wait():
             return out + term("red", "Invalid repo url")
@@ -80,7 +79,7 @@ async def run_git(pack: str, path: Path) -> str:
     return out
 
 
-async def update_and_install(packs: Dict[Path, str]) -> None:
+async def update_and_install(packs: dict[Path, str]) -> None:
     output = [asyncio.create_task(run_git(packs[pack], pack)) for pack in packs]
 
     for out in output[:-1]:

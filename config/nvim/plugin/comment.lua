@@ -54,7 +54,7 @@ MiniComment.config = {
 --- dot-repeatability works): it should be called without arguments inside
 --- expression mapping and with argument when action should be performed.
 ---
----@param mode string Optional string with 'operatorfunc' mode (see |g@|).
+---@param mode string|nil Optional string with 'operatorfunc' mode (see |g@|).
 ---
 ---@return string 'g@' if called without argument, '' otherwise (but after
 ---   performing action).
@@ -299,8 +299,9 @@ end
 H.make_comment_check = function(comment_parts)
   local l, r = comment_parts.left, comment_parts.right
   -- String is commented if it has structure:
-  -- <space> <left> <anything> <right> <space>
-  local regex = string.format('^%%s-%s.*%s%%s-$', vim.pesc(l), vim.pesc(r))
+  -- <possible space> <left> <anything> <right> <space>
+  local start_blank = '%s-'
+  local regex = '^' .. start_blank .. vim.pesc(l) .. '.*' .. vim.pesc(r) .. '%s-$'
 
   return function(line) return line:find(regex) ~= nil end
 end
@@ -326,7 +327,7 @@ H.get_lines_info = function(lines, comment_parts)
     end
 
     -- Update comment info: lines are comment if every single line is comment
-    if l ~= '' and is_comment then is_comment = comment_check(l) end
+    if is_comment then is_comment = comment_check(l) end
   end
 
   -- `indent` can still be `nil` in case all `lines` are empty
@@ -341,26 +342,21 @@ H.make_comment_function = function(comment_parts, indent)
   local lpad = (l == '') and '' or ' '
   local rpad = (r == '') and '' or ' '
 
-  local empty_comment = ''
+  local blank_comment = indent .. l .. r
+
   -- Escape literal '%' symbols in comment parts (like in LaTeX) to be '%%'
   -- because they have special meaning in `string.format` input. NOTE: don't
   -- use `vim.pesc()` here because it also escapes other special characters
   -- (like '-', '*', etc.).
-  local nonempty_format = indent
-    .. l:gsub('%%', '%%%%')
-    .. lpad
-    .. '%s'
-    .. rpad
-    .. r:gsub('%%', '%%%%')
+  local l_esc, r_esc = l:gsub('%%', '%%%%'), r:gsub('%%', '%%%%')
+  local left = indent .. l_esc
+  local nonblank_format = left .. lpad .. '%s' .. rpad .. r_esc
 
   return function(line)
-    -- Line is empty if it doesn't have anything except white space
-    if line:find('^%s*$') ~= nil then
-      -- If doesn't want to comment empty lines, return `line` here
-      return empty_comment
-    else
-      return string.format(nonempty_format, line:sub(nonindent_start))
-    end
+    -- Line is blank if it doesn't have anything except white space
+    if line:find('^%s*$') ~= nil then return line end
+
+    return string.format(nonblank_format, line:sub(nonindent_start))
   end
 end
 

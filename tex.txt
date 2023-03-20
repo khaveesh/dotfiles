@@ -103,7 +103,6 @@ fixlatvian
 fiziko
 float
 font-change-xetex
-fontawesome5
 fontbook
 fontspec
 fontwrap
@@ -181,6 +180,7 @@ latexmp
 letltxmacro
 lineno
 listings
+listofitems
 lm
 lm-math
 ltxcmds
@@ -242,6 +242,7 @@ ntgclass
 oberdiek
 pagesel
 parskip
+pdfcolfoot
 pdfescape
 pdflscape
 pdfmanagement-testphase
@@ -285,6 +286,7 @@ simple-thesis-dissertation
 siunitx
 slideshow
 splines
+stackengine
 stix2-otf
 stringenc
 suanpan

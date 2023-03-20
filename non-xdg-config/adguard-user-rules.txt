@@ -1,14 +1,16 @@
-@@||wikipedia.org^$generichide,badfilter
-wikipedia.org#%#if (window.location.search === "") { window.location.href = "https://www.wikiwand.com/en" + window.location.pathname.slice(5); }
-phoronix.com###sidebar > aside.widget:nth-child(4)
-phoronix.com###sidebar > aside.widget:last-child
+phoronix.com###sidebar
 phoronix.com###about-author
-phoronix.com###footer
 lwn.net###menu
 lwn.net##div.topnav-container
 lwn.net##center:last-child
-1337x.unban.workers.dev##footer
 1337x.unban.workers.dev##div.top-bar:nth-child(2)
-finance.yahoo.com###masterNav
-finance.yahoo.com###header-mail-button
 duckduckgo.com##div.footer
+en.wikipedia.org#$#body { font-family: ui-serif !important; }
+en.wikipedia.org#$#h1,h2,h3,nav,th,form,caption { font-family: ui-sans-serif !important; }
+en.wikipedia.org###siteSub
+en.wikipedia.org###p-lang-btn
+en.wikipedia.org###coordinates
+en.wikipedia.org##div.mw-editsection
+en.wikipedia.org##div.mw-footer-container
+en.wikipedia.org##div.vector-page-toolbar
+en.wikipedia.org##nav.vector-user-links

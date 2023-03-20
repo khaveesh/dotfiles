@@ -17,12 +17,17 @@ start = [
   # Semantic highlighting & text-objects
   "nvim-treesitter/nvim-treesitter",
   "nvim-treesitter/nvim-treesitter-textobjects",
+  "mizlan/iswap.nvim",
 
   # Colour Scheme
   "ellisonleao/gruvbox.nvim",
 
   # Manipulate surrounding delimiters
   "kylechui/nvim-surround",
+
+  # Edit directory listings
+  "stevearc/oil.nvim",
+  "nvim-tree/nvim-web-devicons",
 
   # }}}
 
