@@ -1,5 +1,7 @@
 -- vim: foldmethod=marker
 
+vim.loader.enable()
+
 -- Set pandoc as the default markdown flavour
 vim.filetype.add({ extension = { md = 'markdown.pandoc' } })
 
@@ -29,9 +31,6 @@ vim.cmd('colorscheme gruvbox')
 
 -- LSP {{{
 
--- Highlight the active parameter in the signature popup
-vim.api.nvim_set_hl(0, 'LspSignatureActiveParameter', { link = 'WarningMsg', default = true })
-
 -- Custom on_attach function
 local function on_attach(client, bufnr)
   local function lsp_map(key, action, mode)
@@ -47,6 +46,11 @@ local function on_attach(client, bufnr)
   lsp_map('gd', 'declaration')
   lsp_map('gh', 'hover')
   lsp_map('gs', 'document_symbol')
+
+  -- Indicate server provides formatter
+  if client.server_capabilities.documentFormattingProvider and vim.bo.filetype ~= 'tex' then
+    vim.b.formatprg = 'lsp'
+  end
 
   -- Diagnostics
   local function diagnostic_map(key, action)
@@ -75,11 +79,6 @@ local function on_attach(client, bufnr)
   if not vim.b.lsp_sl then
     vim.b.lsp_sl = ''
     vim.wo.statusline = vim.o.statusline .. '%{%b:lsp_sl%}'
-  end
-
-  -- Indicate server provides formatter
-  if client.server_capabilities.documentFormattingProvider and vim.bo.filetype ~= 'tex' then
-    vim.b.formatprg = 'lsp'
   end
 end
 

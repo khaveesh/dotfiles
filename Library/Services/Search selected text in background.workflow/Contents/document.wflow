@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>512</string>
+	<string>521.1</string>
 	<key>AMApplicationVersion</key>
 	<string>2.10</string>
 	<key>AMDocumentVersion</key>
@@ -51,7 +51,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>function run(input, parameters) {	return encodeURIComponent(input);}</string>
+					<string>function run(input, parameters) {  return encodeURIComponent(input);}</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunJavaScript</string>
@@ -154,7 +154,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>on run {input, parameters}	tell application "Safari" to set the URL of (make new tab in window 1) to "https://duckduckgo.com/?q=" &amp; input		return inputend run</string>
+					<string>on run {input, parameters}	tell application "Safari" to set the URL of (make new tab in window 1) to "https://google.com/search?q=" &amp; input		return inputend run</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -218,7 +218,7 @@ end run</string>
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>7FBF6A3B-0240-4930-A289-9BEF96CDBAE7</key>
+		<key>05FB939B-9B67-4E8D-A3A5-2F06878F12A6</key>
 		<dict>
 			<key>from</key>
 			<string>AB4E8522-7D16-416C-9BB1-B883BBCBA23E - AB4E8522-7D16-416C-9BB1-B883BBCBA23E</string>

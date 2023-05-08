@@ -17,7 +17,8 @@
             3,
             4,
             5,
-            7
+            7,
+            0
         ],
         "enabled-filters": [
             208,
@@ -40,7 +41,7 @@
         "custom-filters": [],
         "user-filter": {
             "enabled": true,
-            "rules": "phoronix.com###sidebar\nphoronix.com###about-author\nlwn.net###menu\nlwn.net##div.topnav-container\nlwn.net##center:last-child\n1337x.unban.workers.dev##div.top-bar:nth-child(2)\nduckduckgo.com##div.footer\nen.wikipedia.org#$#body { font-family: ui-serif !important; }\nen.wikipedia.org#$#h1,h2,h3,nav,th,form,caption { font-family: ui-sans-serif !important; }\nen.wikipedia.org###siteSub\nen.wikipedia.org###p-lang-btn\nen.wikipedia.org###coordinates\nen.wikipedia.org##div.mw-editsection\nen.wikipedia.org##div.mw-footer-container\nen.wikipedia.org##div.vector-page-toolbar\nen.wikipedia.org##nav.vector-user-links",
+            "rules": "phoronix.com###sidebar\nphoronix.com###about-author\nlwn.net###menu\nlwn.net##div.topnav-container\nlwn.net##center:last-child\n1337x.unban.workers.dev##div.top-bar:nth-child(2)\nduckduckgo.com##div.footer\nen.wikipedia.org#$#body { font-family: ui-serif !important; }\nen.wikipedia.org#$#h1,h2,h3,nav,th,form,caption { font-family: ui-sans-serif !important; }\nen.wikipedia.org###siteSub\nen.wikipedia.org###p-lang-btn\nen.wikipedia.org###coordinates\nen.wikipedia.org##div.mw-footer-container\nen.wikipedia.org##div.vector-page-toolbar\nen.wikipedia.org##nav.vector-user-links\nen.wikipedia.org###mp-bottom\nen.wikipedia.org###mp-topbanner\nen.wikipedia.org##.mw-editsection",
             "disabled-rules": ""
         },
         "allowlist": {

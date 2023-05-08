@@ -10,7 +10,9 @@ en.wikipedia.org#$#h1,h2,h3,nav,th,form,caption { font-family: ui-sans-serif !im
 en.wikipedia.org###siteSub
 en.wikipedia.org###p-lang-btn
 en.wikipedia.org###coordinates
-en.wikipedia.org##div.mw-editsection
 en.wikipedia.org##div.mw-footer-container
 en.wikipedia.org##div.vector-page-toolbar
 en.wikipedia.org##nav.vector-user-links
+en.wikipedia.org###mp-bottom
+en.wikipedia.org###mp-topbanner
+en.wikipedia.org##.mw-editsection

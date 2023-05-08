@@ -228,6 +228,7 @@ modes
 mp3d
 mparrows
 mpattern
+mpchess
 mpcolornames
 mpgraphics
 mptopdf
@@ -267,7 +268,6 @@ refcount
 repere
 rerunfilecheck
 revtex
-roboto
 roex
 roundrect
 sansmath
@@ -287,7 +287,6 @@ siunitx
 slideshow
 splines
 stackengine
-stix2-otf
 stringenc
 suanpan
 subfig
@@ -295,10 +294,8 @@ symbol
 synctex
 synctex.universal-darwin
 tabularray
-tagpdf
 tetragonos
 tex
-tex-gyre
 tex-ini-files
 tex.universal-darwin
 texlive-common

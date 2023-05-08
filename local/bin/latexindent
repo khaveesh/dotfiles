@@ -1,3 +1,0 @@
-#!/usr/bin/env dash
-
-/Library/TeX/texbin/latexindent -c=/tmp/ -y=defaultIndent:\ '  '

@@ -1,22 +1,27 @@
--- MIT License Copyright (c) 2021 Evgeni Chasnovski
-
--- Documentation ==============================================================
---- Fast and familiar per-line commenting. Commenting in Normal mode respects
---- |count| and is dot-repeatable. Comment structure is inferred from
---- 'commentstring'. Handles both tab and space indenting (but not when they
---- are mixed).
+--- *mini.comment* Comment lines
+--- *MiniComment*
+---
+--- MIT License Copyright (c) 2021 Evgeni Chasnovski
+---
+--- ==============================================================================
+---
+--- Features:
+--- - Commenting in Normal mode respects |count| and is dot-repeatable.
+---
+--- - Comment structure is inferred from 'commentstring'.
 ---
 --- What it doesn't do:
 --- - Block and sub-line comments. This will only support per-line commenting.
+---
 --- - Configurable (from module) comment structure. Modify |commentstring|
 ---   instead. To enhance support for commenting in multi-language files, see
 ---   "JoosepAlviste/nvim-ts-context-commentstring" plugin along with `hooks`
 ---   option of this module (see |MiniComment.config|).
---- - Handle indentation with mixed tab and space.
---- - Preserve trailing white space in empty lines.
 ---
----@tag mini.comment
----@tag MiniComment
+--- - Handle indentation with mixed tab and space.
+---
+--- - Preserve trailing whitespace in empty lines.
+---
 
 -- Module definition ==========================================================
 local MiniComment = {}
@@ -56,7 +61,7 @@ MiniComment.config = {
 ---
 ---@param mode string|nil Optional string with 'operatorfunc' mode (see |g@|).
 ---
----@return string 'g@' if called without argument, '' otherwise (but after
+---@return string|nil 'g@' if called without argument, '' otherwise (but after
 ---   performing action).
 MiniComment.operator = function(mode)
   -- If used without arguments inside expression mapping:
@@ -179,7 +184,7 @@ MiniComment.toggle_lines = function(line_start, line_end)
   vim.api.nvim_buf_set_lines(0, line_start - 1, line_end, false, lines)
 end
 
---- Comment textobject
+--- Select comment textobject
 ---
 --- This selects all commented lines adjacent to cursor line (if it itself is
 --- commented). Designed to be used with operator mode mappings (see |mapmode-o|).
@@ -290,9 +295,11 @@ H.make_comment_parts = function()
   end
 
   -- Assumed structure of 'commentstring':
-  -- <space> <left> <space> <'%s'> <space> <right> <space>
-  -- So this extracts parts without surrounding white space
-  local left, right = cs:match('^%s*(.-)%s*%%s%s*(.-)%s*$')
+  -- <space> <left> <'%s'> <right> <space>
+  -- So this extracts parts without surrounding whitespace
+  local left, right = cs:match('^%s*(.*)%%s(.-)%s*$')
+  -- Trim comment parts from inner whitespace to ensure single space pad
+  left, right = vim.trim(left), vim.trim(right)
   return { left = left, right = right }
 end
 
@@ -314,20 +321,20 @@ H.get_lines_info = function(lines, comment_parts)
   local comment_check = H.make_comment_check(comment_parts)
 
   for _, l in pairs(lines) do
-    -- Update lines indent: minimum of all indents except empty lines
-    if n_indent > 0 then
-      _, n_indent_cur, indent_cur = l:find('^(%s*)')
-      -- Condition "current n-indent equals line length" detects empty line
-      if (n_indent_cur < n_indent) and (n_indent_cur < l:len()) then
-        -- NOTE: Copy of actual indent instead of recreating it with `n_indent`
-        -- allows to handle both tabs and spaces
-        n_indent = n_indent_cur
-        indent = indent_cur
-      end
+    -- Update lines indent: minimum of all indents except blank lines
+    _, n_indent_cur, indent_cur = l:find('^(%s*)')
+    local is_blank = n_indent_cur == l:len()
+
+    if n_indent_cur < n_indent and not is_blank then
+      -- NOTE: Copy of actual indent instead of recreating it with `n_indent`
+      -- allows to handle both tabs and spaces
+      n_indent = n_indent_cur
+      indent = indent_cur
     end
 
     -- Update comment info: lines are comment if every single line is comment
-    if is_comment then is_comment = comment_check(l) end
+    -- Ignore blank lines if corresponding option is set to `true`
+    if not is_blank then is_comment = is_comment and comment_check(l) end
   end
 
   -- `indent` can still be `nil` in case all `lines` are empty
@@ -339,8 +346,8 @@ H.make_comment_function = function(comment_parts, indent)
   local nonindent_start = indent:len() + 1
 
   local l, r = comment_parts.left, comment_parts.right
-  local lpad = (l == '') and '' or ' '
-  local rpad = (r == '') and '' or ' '
+  local lpad = (l ~= '') and ' ' or ''
+  local rpad = (r ~= '') and ' ' or ''
 
   local blank_comment = indent .. l .. r
 
@@ -362,8 +369,8 @@ end
 
 H.make_uncomment_function = function(comment_parts)
   local l, r = comment_parts.left, comment_parts.right
-  local lpad = (l == '') and '' or '[ ]?'
-  local rpad = (r == '') and '' or '[ ]?'
+  local lpad = (l ~= '') and '[ ]?' or ''
+  local rpad = (r ~= '') and '[ ]?' or ''
 
   -- Usage of `lpad` and `rpad` as possbile single space enables uncommenting
   -- of commented empty lines without trailing white space (like '  #').
